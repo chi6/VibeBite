@@ -3,6 +3,7 @@ from typing import List, Dict, Any
 from llm_client import ChatGptClient
 from prompt_manager import PromptManager
 import asyncio
+from rag_utils import RAGTools
 
 class Agent:
     def __init__(
@@ -71,7 +72,6 @@ class Agent:
             "input": input_text,
             "output": response
         })
-        
         return response
     
     def _format_memory(self) -> str:

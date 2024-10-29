@@ -47,4 +47,55 @@
 
 ## 运行服务
 
-启动Flask服务： 
+1. 直接运行服务：
+
+```bash
+python service.py
+```
+
+2. 或者在Python代码中使用：
+
+```python
+from service import AgentChatService
+
+service = AgentChatService()
+service.run()
+```
+
+## API接口
+
+### 1. 初始化Agent
+
+```bash
+curl -X POST http://localhost:5000/initAgent \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_id": "custom_agent_1",
+    "name": "自定义助手"
+  }'
+```
+
+### 2. 发送聊天消息
+
+```bash
+curl -X POST http://localhost:5000/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_id": "1",
+    "message": "请介绍一下人工智能。",
+    "task_name": "chat",
+    "group_id": "main_group"
+  }'
+```
+
+## 配置说明
+
+在`config.py`中可以配置以下参数：
+
+- OPENAI_API_KEY：OpenAI API密钥
+- DEFAULT_MODEL：默认使用的模型
+- MAX_TOKENS：最大token数
+- TEMPERATURE：温度参数
+- MEMORY_PATH：记忆存储路径
+- PROMPT_PATH：prompt存储路径
+- VECTOR_DB_PATH：向量数据库存储路径

@@ -1,6 +1,7 @@
 import os
 import json
 from typing import Dict, Optional
+from config import Config  # 确保导入 Config 类或模块
 
 class PromptManager:
     def __init__(self, prompt_path: str = Config.PROMPT_PATH):
