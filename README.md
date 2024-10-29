@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AI Agent Chat Service
 
 这是一个基于Flask的AI Agent聊天服务，使用OpenAI的API进行自然语言处理。该服务支持通过POST请求与多个智能体进行交互。
@@ -99,3 +100,6 @@ curl -X POST http://localhost:5000/chat \
 - MEMORY_PATH：记忆存储路径
 - PROMPT_PATH：prompt存储路径
 - VECTOR_DB_PATH：向量数据库存储路径
+=======
+# VibeBite
+>>>>>>> 4d7f18ebe4d6e53f882b53ec95a9e1256b3deeae
