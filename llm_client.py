@@ -95,7 +95,6 @@ class ChatGptClient:
             # print("LOG_DEBUG", "fake msg")
             return True
             
-        
         self.req_queue.put({"uid": uid, "request_id": request_id, "prompt":input_messages, "temperature": self.temperature, "model_name": self.model_name})
         return True
 

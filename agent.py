@@ -23,11 +23,12 @@ class Agent:
         
     async def process_task(self, task_name: str, input_text: str) -> str:
         prompt = self.prompt_manager.get_prompt(task_name)
+        print(prompt)
         if not prompt:
             return "未找到对应任务的prompt"
             
         messages = [
-            {"role": "system", "content": prompt}
+            {"role": "system", "content": ""}
         ]
         
         # 添加记忆上下文
@@ -51,11 +52,12 @@ class Agent:
         # 添加用户输入
         messages.append({
             "role": "user",
-            "content": input_text
+            "content": prompt+'\n'+input_text
         })
         
         # 使用新的ChatGptClient处理请求
         request_id = f"{self.agent_id}_{task_name}_{len(self.memory)}"
+        print(messages)
         self.llm_client.proc_chat(self.agent_id, messages, "", "", request_id)
         
         # 等待响应
@@ -72,6 +74,7 @@ class Agent:
             "input": input_text,
             "output": response
         })
+        print(response)
         return response
     
     def _format_memory(self) -> str:
