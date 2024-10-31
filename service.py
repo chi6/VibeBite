@@ -52,29 +52,20 @@ class AgentChatService:
         base_prompts = {
             "chat": "你是一个友好的助手，请根据提供的上下文信息回答问题。",
             "analysis": "你是一个数据分析师，请分析用户提供的数据。",
-            "expert": "你是相关领域的专家，请提供专业的建议。"
-        }
-        for task_name, prompt in base_prompts.items():
-            self.prompt_manager.add_prompt(task_name, prompt)
-        
-        """初始化两个专门的Agent"""
-        # 创建问题分析专家
-        analyzer_prompt = """你是一个问题分析专家。你的职责是：
+            "expert": "你是相关领域的专家，请提供专业的建议。",
+            "analyzer": """你是一个问题分析专家。你的职责是：
                         1. 分析用户提出的问题的关键点
                         2. 提出解决问题需要考虑的各个方面
                         3. 与解决方案专家讨论，确保方案的可行性
-                        请用简洁专业的语言进行沟通。"""
-        
-        # 创建解决方案专家
-        solver_prompt = """你是一个解决方案专家。你的职责是：
+                        请用简洁专业的语言进行沟通。""",
+            "solver": """你是一个解决方案专家。你的职责是：
                         1. 根据问题分析专家的分析，提出具体的解决方案
                         2. 说明方案的可行性和潜在风险
                         3. 与问题分析专家讨论，优化解决方案
                         请用清晰条理的方式描述解决方案。"""
-        
-        # 添加prompts
-        self.prompt_manager.add_prompt("analyzer", analyzer_prompt)
-        self.prompt_manager.add_prompt("solver", solver_prompt)
+        }
+        for task_name, prompt in base_prompts.items():
+            self.prompt_manager.add_prompt(task_name, prompt)
             
     def _init_knowledge_base(self):
         """初始化知识库"""
