@@ -28,13 +28,6 @@ class AgentChatService:
 
     def init_components(self):
         """初始化所有组件"""
-        # 初始化LLM客户端
-        self.llm_client = ChatGptClient(
-            model_name="qwen-max",
-            timeout=80,
-            retry=7,
-            thread_num=1
-        )
         
         # 初始化Prompt管理器
         self.prompt_manager = PromptManager()
@@ -46,6 +39,8 @@ class AgentChatService:
         
         # 初始化默认agents和groups
         self._init_default_agents()
+        
+        print("所有组件初始化完成")
         
     def _init_prompts(self):
         """初始化基础prompt"""
@@ -59,9 +54,9 @@ class AgentChatService:
                         3. 与解决方案专家讨论，确保方案的可行性
                         请用简洁专业的语言进行沟通。""",
             "solver": """你是一个解决方案专家。你的职责是：
-                        1. 根据问题分析专家的分析，提出具体的解决方案
+                        1. 根据题分析专家的分析，提出具体的解决方案
                         2. 说明方案的可行性和潜在风险
-                        3. 与问题分析专家讨论，优化解决方案
+                        3. 与问题分析专家讨，优化解决方案
                         请用清晰条理的方式描述解决方案。"""
         }
         for task_name, prompt in base_prompts.items():
@@ -138,33 +133,38 @@ class AgentChatService:
     async def chat_agent(self):
         """处理聊天请求"""
         start_time = time.time()
+        # 启动工作线程
+        asyncio.create_task(self.llm_client.start())
         
         data = request.get_json()
         print(data)
         if not data:
             return jsonify({
-                "error": "Invalid JSON",
-                "response_time": f"{time.time() - start_time:.3f}s"
+                "uniqueId": int(time.time() * 1000000),  # 生成唯一ID
+                "taskInvoker": None,
+                "response": "Invalid JSON"
             }), 400
             
-        agent_id = data.get('agent_id')
+        agent_id = data.get('agentId')
         message = data.get('message')
-        task_name = data.get('task_name', 'chat')
-        group_id = data.get('group_id', 'main_group')
+        task_name = data.get('taskName', 'chat')
+        group_id = data.get('groupId', 'main_group')
         
-        if group_id not in self.groups:
+        """if group_id not in self.groups:
             return jsonify({
-                "error": "Group not found",
-                "response_time": f"{time.time() - start_time:.3f}s"
-            }), 404
+                "uniqueId": int(time.time() * 1000000),
+                "taskInvoker": None,
+                "response": "Group not found"
+            }), 404"""
             
-        group = self.groups[group_id]
+        #group = self.groups[group_id]
         #responses = await group.group_chat(agent_id, message, task_name)
         responses = await self.agents[agent_id].process_task(task_name, message)
-        
+
         return jsonify({
-            "response": responses,
-            "response_time": f"{time.time() - start_time:.3f}s"
+            "uniqueId": int(time.time() * 1000000),  # 生成唯一ID
+            "taskInvoker": None,  # 或者是 undefined
+            "response": responses  # AI的回复内容
         })
         
     async def chat_group(self):
@@ -207,7 +207,7 @@ class AgentChatService:
         message = data.get('message')
         task = data.get('task_name', 'chat')
         group_id = data.get('group_id', 'main_group')
-        """模拟两个Agent的讨论过程"""
+        """模拟个Agent的讨论过程"""
         print(f"\n开始讨论任务: {task}\n")
         self.analyzer = self.agents["1"]
         self.solver = self.agents["2"]
@@ -245,13 +245,22 @@ class AgentChatService:
             "discussion_rounds": rounds
         }
         
-    def run(self, host='0.0.0.0', port=5000, debug=True):
+    async def run(self):
         """运行服务"""
-        self.init_components()
-        self.app.run(host=host, port=port, debug=True)
+      # 初始化LLM客户端
+        self.llm_client = ChatGptClient()
+
+
+    def run_flask(self, host='0.0.0.0', port=5000, debug=True):
+        """运行服务"""
+        self.init_components()  # 初始化组件
+        # 启动 Flask 应用
+        self.app.run(host=host, port=port, debug=debug)
+
 
 # 创建服务实例
 service = AgentChatService()
 
 if __name__ == '__main__':
-    service.run() 
+    asyncio.run(service.run()) 
+    service.run_flask()
