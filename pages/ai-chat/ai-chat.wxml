@@ -1,0 +1,19 @@
+<view class="container">
+  <view class="chat-container">
+    <scroll-view scroll-y="true" class="chat-list" scroll-into-view="{{scrollToMessage}}">
+      <block wx:for="{{messages}}" wx:key="id">
+        <view id="msg-{{item.id}}" class="message {{item.type}}">
+          <view class="avatar">
+            <image src="{{item.type === 'user' ? '/images/logo.png' : '/images/headphoto.jpeg'}}" mode="aspectFit"></image>
+          </view>
+          <view class="content">{{item.content}}</view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+  
+  <view class="input-container">
+    <input class="chat-input" type="text" value="{{inputMessage}}" bindinput="onInputChange" placeholder="输入消息..."/>
+    <button class="send-btn" bindtap="sendMessage">发送</button>
+  </view>
+</view>

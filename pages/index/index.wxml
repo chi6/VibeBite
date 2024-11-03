@@ -1,0 +1,61 @@
+<!--index.wxml-->
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <view class="header">
+      <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+      <view class="title">
+        <text class="vibe">Vibe</text><text class="bite">Bite</text>
+      </view>
+    </view>
+
+    <view class="content">
+      <view class="status-cards">
+        <view class="status-card mood-card" bindtap="showMoodInput">
+          <view class="card-header">
+            <image class="card-icon" src="/images/mood-icon.png" mode="aspectFit"></image>
+            <text class="card-title">当前心情</text>
+          </view>
+          <view class="card-content">
+            <text class="status-value {{currentMood === '未设置' ? 'unset' : ''}}">{{currentMood || '点击输入心情'}}</text>
+            <text class="status-desc">可以用自然语言描述</text>
+          </view>
+          <input class="mood-input {{showMoodInput ? 'show' : ''}}" 
+                 value="{{tempMood}}"
+                 bindinput="onMoodInput"
+                 bindconfirm="confirmMood"
+                 placeholder="例如：今天想吃点清淡的..."
+                 confirm-type="done"
+                 focus="{{showMoodInput}}"/>
+        </view>
+
+        <view class="status-card mode-card" bindtap="showModeInput">
+          <view class="card-header">
+            <image class="card-icon" src="/images/mode-icon.png" mode="aspectFit"></image>
+            <text class="card-title">用餐模式</text>
+          </view>
+          <view class="card-content">
+            <text class="status-value {{currentMode === '未设置' ? 'unset' : ''}}">{{currentMode || '点击输入模式'}}</text>
+            <text class="status-desc">可以用自然语言描述</text>
+          </view>
+          <input class="mode-input {{showModeInput ? 'show' : ''}}" 
+                 value="{{tempMode}}"
+                 bindinput="onModeInput"
+                 bindconfirm="confirmMode"
+                 placeholder="例如：和朋友一起聚餐..."
+                 confirm-type="done"
+                 focus="{{showModeInput}}"/>
+        </view>
+      </view>
+
+      <view class="chat-section">
+        <button class="chat-btn" bindtap="goToAIChat">
+          <image class="ai-icon" src="/images/ai-icon.png" mode="aspectFit"></image>
+          <view class="btn-text">
+            <text class="btn-title">与AI助手对话</text>
+            <text class="btn-desc">让AI为您推荐美食</text>
+          </view>
+        </button>
+      </view>
+    </view>
+  </view>
+</scroll-view>

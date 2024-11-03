@@ -1,0 +1,16 @@
+<view class="container">
+  <text class="title">选择您的心情</text>
+  
+  <view class="mood-grid">
+    <view class="mood-item" wx:for="{{moods}}" wx:key="index" bindtap="selectMood" data-mood="{{item}}">
+      <image class="mood-icon" src="/images/{{item.icon}}"></image>
+      <text class="mood-text">{{item.name}}</text>
+    </view>
+  </view>
+
+  <view class="selected-mood" wx:if="{{selectedMood}}">
+    <text>已选择：{{selectedMood.name}}</text>
+  </view>
+
+  <button class="confirm-btn" bindtap="confirmMood" disabled="{{!selectedMood}}">确认心情</button>
+</view>

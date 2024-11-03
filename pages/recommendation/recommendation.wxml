@@ -1,0 +1,20 @@
+<view class="container">
+  <view class="mood-info">
+    <text>当前心情：{{selectedMood.name}}</text>
+  </view>
+
+  <view class="restaurant-card" wx:if="{{recommendedRestaurant}}">
+    <image class="restaurant-image" src="{{recommendedRestaurant.image}}" mode="aspectFill"></image>
+    <view class="restaurant-info">
+      <text class="restaurant-name">{{recommendedRestaurant.name}}</text>
+      <text class="restaurant-rating">评分：{{recommendedRestaurant.rating}}</text>
+      <text class="restaurant-distance">距离：{{recommendedRestaurant.distance}}km</text>
+    </view>
+    <view class="recommendation-reason">
+      <text>{{recommendationReason}}</text>
+    </view>
+  </view>
+
+  <button class="action-btn" bindtap="getNewRecommendation">换一个推荐</button>
+  <button class="action-btn" bindtap="viewDetails">查看详情</button>
+</view>

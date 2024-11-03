@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="header">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <view class="title">
+      <text class="vibe">Vibe</text><text class="bite">Bite</text>
+    </view>
+  </view>
+  
+  <view class="content">
+    <view class="section">
+      <text class="welcome-text">Welcome to VibeBite</text>
+      <text class="subtitle">Make a decision</text>
+      <text class="subtitle">With your AI Agent</text>
+    </view>
+
+    <button class="main-btn" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+      <image class="wechat-icon" src="/images/wechat-icon.png" mode="aspectFit"></image>
+      微信一键登录
+    </button>
+  </view>
+</view>
