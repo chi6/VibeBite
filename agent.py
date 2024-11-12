@@ -48,7 +48,7 @@ class Agent:
         return system_prompt, user_prompt
 
 
-    async def process_task(self, task_name: str, input_text: str) -> str:
+    def process_task(self, task_name: str, input_text: str) -> str:
         #TODO: some query to qwen cannot get response
         #prompt = self.prompt_manager.get_prompt(task_name)
         
@@ -61,7 +61,7 @@ class Agent:
         request_id = f"{self.agent_id}_{task_name}_{len(self.memory)}"
         request_id = str(uuid.uuid4())
         print(user_prompt["content"])
-        await self.llm_client.add_request(self.agent_id, user_prompt["content"], request_id)
+        self.llm_client.add_request(self.agent_id, user_prompt["content"], request_id)
         #await self.llm_client.add_request("user3", "你能告诉我关于长安的历史吗？", request_id)
         #await self.llm_client.request_queue.join()
         #print(self.llm_client.get_chat("request3"))
@@ -69,13 +69,13 @@ class Agent:
         response = ""
         for _ in range(100):  # 最多等待100次
             response = self.llm_client.get_chat(request_id)
-            if response['response'] != "没有找到响应":
+            response_content = response['response'].choices[0].message.content
+            if response_content != "没有找到响应":
                 break
-            await asyncio.sleep(0.1)
-        print(response)
+            time.sleep(0.1)
+
         # 检查响应格式
-        res = response['response'].choices[0].message.content
-        print(res)
+        res = response_content
         # 保存到记忆
         self.memory.append({
             "user_input": input_text,

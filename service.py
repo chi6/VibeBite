@@ -133,9 +133,6 @@ class AgentChatService:
     async def chat_agent(self):
         """处理聊天请求"""
         start_time = time.time()
-        # 启动工作线程
-        asyncio.create_task(self.llm_client.start())
-        
         data = request.get_json()
         print(data)
         if not data:
@@ -159,8 +156,8 @@ class AgentChatService:
             
         #group = self.groups[group_id]
         #responses = await group.group_chat(agent_id, message, task_name)
-        responses = await self.agents[agent_id].process_task(task_name, message)
-
+        responses = self.agents[agent_id].process_task(task_name, message)
+        print(responses)
         return jsonify({
             "uniqueId": int(time.time() * 1000000),  # 生成唯一ID
             "taskInvoker": None,  # 或者是 undefined
