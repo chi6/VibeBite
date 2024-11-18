@@ -2,13 +2,65 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #e6f7ff;
 }
 
+/* AI互动区域样式 */
+.ai-interaction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 150rpx;
+  padding: 0 20rpx;
+  background-color: #bae7ff;
+  font-size: 28rpx;
+  line-height: 1.4;
+}
+
+.ai-character {
+  width: 100rpx;
+  height: 100rpx;
+}
+
+.ai-animation {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: bounce 2s infinite;
+}
+
+/* 聊天内容展示样式 */
 .chat-container {
   flex: 1;
   padding: 10rpx 20rpx;
   background-color: #f0f0f0;
+  overflow-y: auto;
+}
+
+/* 信息流推荐样式 */
+.recommendation {
+  height: 200rpx; /* 设置信息流的高度 */
+  padding: 10rpx 20rpx;
+  background-color: #fff3e0;
+  overflow-y: auto;
+}
+
+.recommendation-item {
+  margin-bottom: 10rpx;
+  padding: 10rpx;
+  background-color: #fff;
+  border-radius: 8rpx;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-title {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.recommendation-desc {
+  font-size: 24rpx;
+  color: #666;
 }
 
 .chat-list {
@@ -75,7 +127,7 @@
   width: 80rpx;
   height: 50rpx;
   margin-left: 10rpx;
-  line-height: 50rpx;
+  line-height: 25rpx;
   text-align: center;
   background-color: #1890ff;
   color: #fff;

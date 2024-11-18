@@ -79,6 +79,70 @@ const api = {
       method: 'POST',
       data
     });
+  },
+
+  async getMeituanRecommendations(params) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: 'https://api.meituan.com/recommendations', // 替换为实际的美团API URL
+        method: 'GET',
+        data: params,
+        success: (res) => {
+          if (res.statusCode === 200) {
+            resolve(res.data);
+          } else {
+            reject(new Error('Failed to fetch recommendations'));
+          }
+        },
+        fail: (err) => {
+          reject(err);
+        }
+      });
+    });
+  },
+
+  async getRestaurants(params) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: 'https://newapi.ele.me/v2/restaurants/', // 替换为最新的饿了么API URL
+        method: 'GET',
+        data: params,
+        success: (res) => {
+          if (res.statusCode === 200) {
+            resolve(res.data);
+          } else {
+            reject(new Error('Failed to fetch restaurants'));
+          }
+        },
+        fail: (err) => {
+          reject(err);
+        }
+      });
+    });
+  },
+
+  async getNearbyRestaurants(params) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: 'http://apis.juhe.cn/catering/query', // 聚合数据API的基础URL,
+        method: 'GET',
+        data: {
+          ...params,
+          key: 'your_app_key', // 替换为你的聚合数据APPKEY
+          dtype: 'json' // 返回数据格式
+        },
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.error_code === 0) {
+            resolve(res.data.result);
+          } else {
+            reject(new Error(res.data.reason || 'Failed to fetch restaurants'));
+          }
+        },
+        fail: (err) => {
+          reject(err);
+        }
+      });
+    });
   }
 };
 

@@ -15,6 +15,14 @@
     "navigationBarTextStyle": "black",
     "enablePullDownRefresh": false
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于获取附近的推荐内容"
+    }
+  },
   "style": "v2",
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "requiredPrivateInfos": [
+    "getLocation"
+  ]
 }

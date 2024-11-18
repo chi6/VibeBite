@@ -1,4 +1,15 @@
 <view class="container">
+  <!-- AI互动区域 -->
+  <view class="ai-interaction">
+    <view class="ai-character ai-left">
+      <image class="ai-animation" src="/images/ai-left.gif" mode="aspectFit"></image>
+    </view>
+    <view class="ai-character ai-right">
+      <image class="ai-animation" src="/images/ai-right.gif" mode="aspectFit"></image>
+    </view>
+  </view>
+
+  <!-- 聊天内容展示 -->
   <view class="chat-container">
     <scroll-view scroll-y="true" class="chat-list" scroll-into-view="{{scrollToMessage}}">
       <block wx:for="{{messages}}" wx:key="id">
@@ -11,7 +22,18 @@
       </block>
     </scroll-view>
   </view>
-  
+
+  <!-- 信息流推荐 -->
+  <scroll-view scroll-y="true" class="recommendation">
+    <block wx:for="{{recommendations}}" wx:key="id">
+      <view class="recommendation-item">
+        <text class="recommendation-title">{{item.title}}</text>
+        <text class="recommendation-desc">{{item.description}}</text>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 输入区域 -->
   <view class="input-container">
     <input class="chat-input" type="text" value="{{inputMessage}}" bindinput="onInputChange" placeholder="输入消息..."/>
     <button class="send-btn" bindtap="sendMessage">发送</button>
