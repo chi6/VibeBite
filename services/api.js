@@ -1,5 +1,5 @@
 // 配置 API 基础 URL
-const BASE_URL = 'http://192.168.0.102:5000';  // 生产环境
+const BASE_URL = 'http://127.0.0.1:5000';  // 生产环境
 
 const api = {
   // 基础请求方法
@@ -71,7 +71,15 @@ const api = {
       method: 'POST',
       data
     });
+  },
+
+  // 获取AI状态
+  getAIStatus(data) {
+    return this.request('/ai_status', {
+      method: 'POST',
+      data
+    });
   }
 };
 
-export default api; 
+module.exports = api; 

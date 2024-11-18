@@ -6,6 +6,7 @@ Page({
     inputMessage: '',
     scrollToMessage: '',
     isLoading: false,
+    location: null,
   },
 
   onLoad: function() {
@@ -17,6 +18,27 @@ Page({
     this.addMessage('ai', '你好！我是你的AI助手。我可以帮你推荐餐厅，你想吃什么类型的食物？');
   },
 
+  // 获取位置信息
+  getLocation: function() {
+    wx.getLocation({
+      type: 'wgs84', // 返回可以用于 `wx.openLocation` 的 GPS 坐标
+      success: (res) => {
+        const { latitude, longitude } = res;
+        this.setData({
+          location: { latitude, longitude }
+        });
+        console.log('当前位置：', latitude, longitude);
+      },
+      fail: (err) => {
+        console.error('获取位置信息失败:', err);
+        wx.showToast({
+          title: '无法获取位置信息',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
   onInputChange: function(e) {
     this.setData({
       inputMessage: e.detail.value
@@ -24,7 +46,7 @@ Page({
   },
 
   async sendMessage() {
-    const { inputMessage, isLoading } = this.data;
+    const { inputMessage, isLoading, location } = this.data;
     if (inputMessage.trim() === '' || isLoading) return;
 
     this.addMessage('user', inputMessage);
@@ -38,7 +60,8 @@ Page({
         message: inputMessage,
         taskName: 'chat',
         agentId: '1',
-        groupId: 'main_group'
+        groupId: 'main_group',
+        location
       });
 
       if (response && response.response) {

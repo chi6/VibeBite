@@ -1,72 +1,40 @@
 // index.js
 const defaultAvatarUrl = '/images/default-avatar.png'
+const api = require('../../services/api'); // 导入整个api对象
 
 Page({
   data: {
-    currentMood: '',
-    currentMode: '',
-    showMoodInput: false,
-    showModeInput: false,
-    tempMood: '',
-    tempMode: ''
+    aiStatus: {
+      mood: '加载中...',
+      activity: '加载中...',
+      thought: '加载中...'
+    },
+    agentId: '1' // 假设你有一个agent_id
   },
 
   onLoad() {
-    const app = getApp();
-    this.setData({
-      currentMood: app.globalData.selectedMood || '未设置',
-      currentMode: app.globalData.selectedMode || '未设置'
-    });
+    this.fetchAIStatus();
   },
 
-  showMoodInput() {
-    this.setData({
-      showMoodInput: true,
-      showModeInput: false,
-      tempMood: this.data.currentMood === '未设置' ? '' : this.data.currentMood
-    });
-  },
-
-  showModeInput() {
-    this.setData({
-      showModeInput: true,
-      showMoodInput: false,
-      tempMode: this.data.currentMode === '未设置' ? '' : this.data.currentMode
-    });
-  },
-
-  onMoodInput(e) {
-    this.setData({
-      tempMood: e.detail.value
-    });
-  },
-
-  onModeInput(e) {
-    this.setData({
-      tempMode: e.detail.value
-    });
-  },
-
-  confirmMood(e) {
-    const mood = e.detail.value.trim();
-    if (mood) {
+  fetchAIStatus() {
+    const requestData = {
+      agent_id: this.data.agentId // 传递agent_id
+    };
+    api.getAIStatus(requestData).then(status => {
       this.setData({
-        currentMood: mood,
-        showMoodInput: false
+        aiStatus: {
+          mood: status.mood || '未知',
+          activity: status.activity || '未知',
+          thought: status.thought || '未知'
+        }
       });
-      getApp().globalData.selectedMood = mood;
-    }
-  },
-
-  confirmMode(e) {
-    const mode = e.detail.value.trim();
-    if (mode) {
-      this.setData({
-        currentMode: mode,
-        showModeInput: false
+    }).catch(error => {
+      console.error('获取AI状态失败:', error);
+      wx.showToast({
+        title: '获取AI状态失败',
+        icon: 'none'
       });
-      getApp().globalData.selectedMode = mode;
-    }
+    });
   },
 
   goToAIChat() {
