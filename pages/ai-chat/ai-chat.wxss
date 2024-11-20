@@ -1,77 +1,92 @@
 .container {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   height: 100vh;
-  background-color: #e6f7ff;
+  background: #f8f9fd;
+  position: relative;
+  padding: 0;
+  overflow: hidden;
 }
 
-/* AI互动区域样式 */
+/* AI互动区域样式优化 */
 .ai-interaction {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 150rpx;
-  padding: 0 20rpx;
-  background-color: #bae7ff;
-  font-size: 28rpx;
-  line-height: 1.4;
+  padding: 30rpx 40rpx;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  border-radius: 0 0 40rpx 40rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  height: 280rpx;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.ai-character {
-  width: 100rpx;
-  height: 100rpx;
+.ai-character-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 180rpx;
+  margin-bottom: 20rpx;
+  padding: 0 40rpx;
 }
 
 .ai-animation {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  animation: bounce 2s infinite;
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.15);
+  border: 4rpx solid rgba(255, 255, 255, 0.8);
+  transition: transform 0.3s ease;
 }
 
-/* 聊天内容展示样式 */
+.ai-animation:active {
+  transform: scale(0.95);
+}
+
+.ai-status {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 26rpx;
+  font-weight: 500;
+  padding: 10rpx 30rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 30rpx;
+  backdrop-filter: blur(10px);
+  width: fit-content;
+  margin: 10rpx auto 0;
+}
+
+/* 聊天区域样式优化 */
 .chat-container {
   flex: 1;
-  padding: 10rpx 20rpx;
-  background-color: #f0f0f0;
-  overflow-y: auto;
-}
-
-/* 信息流推荐样式 */
-.recommendation {
-  height: 200rpx; /* 设置信息流的高度 */
-  padding: 10rpx 20rpx;
-  background-color: #fff3e0;
-  overflow-y: auto;
-}
-
-.recommendation-item {
-  margin-bottom: 10rpx;
-  padding: 10rpx;
-  background-color: #fff;
-  border-radius: 8rpx;
-  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
-}
-
-.recommendation-title {
-  font-size: 28rpx;
-  font-weight: bold;
-}
-
-.recommendation-desc {
-  font-size: 24rpx;
-  color: #666;
+  padding: 30rpx;
+  overflow: hidden;
+  height: calc(100vh - 280rpx - 140rpx - env(safe-area-inset-bottom));
 }
 
 .chat-list {
   height: 100%;
-  padding-bottom: 20rpx;
+  padding-bottom: 40rpx;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .message {
   display: flex;
-  margin-bottom: 16rpx;
+  margin-bottom: 30rpx;
+  align-items: flex-start;
+  animation: fadeIn 0.3s ease;
   padding: 0 10rpx;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .message.user {
@@ -79,58 +94,288 @@
 }
 
 .avatar {
-  width: 50rpx;
-  height: 50rpx;
-  margin: 0 10rpx;
-  flex-shrink: 0;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 20rpx;
+  border: 4rpx solid #fff;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
 }
 
 .avatar image {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+}
+
+.content-wrapper {
+  max-width: 70%;
+  position: relative;
+  margin: 0 12rpx;
 }
 
 .content {
-  max-width: 70%;
-  padding: 10rpx 16rpx;
-  border-radius: 16rpx;
-  background-color: #fff;
-  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  padding: 24rpx 30rpx;
+  border-radius: 24rpx;
   font-size: 28rpx;
-  line-height: 1.4;
+  line-height: 1.5;
+  word-break: break-all;
+  position: relative;
 }
 
-.message.user .content {
-  background-color: #1890ff;
+.message-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 10rpx;
+  margin-left: 10rpx;
+}
+
+.user .content {
+  background: linear-gradient(135deg, #6e8efb, #7b7fec);
   color: #fff;
+  border-radius: 24rpx 24rpx 0 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(110, 142, 251, 0.2);
 }
 
-.input-container {
+.ai .content {
+  background: #fff;
+  color: #333;
+  border-radius: 24rpx 24rpx 24rpx 0;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 浮动推荐窗口样式优化 */
+.floating-recommendations {
+  position: fixed;
+  right: -100%;
+  bottom: calc(140rpx + constant(safe-area-inset-bottom));
+  bottom: calc(140rpx + env(safe-area-inset-bottom));
+  width: 650rpx;
+  max-height: calc(70vh - 140rpx);
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 30rpx 0 0 30rpx;
+  box-shadow: -4rpx 0 30rpx rgba(0, 0, 0, 0.12);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 99;
+  backdrop-filter: blur(10px);
+}
+
+.floating-recommendations.show {
+  right: 0;
+  transform: translateX(0);
+}
+
+/* 添加遮罩层 */
+.recommendations-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 98;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+}
+
+.recommendations-mask.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.recommendations-header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 30rpx;
+  border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
+}
+
+.recommendations-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.recommendations-title::before {
+  content: '';
+  width: 8rpx;
+  height: 32rpx;
+  background: #6e8efb;
+  margin-right: 16rpx;
+  border-radius: 4rpx;
+}
+
+.close-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #999;
+  transition: all 0.3s ease;
+}
+
+.close-btn:active {
+  transform: scale(0.9);
+}
+
+.recommendations-list {
+  padding: 24rpx;
+  max-height: calc(70vh - 200rpx);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.recommendation-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  border: 2rpx solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.recommendation-card:active {
+  transform: scale(0.98);
+}
+
+.recommendation-tag {
+  display: inline-block;
+  padding: 6rpx 20rpx;
+  background: rgba(110, 142, 251, 0.1);
+  color: #6e8efb;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.recommendation-content {
+  margin: 16rpx 0;
+}
+
+.recommendation-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12rpx;
+  display: block;
+}
+
+.recommendation-desc {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+  display: block;
+}
+
+.recommendation-action {
+  margin-top: 20rpx;
+}
+
+.action-btn {
+  background: #6e8efb;
+  color: #fff;
+  font-size: 26rpx;
+  padding: 12rpx 30rpx;
+  border-radius: 30rpx;
+  border: none;
+  box-shadow: 0 4rpx 12rpx rgba(110, 142, 251, 0.2);
+}
+
+/* 输入区域样式优化 */
+.input-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 30rpx;
+  padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.98);
+  border-top: 2rpx solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  z-index: 97;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f5f6fa;
+  border-radius: 40rpx;
   padding: 10rpx 20rpx;
-  background-color: #fff;
-  border-top: 1rpx solid #e0e0e0;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
 }
 
 .chat-input {
   flex: 1;
-  height: 50rpx;
-  padding: 0 12rpx;
-  border: 1rpx solid #e0e0e0;
-  border-radius: 25rpx;
+  height: 72rpx;
   font-size: 28rpx;
-  background-color: #f8f9fa;
+  padding: 0 20rpx;
+}
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.voice-btn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(110, 142, 251, 0.1);
+  border-radius: 50%;
+}
+
+.voice-btn image {
+  width: 36rpx;
+  height: 36rpx;
 }
 
 .send-btn {
-  width: 80rpx;
-  height: 50rpx;
-  margin-left: 10rpx;
-  line-height: 25rpx;
-  text-align: center;
-  background-color: #1890ff;
+  background: linear-gradient(135deg, #6e8efb, #7b7fec);
   color: #fff;
-  border-radius: 25rpx;
+  padding: 0 40rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  border-radius: 32rpx;
   font-size: 28rpx;
+  font-weight: 500;
+  box-shadow: 0 4rpx 12rpx rgba(110, 142, 251, 0.2);
+}
+
+/* 触发按钮样式优化 */
+.trigger-recommendations {
+  position: fixed;
+  right: 30rpx;
+  bottom: calc(140rpx + constant(safe-area-inset-bottom));
+  bottom: calc(140rpx + env(safe-area-inset-bottom));
+  width: 100rpx;
+  height: 100rpx;
+  background: linear-gradient(135deg, #6e8efb, #7b7fec);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 20rpx rgba(110, 142, 251, 0.3);
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.trigger-recommendations:active {
+  transform: scale(0.9);
+}
+
+.trigger-recommendations image {
+  width: 50rpx;
+  height: 50rpx;
+  opacity: 0.9;
 }

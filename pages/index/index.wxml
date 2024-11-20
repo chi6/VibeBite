@@ -1,5 +1,14 @@
 <!--index.wxml-->
 <view class="container">
+  <!-- 顶部渐变区域 -->
+  <view class="header">
+    <view class="welcome-text">
+      <text class="title">欢迎使用</text>
+      <text class="subtitle">AI智能助手</text>
+    </view>
+  </view>
+
+  <!-- AI状态区域 -->
   <view class="status-section">
     <view class="ai-status">
       <image class="ai-animation" src="/images/dog.gif" mode="aspectFit"></image>
@@ -12,6 +21,27 @@
     </view>
   </view>
 
+  <!-- 功能导航区 -->
+  <view class="nav-container">
+    <view class="nav-group">
+      <navigator url="/pages/ai-chat/ai-chat" class="nav-item">
+        <image class="nav-icon" src="/images/chat-icon.png" mode="aspectFit"></image>
+        <text class="nav-text">AI对话</text>
+      </navigator>
+      
+      <navigator url="/pages/mood/mood" class="nav-item">
+        <image class="nav-icon" src="/images/mood-icon.png" mode="aspectFit"></image>
+        <text class="nav-text">心情分析</text>
+      </navigator>
+
+      <navigator url="/pages/recommendation/recommendation" class="nav-item">
+        <image class="nav-icon" src="/images/recommend-icon.png" mode="aspectFit"></image>
+        <text class="nav-text">智能推荐</text>
+      </navigator>
+    </view>
+  </view>
+
+  <!-- 快捷对话入口 -->
   <view class="chat-section">
     <button class="chat-btn" bindtap="goToAIChat">
       <image class="ai-icon" src="/images/ai-icon.png" mode="aspectFit"></image>
@@ -20,6 +50,23 @@
         <text class="btn-desc">让AI为您推荐美食</text>
       </view>
     </button>
+  </view>
+
+  <!-- 最近活动区域 -->
+  <view class="recent-activity">
+    <view class="section-title">
+      <text class="title-text">最近活动</text>
+      <view class="title-line"></view>
+    </view>
+    <scroll-view class="activity-list" scroll-y="true">
+      <view class="activity-item" wx:for="{{activities}}" wx:key="id">
+        <image class="activity-icon" src="{{item.icon}}" mode="aspectFit"></image>
+        <view class="activity-info">
+          <text class="activity-title">{{item.title}}</text>
+          <text class="activity-time">{{item.time}}</text>
+        </view>
+      </view>
+    </scroll-view>
   </view>
 </view>
 

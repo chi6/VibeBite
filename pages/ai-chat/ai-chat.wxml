@@ -1,41 +1,91 @@
 <view class="container">
-  <!-- AI互动区域 -->
+  <!-- AI互动区域 - 使用更现代的设计 -->
   <view class="ai-interaction">
-    <view class="ai-character ai-left">
-      <image class="ai-animation" src="/images/ai-left.gif" mode="aspectFit"></image>
+    <view class="ai-character-wrapper">
+      <view class="ai-character ai-left">
+        <image class="ai-animation" src="/images/ai-left.gif" mode="aspectFit"></image>
+      </view>
+      <view class="ai-character ai-right">
+        <image class="ai-animation" src="/images/ai-right.gif" mode="aspectFit"></image>
+      </view>
     </view>
-    <view class="ai-character ai-right">
-      <image class="ai-animation" src="/images/ai-right.gif" mode="aspectFit"></image>
+    <view class="ai-status">
+      <text class="ai-status-text">AI正在分析...</text>
     </view>
   </view>
 
-  <!-- 聊天内容展示 -->
+  <!-- 聊天内容区域 - 优化消息展示 -->
   <view class="chat-container">
-    <scroll-view scroll-y="true" class="chat-list" scroll-into-view="{{scrollToMessage}}">
+    <scroll-view 
+      scroll-y="true" 
+      class="chat-list" 
+      scroll-into-view="{{scrollToMessage}}"
+      enhanced="true"
+      show-scrollbar="false">
       <block wx:for="{{messages}}" wx:key="id">
         <view id="msg-{{item.id}}" class="message {{item.type}}">
           <view class="avatar">
             <image src="{{item.type === 'user' ? '/images/logo.png' : '/images/headphoto.jpeg'}}" mode="aspectFit"></image>
           </view>
-          <view class="content">{{item.content}}</view>
+          <view class="content-wrapper">
+            <view class="content">{{item.content}}</view>
+            <view class="message-time">{{item.time}}</view>
+          </view>
         </view>
       </block>
     </scroll-view>
   </view>
 
-  <!-- 信息流推荐 -->
-  <scroll-view scroll-y="true" class="recommendation">
-    <block wx:for="{{recommendations}}" wx:key="id">
-      <view class="recommendation-item">
-        <text class="recommendation-title">{{item.title}}</text>
-        <text class="recommendation-desc">{{item.description}}</text>
-      </view>
-    </block>
-  </scroll-view>
+  <!-- 在聊天容器下方添加一个触发按钮 -->
+  <view class="trigger-recommendations" bindtap="toggleRecommendations">
+    <image src="/images/logo.png" mode="aspectFit"></image>
+  </view>
 
-  <!-- 输入区域 -->
+  <!-- 添加遮罩层 -->
+  <view class="recommendations-mask {{showRecommendations ? 'show' : ''}}" bindtap="toggleRecommendations"></view>
+
+  <!-- 浮动推荐窗口 -->
+  <view class="floating-recommendations {{showRecommendations ? 'show' : ''}}">
+    <view class="recommendations-header">
+      <text class="recommendations-title">AI分析推荐</text>
+      <view class="close-btn" bindtap="toggleRecommendations">×</view>
+    </view>
+    <scroll-view 
+      scroll-y="true" 
+      class="recommendations-list"
+      enhanced="true"
+      show-scrollbar="false">
+      <block wx:for="{{recommendations}}" wx:key="id">
+        <view class="recommendation-card">
+          <view class="recommendation-tag">{{item.tag}}</view>
+          <view class="recommendation-content">
+            <text class="recommendation-title">{{item.title}}</text>
+            <text class="recommendation-desc">{{item.description}}</text>
+          </view>
+          <view class="recommendation-action">
+            <button class="action-btn">查看详情</button>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <!-- 输入区域 - 现代化设计 -->
   <view class="input-container">
-    <input class="chat-input" type="text" value="{{inputMessage}}" bindinput="onInputChange" placeholder="输入消息..."/>
-    <button class="send-btn" bindtap="sendMessage">发送</button>
+    <view class="input-wrapper">
+      <input 
+        class="chat-input" 
+        type="text" 
+        value="{{inputMessage}}" 
+        bindinput="onInputChange" 
+        placeholder="说点什么吧..."
+      />
+      <view class="input-actions">
+        <view class="voice-btn" bindtap="startVoiceInput">
+          <image src="/images/logo.png" mode="aspectFit"></image>
+        </view>
+        <button class="send-btn" bindtap="sendMessage">发送</button>
+      </view>
+    </view>
   </view>
 </view>

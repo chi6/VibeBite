@@ -8,7 +8,21 @@ Page({
     isLoading: false,
     location: null,
     aiInteractionContent: '欢迎来到AI互动区域',
-    recommendations: []
+    recommendations: [
+      {
+        id: 1,
+        tag: '测试推荐',
+        title: '推荐主题1',
+        description: '这是一条测试推荐内容'
+      },
+      {
+        id: 2,
+        tag: '热门推荐',
+        title: '推荐主题2',
+        description: '这是另一条测试推荐内容'
+      }
+    ],
+    showRecommendations: false
   },
 
   onLoad: function() {
@@ -73,11 +87,15 @@ Page({
 
       if (response && response.response) {
         this.addMessage('ai', response.response);
-        if (response.taskInvoker) {
-          console.log('Task Invoker:', response.taskInvoker);
-        } else {
-          console.warn('Task Invoker is undefined');
-        }
+        
+        // 分析AI响应，更新推荐内容
+        await this.updateRecommendations(response);
+        
+        // 显示推荐窗口
+        this.setData({
+          showRecommendations: true
+        });
+
       } else {
         throw new Error('Invalid response from AI');
       }
@@ -137,6 +155,54 @@ Page({
         title: '搜索餐厅失败',
         icon: 'none'
       });
+    }
+  },
+
+  toggleRecommendations() {
+    const { showRecommendations } = this.data;
+    console.log('切换推荐窗口状态:', !showRecommendations);
+    this.setData({
+      showRecommendations: !showRecommendations
+    });
+  },
+
+  autoHideRecommendations() {
+    setTimeout(() => {
+      this.setData({
+        showRecommendations: false
+      });
+    }, 10000); // 10秒后自动隐藏
+  },
+
+  startVoiceInput() {
+    // 实现语音输入逻辑
+  },
+
+  async updateRecommendations(aiResponse) {
+    try {
+      // 这里可以根据AI响应来生成推荐内容
+      const recommendations = [
+        {
+          id: 1,
+          tag: '基于对话分析',
+          title: '推荐主题1',
+          description: '根据您的偏好，为您推荐...'
+        },
+        {
+          id: 2,
+          tag: '热门推荐',
+          title: '推荐主题2',
+          description: '大家都在看...'
+        }
+      ];
+
+      this.setData({
+        recommendations,
+        showRecommendations: true  // 确保设置后立即显示
+      });
+      console.log('更新推荐内容成功，当前状态:', this.data.showRecommendations);
+    } catch (error) {
+      console.error('更新推荐失败:', error);
     }
   }
 });

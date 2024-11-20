@@ -1,49 +1,70 @@
+import api from '../../services/api';
+
 Page({
-  onGetUserInfo(e) {
+  data: {
+    isLoading: false
+  },
+
+  handleWechatLogin(e) {
+    if (this.data.isLoading) return;
+    
+    this.setData({ isLoading: true });
+
     if (e.detail.userInfo) {
       // 用户同意授权
       wx.login({
         success: (res) => {
           if (res.code) {
-            // 发送 res.code 到后端换取 openId, sessionKey, unionId
-            // 这里需要调用您的后端 API
-            wx.request({
-              url: 'https://your-backend-api.com/login', // 替换为你的后端登录API
-              method: 'POST',
-              data: {
-                code: res.code,
-                userInfo: e.detail.userInfo
-              },
-              success: (response) => {
-                if (response.statusCode === 200) {
-                  // 登录成功，保存token或其他信息
-                  wx.setStorageSync('token', response.data.token);
-                  wx.navigateTo({
-                    url: '/pages/index/index'
-                  });
-                } else {
-                  console.error('登录失败:', response.data.message);
+            // 调用登录接口
+            api.login(res.code, e.detail.userInfo)
+              .then(loginResult => {
+                if (loginResult.success) {
+                  // 存储用户信息和token
+                  wx.setStorageSync('userInfo', loginResult.userInfo);
+                  wx.setStorageSync('token', loginResult.token);
+                  
+                  // 显示成功提示
                   wx.showToast({
-                    title: '登录失败，请重试',
-                    icon: 'none'
+                    title: '登录成功',
+                    icon: 'success',
+                    duration: 1500
                   });
+
+                  // 延迟跳转到首页
+                  setTimeout(() => {
+                    wx.reLaunch({
+                      url: '/pages/index/index'
+                    });
+                  }, 1500);
+                } else {
+                  throw new Error('登录失败');
                 }
-              },
-              fail: (err) => {
-                console.error('请求失败:', err);
+              })
+              .catch(error => {
+                console.error('登录失败:', error);
                 wx.showToast({
-                  title: '网络错误，请重试',
+                  title: '登录失败，请重试',
                   icon: 'none'
                 });
-              }
-            });
+              })
+              .finally(() => {
+                this.setData({ isLoading: false });
+              });
           } else {
-            console.log('登录失败！' + res.errMsg);
             wx.showToast({
-              title: '登录失败，请重试',
+              title: '获取用户信息失败',
               icon: 'none'
             });
+            this.setData({ isLoading: false });
           }
+        },
+        fail: (error) => {
+          console.error('wx.login 失败:', error);
+          wx.showToast({
+            title: '登录失败，请重试',
+            icon: 'none'
+          });
+          this.setData({ isLoading: false });
         }
       });
     } else {
@@ -52,6 +73,13 @@ Page({
         title: '需要授权才能使用',
         icon: 'none'
       });
+      this.setData({ isLoading: false });
     }
+  },
+
+  showPrivacyPolicy() {
+    wx.navigateTo({
+      url: '/pages/privacy/privacy'
+    });
   }
-})
+});

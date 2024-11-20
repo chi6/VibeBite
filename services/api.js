@@ -1,5 +1,4 @@
-// 配置 API 基础 URL
-const BASE_URL = 'http://127.0.0.1:5000';  // 生产环境
+const BASE_URL = 'http://192.168.10.105:5000';  // 生产环境
 
 const api = {
   // 基础请求方法
@@ -15,8 +14,29 @@ const api = {
       ...options
     };
 
-    console.log('请求的 URL:', defaultOptions.url); // 添加调试信息
-    console.log('请求的选项:', defaultOptions); // 添加调试信息
+    console.log('请求的 URL:', defaultOptions.url);
+    console.log('请求的选项:', defaultOptions);
+
+    // 如果是登录请求，直接返回模拟数据
+    if (url === '/api/login') {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            success: true,
+            code: 200,
+            data: {
+              token: 'mock_token_' + Date.now(),
+              userInfo: {
+                nickName: '测试用户',
+                avatarUrl: '/images/default-avatar.png',
+                userId: 'test_user_' + Date.now()
+              }
+            },
+            message: '登录成功'
+          });
+        }, 500);
+      });
+    }
 
     try {
       const response = await new Promise((resolve, reject) => {
@@ -26,9 +46,9 @@ const api = {
           fail: reject
         });
       });
-      console.log('完整响应：', response); // 打印完整响应
-      console.log('返回状态码：', response.statusCode); // 打印状态码
-      console.log('返回数据：', response.data); // 打印返回的数据
+      console.log('完整响应：', response);
+      console.log('返回状态码：', response.statusCode);
+      console.log('返回数据：', response.data);
       if (response.statusCode === 200) {
         return response.data;
       } else {
@@ -37,13 +57,21 @@ const api = {
       }
     } catch (error) {
       console.error('API请求失败:', error);
-      throw error; // 继续抛出错误以便在调用处处理
+      throw error;
     }
   },
 
   // AI聊天
   aiChat(data) {
     return this.request('/chat_agent', {
+      method: 'POST',
+      data
+    });
+  },
+
+  // 获取AI状态
+  getAIStatus(data) {
+    return this.request('/ai_status', {
       method: 'POST',
       data
     });
@@ -65,17 +93,9 @@ const api = {
     });
   },
 
-  // 启动模拟讨论
+  // 启��模拟讨论
   startSimulation(data) {
     return this.request('/simulation', {
-      method: 'POST',
-      data
-    });
-  },
-
-  // 获取AI状态
-  getAIStatus(data) {
-    return this.request('/ai_status', {
       method: 'POST',
       data
     });
@@ -84,7 +104,7 @@ const api = {
   async getMeituanRecommendations(params) {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: 'https://api.meituan.com/recommendations', // 替换为实际的美团API URL
+        url: 'https://api.meituan.com/recommendations',
         method: 'GET',
         data: params,
         success: (res) => {
@@ -104,7 +124,7 @@ const api = {
   async getRestaurants(params) {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: 'https://newapi.ele.me/v2/restaurants/', // 替换为最新的饿了么API URL
+        url: 'https://newapi.ele.me/v2/restaurants/',
         method: 'GET',
         data: params,
         success: (res) => {
@@ -124,12 +144,12 @@ const api = {
   async getNearbyRestaurants(params) {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: 'http://apis.juhe.cn/catering/query', // 聚合数据API的基础URL,
+        url: 'http://apis.juhe.cn/catering/query',
         method: 'GET',
         data: {
           ...params,
-          key: 'your_app_key', // 替换为你的聚合数据APPKEY
-          dtype: 'json' // 返回数据格式
+          key: 'your_app_key',
+          dtype: 'json'
         },
         success: (res) => {
           if (res.statusCode === 200 && res.data.error_code === 0) {
