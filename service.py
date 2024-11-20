@@ -25,6 +25,7 @@ class AgentChatService:
         self.app.route('/initAgent', methods=['POST'])(self.init_agent)
         self.app.route('/chat_agent', methods=['POST'])(self.chat_agent)
         self.app.route('/do_simulation', methods = ['POST'])(self.do_simulation)
+        self.app.route('/ai_status', methods=['POST'])(self.ai_status)
 
     def init_components(self):
         """初始化所有组件"""
@@ -57,7 +58,8 @@ class AgentChatService:
                         1. 根据题分析专家的分析，提出具体的解决方案
                         2. 说明方案的可行性和潜在风险
                         3. 与问题分析专家讨，优化解决方案
-                        请用清晰条理的方式描述解决方案。"""
+                        请用清晰条理的方式描述解决方案。""",
+            "status_check": "你是徐老师，是徐佳铭的AI分身，性格像线条小狗，请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容，请用json格式返回，注意：1. 每一个字段都要是中文且有值。 2. 返回的内容风格要像二次元漫画风格。"
         }
         for task_name, prompt in base_prompts.items():
             self.prompt_manager.add_prompt(task_name, prompt)
@@ -225,7 +227,7 @@ class AgentChatService:
             
             # 分析专家评估方案
             analysis_feedback = await self.analyzer.process_task(task,
-                f"请评估这个解决方案，指出潜在问题和改进建议：\n{initial_solution}")
+                f"请评估个解决方案，指出潜在问题和改进建议：\n{initial_solution}")
             print(f"分析专家：{analysis_feedback}\n")
             
             # 方案专家优化方案
@@ -254,6 +256,27 @@ class AgentChatService:
         # 启动 Flask 应用
         self.app.run(host=host, port=port, debug=debug)
 
+    async def ai_status(self):
+        """获取AI状态"""
+        start_time = time.time()
+        data = request.get_json()
+        
+        agent_id = data.get('agent_id')
+        print(agent_id)
+        if agent_id not in self.agents:
+            return jsonify({
+                "error": "Agent not found",
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 404
+        # 假设Agent类有一个方法get_status来获取状态
+        status = await self.agents[agent_id].get_status()
+        
+        return jsonify({
+            "mood": status.get('mood'),
+            "activity": status.get('activity'),
+            "thought": status.get('thought'),
+            "response_time": f"{time.time() - start_time:.3f}s"
+        })
 
 # 创建服务实例
 service = AgentChatService()
