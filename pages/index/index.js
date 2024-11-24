@@ -1,6 +1,6 @@
 // index.js
 const defaultAvatarUrl = '/images/default-avatar.png'
-const api = require('../../services/api'); // 导入整个api对象
+const api = require('../../services/api');
 
 Page({
   data: {
@@ -9,16 +9,20 @@ Page({
       activity: '加载中...',
       thought: '加载中...'
     },
-    agentId: '1' // 假设你有一个agent_id
+    agentId: '1',
+    preferences: {
+      summary: '加载中...'
+    }
   },
 
   onLoad() {
     this.fetchAIStatus();
+    this.fetchPreferencesSummary();
   },
 
   fetchAIStatus() {
     const requestData = {
-      agent_id: this.data.agentId // 传递agent_id
+      agent_id: this.data.agentId
     };
     api.getAIStatus(requestData).then(status => {
       this.setData({
@@ -37,6 +41,30 @@ Page({
     });
   },
 
+  fetchPreferencesSummary() {
+    wx.showLoading({
+      title: '加载中...',
+      mask: true
+    });
+
+    api.getPreferencesSummary().then(res => {
+      wx.hideLoading();
+      if (res.success && res.data) {
+        this.setData({
+          'preferences.summary': res.data.summary || '暂无餐饮喜好信息'
+        });
+      } else {
+        throw new Error('获取数据失败');
+      }
+    }).catch(error => {
+      wx.hideLoading();
+      console.error('获取餐饮喜好总结失败:', error);
+      this.setData({
+        'preferences.summary': '获取信息失败，请稍后重试'
+      });
+    });
+  },
+
   goToAIChat() {
     wx.navigateTo({
       url: '/pages/ai-chat/ai-chat',
@@ -49,4 +77,4 @@ Page({
       }
     });
   }
-})
+});

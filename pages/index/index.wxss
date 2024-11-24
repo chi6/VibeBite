@@ -236,3 +236,33 @@ page {
   font-size: 24rpx;
   color: #999;
 }
+
+/* 餐饮喜好区域 */
+.preferences-section {
+  margin: 30rpx;
+  padding: 30rpx;
+  background: #fff;
+  border-radius: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.preferences-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.preferences-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.preferences-item {
+  font-size: 26rpx;
+  color: #666;
+  background: rgba(110, 142, 251, 0.1);
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+}

@@ -31,7 +31,8 @@
     "compileHotReLoad": false,
     "useMultiFrameRuntime": true,
     "useApiHook": true,
-    "useApiHostProcess": true
+    "useApiHostProcess": true,
+    "ignoreUploadUnusedFiles": false
   },
   "condition": {},
   "editorSetting": {

@@ -1,0 +1,100 @@
+.container {
+  padding: 30rpx;
+  background: #f8f8f8;
+}
+
+.header {
+  margin-bottom: 40rpx;
+  text-align: center;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.description {
+  font-size: 28rpx;
+  color: #666;
+  display: block;
+}
+
+.form-section {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+  display: block;
+}
+
+.form-item {
+  margin-bottom: 30rpx;
+}
+
+.form-item text {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.picker {
+  padding: 20rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+input {
+  width: 100%;
+  padding: 20rpx;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+radio-group, checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+radio-group label, checkbox-group label {
+  background: #f5f5f5;
+  padding: 12rpx 24rpx;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.submit-btn {
+  width: 90%;
+  margin: 40rpx auto;
+  background: #e64340;
+  color: #fff;
+  border-radius: 8rpx;
+  padding: 24rpx 0;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.privacy-notice {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+  margin: 30rpx 0;
+} 

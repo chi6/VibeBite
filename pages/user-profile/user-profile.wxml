@@ -1,0 +1,13 @@
+<view class="profile-container">
+  <view class="user-info" wx:if="{{userInfo}}">
+    <image class="avatar" src="{{userInfo.avatarUrl}}" />
+    <view class="info">
+      <text class="nickname">{{userInfo.nickName}}</text>
+      <text class="phone">{{userInfo.phone}}</text>
+    </view>
+  </view>
+  <view class="no-login" wx:else>
+    <navigator url="/pages/login/login">请先登录</navigator>
+  </view>
+  <button bindtap="handleUpdateUserInfo">更新用户信息</button>
+</view> 

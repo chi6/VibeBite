@@ -6,6 +6,8 @@
     "pages/recommendation/recommendation",
     "pages/history/history",
     "pages/webview/webview",
+    "pages/user-info/user-info",
+    "pages/preferences/preferences",
     "pages/ai-chat/ai-chat"
   ],
   "window": {

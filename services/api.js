@@ -1,4 +1,4 @@
-const BASE_URL = 'http://192.168.10.105:5000';  // 生产环境
+const BASE_URL = 'http://192.168.10.100:5000';  // 生产环境
 
 const api = {
   // 基础请求方法
@@ -16,27 +16,6 @@ const api = {
 
     console.log('请求的 URL:', defaultOptions.url);
     console.log('请求的选项:', defaultOptions);
-
-    // 如果是登录请求，直接返回模拟数据
-    if (url === '/api/login') {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            success: true,
-            code: 200,
-            data: {
-              token: 'mock_token_' + Date.now(),
-              userInfo: {
-                nickName: '测试用户',
-                avatarUrl: '/images/default-avatar.png',
-                userId: 'test_user_' + Date.now()
-              }
-            },
-            message: '登录成功'
-          });
-        }, 500);
-      });
-    }
 
     try {
       const response = await new Promise((resolve, reject) => {
@@ -86,14 +65,25 @@ const api = {
   },
 
   // 登录
-  login(code) {
+  login(code, userInfo) {
     return this.request('/api/login', {
       method: 'POST',
-      data: { code }
+      data: {
+        code: code,
+        userInfo: {
+          nickName: userInfo.nickName,
+          gender: userInfo.gender,
+          language: userInfo.language,
+          city: userInfo.city,
+          province: userInfo.province,
+          country: userInfo.country,
+          avatarUrl: userInfo.avatarUrl
+        }
+      }
     });
   },
 
-  // 启��模拟讨论
+  // 启模拟讨论
   startSimulation(data) {
     return this.request('/simulation', {
       method: 'POST',
@@ -162,6 +152,29 @@ const api = {
           reject(err);
         }
       });
+    });
+  },
+
+  // 提交餐饮喜好信息
+  submitPreferences(preferences) {
+    return this.request('/api/preferences', {
+      method: 'POST',
+      data: preferences
+    });
+  },
+
+  // 获取餐饮喜好信息
+  getPreferences() {
+    return this.request('/api/preferences', {
+      method: 'GET'
+    });
+  },
+
+  // 获取餐饮喜好总结
+  getPreferencesSummary() {
+    return this.request('/api/preferences/summary', {
+      method: 'POST',
+      data: {}
     });
   }
 };

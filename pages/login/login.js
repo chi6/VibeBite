@@ -11,7 +11,6 @@ Page({
     this.setData({ isLoading: true });
 
     if (e.detail.userInfo) {
-      // 用户同意授权
       wx.login({
         success: (res) => {
           if (res.code) {
@@ -30,14 +29,34 @@ Page({
                     duration: 1500
                   });
 
-                  // 延迟跳转到首页
-                  setTimeout(() => {
-                    wx.reLaunch({
-                      url: '/pages/index/index'
+                  // 检查用户是否已经填写过餐饮喜好
+                  api.getPreferences()
+                    .then(preferences => {
+                      console.log('preferences', preferences, 'gender', preferences.data.preferences.gender);
+                      if (preferences && preferences.data.preferences.gender) {
+                        // 如果已经填写过，直接跳转到首页
+                        wx.reLaunch({
+                          url: '/pages/index/index'
+                        });
+                      } else {
+                        // 否则跳转到餐饮喜好填写页面
+                        wx.navigateTo({
+                          url: '/pages/preferences/preferences'
+                        });
+                      }
+                    })
+                    .catch(error => {
+                      console.error('获取餐饮喜好信息失败:', error);
+                      wx.showToast({
+                        title: '获取餐饮喜好信息失败',
+                        icon: 'none'
+                      });
                     });
-                  }, 1500);
                 } else {
-                  throw new Error('登录失败');
+                  wx.showToast({
+                    title: '登录失败，请重试',
+                    icon: 'none'
+                  });
                 }
               })
               .catch(error => {
@@ -68,7 +87,6 @@ Page({
         }
       });
     } else {
-      // 用户拒绝授权
       wx.showToast({
         title: '需要授权才能使用',
         icon: 'none'

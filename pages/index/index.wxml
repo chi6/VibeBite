@@ -21,6 +21,14 @@
     </view>
   </view>
 
+  <!-- 餐饮喜好区域 -->
+  <view class="preferences-section">
+    <text class="preferences-title">餐饮喜好</text>
+    <view class="preferences-details">
+      <text class="preferences-summary">{{preferences.summary}}</text>
+    </view>
+  </view>
+
   <!-- 功能导航区 -->
   <view class="nav-container">
     <view class="nav-group">
