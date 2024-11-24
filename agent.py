@@ -57,7 +57,7 @@ class Agent:
         messages = [system_prompt, user_prompt]
         request_id = str(uuid.uuid4())
         print(user_prompt["content"])
-        self.llm_client.add_request(self.agent_id, user_prompt["content"], request_id)
+        self.llm_client.add_request(self.agent_id, system_prompt["content"], user_prompt["content"], request_id)
         
         response = ""
         for _ in range(100):
@@ -88,8 +88,8 @@ class Agent:
             return {"error": "未找到对应任务的prompt"}
         
         request_id = str(uuid.uuid4())
-        print(f"发送请求: agent_id={self.agent_id}, request_id={request_id}")
-        self.llm_client.add_request(self.agent_id, user_prompt["content"], request_id)
+        print(f"发送请求: agent_id={self.agent_id}, request_id={request_id}, system_prompt={system_prompt['content']}, user_prompt={user_prompt['content']}")
+        self.llm_client.add_request(self.agent_id, system_prompt["content"], user_prompt["content"], request_id)
         
         response = ""
         for _ in range(100):

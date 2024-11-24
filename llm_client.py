@@ -10,13 +10,13 @@ class ChatGptClient:
         self.responses = {}  # 存储请求的响应
         self.client = Ark()
 
-    def query(self, user_message, request_id):
+    def query(self, system_message, user_message, request_id):
         """发送用户消息并获取响应"""
         print("----- standard request -----")
         completion = self.client.chat.completions.create(
             model=self.endpoint_id,
             messages=[
-                {"role": "system", "content": "你是徐老师，是徐佳铭的AI分身"},
+                {"role": "system", "content": system_message},
                 {"role": "user", "content": user_message},
             ],
         )
@@ -24,10 +24,10 @@ class ChatGptClient:
         self.responses[request_id] = completion
         return completion
 
-    def add_request(self, uid, user_message, request_id):
+    def add_request(self, uid, system_message, user_message, request_id):
         """处理请求并立即返回响应"""
-        print(f"Processing request: {uid}, {user_message}, {request_id}")
-        self.query(user_message, request_id)
+        print(f"Processing request: {uid}, {system_message}, {user_message}, {request_id}")
+        self.query(system_message, user_message, request_id)
 
     def get_chat(self, request_id):
         """获取聊天响应"""
