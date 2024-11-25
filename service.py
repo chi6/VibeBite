@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 import sqlite3
 from datetime import datetime
 from bs4 import BeautifulSoup
+import json
 
 class AgentChatService:
     def __init__(self):
@@ -61,6 +62,8 @@ class AgentChatService:
         self.app.route('/api/preferences', methods=['GET', 'POST'])(self.user_preferences)
         self.app.route('/api/preferences/summary', methods=['POST'])(self.get_preferences_summary)
         self.app.route('/api/recommendations', methods=['POST'])(self.get_recommendations)
+        self.app.route('/api/share/save', methods=['POST'])(self.save_shared_session)
+        self.app.route('/api/share/<share_id>', methods=['GET'])(self.get_shared_session)
 
     def init_components(self):
         """初始化所有组件"""
@@ -410,6 +413,20 @@ class AgentChatService:
                     )
                 ''')
                 
+                # 添加分享会话表
+                print("- 创建 shared_sessions 表")
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS shared_sessions (
+                        share_id TEXT PRIMARY KEY,
+                        openid TEXT,
+                        messages TEXT,
+                        recommendations TEXT,
+                        timestamp TEXT,
+                        created_at TEXT,
+                        FOREIGN KEY (openid) REFERENCES users (openid)
+                    )
+                ''')
+                
                 conn.commit()
                 
                 # 验证表是否创建成功
@@ -580,7 +597,7 @@ class AgentChatService:
             # 验证token
             auth_header = request.headers.get('Authorization')
             if not auth_header or not auth_header.startswith('Bearer '):
-                print("验证失败: 缺少��无效的Authorization header")
+                print("验证失败: 缺少或无效的Authorization header")
                 return jsonify({
                     "success": False,
                     "message": "未授权的访问",
@@ -761,7 +778,7 @@ class AgentChatService:
             if not self._save_user_session(token, openid):
                 return jsonify({
                     "error": "Session Storage Error",
-                    "message": "保存会话信息失败",
+                    "message": "保存会话息失败",
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 500
 
@@ -1280,7 +1297,8 @@ class AgentChatService:
                     "hl": "zh-cn"
                 }
                 
-                response = requests.post(google_api_url, headers=headers, json=search_data)
+                # 设置较短的超时时间
+                response = requests.post(google_api_url, headers=headers, json=search_data, timeout=5)
                 search_results = response.json()
                 
                 # 处理搜索结果
@@ -1289,45 +1307,6 @@ class AgentChatService:
                 # 处理有机搜索结果
                 if 'organic' in search_results:
                     for result in search_results['organic'][:5]:
-                        # 获取网页快照
-                        snapshot_images = []
-                        try:
-                            # 增加超时时间，添加headers模拟浏览器
-                            headers = {
-                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-                                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                                'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'
-                            }
-                            page_response = requests.get(
-                                result.get('link', ''),
-                                timeout=10,
-                                headers=headers,
-                                verify=False
-                            )
-                            
-                            if page_response.status_code == 200:
-                                content_type = page_response.headers.get('content-type', '')
-                                if 'text/html' in content_type.lower():
-                                    page_response.encoding = page_response.apparent_encoding
-                                    soup = BeautifulSoup(page_response.text, 'html.parser')
-                                    
-                                    # 只获取图片
-                                    for img in soup.find_all('img')[:3]:
-                                        src = img.get('src', '')
-                                        if not src:
-                                            continue
-                                        # 处理相对URL
-                                        if src.startswith('//'):
-                                            src = 'https:' + src
-                                        elif src.startswith('/'):
-                                            base_url = '/'.join(result.get('link', '').split('/')[:3])
-                                            src = base_url + src
-                                        if src.startswith('http'):
-                                            snapshot_images.append(src)
-                                
-                        except Exception as e:
-                            print(f"获取页面图片失败: {str(e)}")
-                        
                         recommendation = {
                             'title': result.get('title', ''),
                             'description': result.get('snippet', ''),
@@ -1336,12 +1315,11 @@ class AgentChatService:
                             'position': result.get('position', 0),
                             'date': result.get('date', ''),
                             'location': location,
-                            'timestamp': timestamp,
-                            'snapshotImages': snapshot_images  # 只返回图片列表
+                            'timestamp': timestamp
                         }
                         recommendations.append(recommendation)
                 
-                # 处���图片结果
+                # 处理图片结果
                 images = []
                 if 'images' in search_results:
                     for image in search_results['images'][:5]:
@@ -1375,6 +1353,133 @@ class AgentChatService:
             return jsonify({
                 "success": False,
                 "message": "获取推荐信息失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
+
+    def save_shared_session(self):
+        """保存分享会话"""
+        start_time = time.time()
+        
+        try:
+            # 验证token
+            auth_header = request.headers.get('Authorization')
+            if not auth_header or not auth_header.startswith('Bearer '):
+                return jsonify({
+                    "success": False,
+                    "message": "未授权的访问",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 401
+
+            token = auth_header.split(' ')[1]
+            
+            try:
+                with sqlite3.connect('vibebite.db') as conn:
+                    cursor = conn.cursor()
+                    # 获取openid
+                    cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
+                    result = cursor.fetchone()
+                    if not result:
+                        return jsonify({
+                            "success": False,
+                            "message": "无效或过期的token",
+                            "response_time": f"{time.time() - start_time:.3f}s"
+                        }), 401
+                    
+                    openid = result[0]
+                    
+                    # 获取请求数据
+                    data = request.get_json()
+                    share_id = data.get('shareId')
+                    messages = json.dumps(data.get('messages', []), ensure_ascii=False)
+                    recommendations = json.dumps(data.get('recommendations', []), ensure_ascii=False)
+                    timestamp = data.get('timestamp')
+                    
+                    # 保存分享会话
+                    cursor.execute('''
+                        INSERT OR REPLACE INTO shared_sessions 
+                        (share_id, openid, messages, recommendations, timestamp, created_at)
+                        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                    ''', (share_id, openid, messages, recommendations, timestamp))
+                    
+                    conn.commit()
+                    
+                    return jsonify({
+                        "success": True,
+                        "message": "分享会话保存成功",
+                        "data": {
+                            "shareId": share_id
+                        },
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    })
+
+            except sqlite3.Error as e:
+                print(f"数据库操作错误: {str(e)}")
+                return jsonify({
+                    "success": False,
+                    "message": "数据库操作失败",
+                    "details": str(e),
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 500
+
+        except Exception as e:
+            print(f"保存分享会话错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "保存分享会话失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
+
+    def get_shared_session(self, share_id):
+        """获取分享会话"""
+        start_time = time.time()
+        
+        try:
+            with sqlite3.connect('vibebite.db') as conn:
+                cursor = conn.cursor()
+                
+                # 获取分享会话数据
+                cursor.execute('''
+                    SELECT s.messages, s.recommendations, s.timestamp, 
+                           u.nickname, u.avatar
+                    FROM shared_sessions s
+                    LEFT JOIN users u ON s.openid = u.openid
+                    WHERE s.share_id = ?
+                ''', (share_id,))
+                
+                result = cursor.fetchone()
+                if not result:
+                    return jsonify({
+                        "success": False,
+                        "message": "分享会话不存在",
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    }), 404
+                
+                messages = json.loads(result[0])
+                recommendations = json.loads(result[1])
+                timestamp = result[2]
+                original_user = {
+                    "nickName": result[3] or "匿名用户",
+                    "avatarUrl": result[4] or ""
+                }
+                
+                return jsonify({
+                    "success": True,
+                    "data": {
+                        "messages": messages,
+                        "recommendations": recommendations,
+                        "timestamp": timestamp,
+                        "originalUser": original_user
+                    },
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                })
+
+        except Exception as e:
+            print(f"获取分享会话错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "获取分享会话失败",
                 "details": str(e),
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
