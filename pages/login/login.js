@@ -32,8 +32,8 @@ Page({
                   // 检查用户是否已经填写过餐饮喜好
                   api.getPreferences()
                     .then(preferences => {
-                      console.log('preferences', preferences, 'gender', preferences.data.preferences.gender);
-                      if (preferences && preferences.data.preferences.gender) {
+                      console.log('preferences', preferences, 'nickname', preferences.data.preferences.nickname);
+                      if (preferences && preferences.data.preferences.nickname) {
                         // 如果已经填写过，直接跳转到首页
                         wx.reLaunch({
                           url: '/pages/index/index'

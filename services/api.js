@@ -159,7 +159,10 @@ const api = {
   submitPreferences(preferences) {
     return this.request('/api/preferences', {
       method: 'POST',
-      data: preferences
+      data: {
+        preferences,
+        timestamp: Date.now()
+      }
     });
   },
 

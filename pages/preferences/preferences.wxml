@@ -1,148 +1,86 @@
 <view class="container">
   <view class="header">
-    <text class="title">让我们更了解你</text>
-    <text class="description">通过填写以下信息，我们将为你推荐符合你口味的美食和酒类。</text>
+    <text class="title">告诉我们你的饮食偏好</text>
+    <text class="subtitle">快速填写或个性化描述，获得最贴合你的推荐。</text>
   </view>
 
-  <!-- 基础信息表单 -->
   <view class="form-section">
-    <text class="section-title">基础信息</text>
-    
-    <!-- 性别 -->
+    <!-- 饮食场景 -->
     <view class="form-item">
-      <text>性别（可选）</text>
-      <radio-group data-field="gender" bindchange="handleInputChange">
-        <label><radio value="男" />男</label>
-        <label><radio value="女" />女</label>
-        <label><radio value="不限" />不限</label>
+      <text class="item-title">最近的饮食场景</text>
+      <radio-group bindchange="handleSceneChange">
+        <block wx:for="{{diningScenes}}" wx:key="*this">
+          <label class="radio-item">
+            <radio value="{{item}}" />{{item}}
+          </label>
+        </block>
       </radio-group>
     </view>
 
-    <!-- 年龄范围 -->
+    <!-- 饮食形式 -->
     <view class="form-item">
-      <text>年龄范围</text>
-      <picker mode="selector" range="{{ageRanges}}" data-field="ageRange" bindchange="handlePickerChange">
-        <view class="picker">{{preferences.ageRange || '请选择年龄范围'}}</view>
-      </picker>
-    </view>
-
-    <!-- 地域/城市 -->
-    <view class="form-item">
-      <text>地域/城市</text>
-      <input type="text" data-field="city" bindinput="handleInputChange" placeholder="请输入城市" />
-    </view>
-
-    <!-- 职业类型 -->
-    <view class="form-item">
-      <text>职业类型</text>
-      <picker mode="selector" range="{{occupations}}" data-field="occupation" bindchange="handlePickerChange">
-        <view class="picker">{{preferences.occupation || '请选择职业类型'}}</view>
-      </picker>
-    </view>
-
-    <!-- 生活方式 -->
-    <view class="form-item">
-      <text>生活方式</text>
-      <checkbox-group data-field="lifestyle" bindchange="handleInputChange">
-        <label><checkbox value="健康饮食" />健康饮食</label>
-        <label><checkbox value="快节奏" />快节奏</label>
-        <label><checkbox value="社交型" />社交型</label>
-        <label><checkbox value="独立享受" />独立享受</label>
+      <text class="item-title">平时更倾向的饮食形式</text>
+      <checkbox-group bindchange="handleStylesChange">
+        <block wx:for="{{diningStyleOptions}}" wx:key="*this">
+          <label class="checkbox-item">
+            <checkbox value="{{item}}" />{{item}}
+          </label>
+        </block>
       </checkbox-group>
     </view>
 
-    <!-- 饮食习惯 -->
+    <!-- 口味偏好 -->
     <view class="form-item">
-      <text>饮食习惯</text>
-      <checkbox-group data-field="dietaryHabits" bindchange="handleInputChange">
-        <label><checkbox value="纯素" />纯素</label>
-        <label><checkbox value="素食" />素食</label>
-        <label><checkbox value="肉食" />肉食</label>
-        <label><checkbox value="无特殊偏好" />无特殊偏好</label>
+      <text class="item-title">最近喜欢的口味</text>
+      <checkbox-group bindchange="handleFlavorChange">
+        <block wx:for="{{flavorOptions}}" wx:key="*this">
+          <label class="checkbox-item">
+            <checkbox value="{{item}}" />{{item}}
+          </label>
+        </block>
       </checkbox-group>
     </view>
 
-    <!-- 对酒精饮品的态度 -->
+    <!-- 酒精态度 -->
     <view class="form-item">
-      <text>对酒精饮品的态度</text>
-      <radio-group data-field="alcoholPreference" bindchange="handleInputChange">
-        <label><radio value="喜欢" />喜欢</label>
-        <label><radio value="偶尔" />偶尔</label>
-        <label><radio value="不喝" />不喝</label>
-        <label><radio value="禁酒" />禁酒</label>
-      </radio-group>
-    </view>
-  </view>
-
-  <!-- 兴趣偏好表单 -->
-  <view class="form-section">
-    <text class="section-title">兴趣偏好</text>
-
-    <!-- 喜欢的口味 -->
-    <view class="form-item">
-      <text>喜欢的口味</text>
-      <checkbox-group data-field="flavorPreferences" bindchange="handleInputChange">
-        <label><checkbox value="辣" />辣</label>
-        <label><checkbox value="酸" />酸</label>
-        <label><checkbox value="甜" />甜</label>
-        <label><checkbox value="咸" />咸</label>
-        <label><checkbox value="鲜" />鲜</label>
-        <label><checkbox value="淡" />淡</label>
-      </checkbox-group>
-    </view>
-
-    <!-- 常去的餐馆类型 -->
-    <view class="form-item">
-      <text>常去的餐馆类型</text>
-      <checkbox-group data-field="restaurantTypes" bindchange="handleInputChange">
-        <label><checkbox value="中餐" />中餐</label>
-        <label><checkbox value="西餐" />西餐</label>
-        <label><checkbox value="日料" />日料</label>
-        <label><checkbox value="韩餐" />韩餐</label>
-        <label><checkbox value="东南亚" />东南亚</label>
-        <label><checkbox value="快餐" />快餐</label>
-        <label><checkbox value="咖啡厅" />咖啡厅</label>
-        <label><checkbox value="其他" />其他</label>
-      </checkbox-group>
-    </view>
-
-    <!-- 偏爱的酒类 -->
-    <view class="form-item">
-      <text>偏爱的酒类</text>
-      <checkbox-group data-field="preferredDrinks" bindchange="handleInputChange">
-        <label><checkbox value="红酒" />红酒</label>
-        <label><checkbox value="白酒" />白酒</label>
-        <label><checkbox value="啤酒" />啤酒</label>
-        <label><checkbox value="鸡尾酒" />鸡尾酒</label>
-        <label><checkbox value="威士忌" />威士忌</label>
-        <label><checkbox value="无酒精饮品" />无酒精饮品</label>
-      </checkbox-group>
-    </view>
-
-    <!-- 典型的美食体验 -->
-    <view class="form-item">
-      <text>典型的美食体验</text>
-      <radio-group data-field="foodExperience" bindchange="handleInputChange">
-        <label><radio value="家庭聚餐" />家庭聚餐</label>
-        <label><radio value="商务宴请" />商务宴请</label>
-        <label><radio value="夜宵小吃" />夜宵小吃</label>
-        <label><radio value="高级餐厅" />高级餐厅</label>
-        <label><radio value="街边摊" />街边摊</label>
+      <text class="item-title">对酒精饮品的态度</text>
+      <radio-group bindchange="handleAlcoholChange">
+        <block wx:for="{{alcoholOptions}}" wx:key="*this">
+          <label class="radio-item">
+            <radio value="{{item}}" />{{item}}
+          </label>
+        </block>
       </radio-group>
     </view>
 
-    <!-- 特别的口味偏好或禁忌 -->
+    <!-- 特别禁忌 -->
     <view class="form-item">
-      <text>特别的口味偏好或禁忌</text>
-      <input type="text" data-field="specialPreferences" bindinput="handleInputChange" placeholder="例如：不吃辣、不吃海鲜、喜欢甜点等" />
+      <text class="item-title">特别的禁忌或需求（可选）</text>
+      <input 
+        class="input-box"
+        placeholder="如'不吃辣''不吃甜''不喝酒'等"
+        bindinput="handleRestrictionsInput"
+      />
+    </view>
+
+    <!-- 自定义描述 -->
+    <view class="form-item custom-description">
+      <text class="item-title">自定义描述你的饮食偏好</text>
+      <textarea 
+        class="description-input"
+        placeholder="用几句话描述你的偏好，比如：'喜欢有特色的地方小吃，不爱太辣的菜'。"
+        bindinput="handleCustomDescriptionInput"
+      />
+      <view class="keywords-container" wx:if="{{preferences.extractedKeywords.length > 0}}">
+        <text class="keywords-title">已提取关键词：</text>
+        <view class="keywords-list">
+          <text class="keyword-tag" wx:for="{{preferences.extractedKeywords}}" wx:key="*this">
+            {{item}}
+          </text>
+        </view>
+      </view>
     </view>
   </view>
 
-  <!-- 提交按钮 -->
-  <button class="submit-btn" bindtap="handleSubmit">获取个性化推荐</button>
-
-  <!-- 隐私说明 -->
-  <view class="privacy-notice">
-    <text>您的数据将严格保密，仅用于提供个性化推荐。</text>
-  </view>
+  <button class="submit-btn" bindtap="handleSubmit">生成个性化推荐</button>
 </view> 
