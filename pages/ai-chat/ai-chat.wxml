@@ -14,6 +14,14 @@
     </view>
   </view>
 
+  <!-- 添加分享按钮 -->
+  <view class="action-buttons">
+    <button class="share-btn" open-type="share">
+      <image class="share-icon" src="/images/share.png" mode="aspectFit"></image>
+      <text>分享对话</text>
+    </button>
+  </view>
+
   <!-- 聊天内容区域 - 优化消息展示 -->
   <view class="chat-container">
     <scroll-view 

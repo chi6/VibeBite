@@ -14,31 +14,38 @@ Page({
     relatedSearches: [],
     showRecommendations: false,
     lastRecommendationTime: 0,
-    currentTab: 'restaurants'
+    currentTab: 'restaurants',
+    forceUpdate: false,
+    shareId: '',
+    isSharedSession: false,
+    originalUser: null
   },
 
-  onLoad: function() {
+  onLoad: function(options) {
     wx.setNavigationBarTitle({
       title: 'AI 助手'
     });
     
-    this.addMessage('ai', '你好！我是你的AI助手。我可以帮你推荐餐厅，你想吃什么类型的食物？');
-    // this.getLocation();
+    if (options.shareId) {
+      this.setData({
+        shareId: options.shareId,
+        isSharedSession: true
+      });
+      this.loadSharedSession(options.shareId);
+    } else {
+      this.addMessage('ai', '你好！我是你的AI助手。我可以帮你推荐餐厅，你想吃什么类型的食物？');
+    }
     
-    // 开始定期获取推荐
     this.startPeriodicRecommendations();
   },
 
-  // 定期获取推荐的功能
   startPeriodicRecommendations() {
-    // 每30秒检查一次是否需要更新推荐
     this.recommendationTimer = setInterval(() => {
       this.checkAndUpdateRecommendations();
     }, 30000);
   },
 
   onUnload() {
-    // 清除定时器
     if (this.recommendationTimer) {
       clearInterval(this.recommendationTimer);
     }
@@ -46,10 +53,23 @@ Page({
 
   async checkAndUpdateRecommendations() {
     const currentTime = Date.now();
-    // 如果距离上次更新超过2分钟，则更新推荐
-    if (currentTime - this.data.lastRecommendationTime > 120000) {
+    if (
+      currentTime - this.data.lastRecommendationTime > 120000 && 
+      (this.shouldUpdateRecommendations() || this.data.forceUpdate)
+    ) {
       await this.fetchLatestRecommendations();
+      this.setData({ forceUpdate: false });
     }
+  },
+
+  shouldUpdateRecommendations() {
+    const recentMessages = this.data.messages.slice(-5);
+    const triggerKeywords = ['推荐', '建议'];
+    return recentMessages.some(msg => 
+      triggerKeywords.some(keyword => 
+        msg.content.includes(keyword)
+      )
+    );
   },
 
   async fetchLatestRecommendations() {
@@ -66,16 +86,13 @@ Page({
       });
 
       if (response.success && response.data) {
-        // 处理推荐数据
         const recommendations = response.data.recommendations.map(item => ({
           ...item,
           formattedDate: new Date(item.timestamp).toLocaleDateString('zh-CN'),
           distance: this.calculateDistance(item.location),
-          // 确保快照图片是数组
           snapshotImages: Array.isArray(item.snapshotImages) ? item.snapshotImages : []
         }));
 
-        // 更新数据
         this.setData({
           recommendations,
           images: response.data.images || [],
@@ -100,8 +117,7 @@ Page({
 
   calculateDistance(locationStr) {
     if (!this.data.location || !locationStr) return '未知距离';
-    // TODO: 实现实际的距离计算逻辑
-    return '1.2km'; // 临时返回固定值
+    return '1.2km';
   },
 
   switchTab(e) {
@@ -116,16 +132,13 @@ Page({
     if (link) {
       switch (type) {
         case 'restaurant':
-          // 检查是否有快照图片
           const restaurant = this.data.recommendations.find(r => r.link === link);
           if (restaurant && restaurant.snapshotImages && restaurant.snapshotImages.length > 0) {
-            // 如果有快照图片，显示图片预览
             wx.previewImage({
-              current: restaurant.snapshotImages[0], // 显示第一张图片
-              urls: restaurant.snapshotImages // 所有图片URL数组
+              current: restaurant.snapshotImages[0],
+              urls: restaurant.snapshotImages
             });
           } else {
-            // 如果没有快照图片，跳转到详情页
             wx.navigateTo({
               url: `/pages/restaurant-detail/restaurant-detail?url=${encodeURIComponent(link)}`
             });
@@ -154,7 +167,7 @@ Page({
   },
 
   async sendMessage() {
-    const { inputMessage, isLoading, location } = this.data;
+    const { inputMessage, isLoading, isSharedSession, originalUser } = this.data;
     if (inputMessage.trim() === '' || isLoading) return;
 
     this.addMessage('user', inputMessage);
@@ -164,21 +177,42 @@ Page({
     });
 
     try {
-      const response = await api.aiChat({
-        message: inputMessage,
-        taskName: 'chat',
-        agentId: '1',
-        groupId: 'main_group',
-        location
-      });
+      if (isSharedSession) {
+        const [myResponse, originalResponse] = await Promise.all([
+          api.aiChat({
+            message: inputMessage,
+            taskName: 'chat',
+            agentId: '1',
+            groupId: 'main_group',
+            location: this.data.location
+          }),
+          api.aiChat({
+            message: inputMessage,
+            taskName: 'chat',
+            agentId: originalUser.agentId,
+            groupId: originalUser.groupId,
+            location: this.data.location
+          })
+        ]);
 
-      if (response && response.response) {
-        this.addMessage('ai', response.response);
-        
-        // 发送消息后立即获取新的推荐
-        await this.fetchLatestRecommendations();
+        if (myResponse.response) {
+          this.addMessage('ai', myResponse.response);
+        }
+        if (originalResponse.response) {
+          this.addMessage('original-ai', originalResponse.response, originalUser.nickName);
+        }
       } else {
-        throw new Error('Invalid response from AI');
+        const response = await api.aiChat({
+          message: inputMessage,
+          taskName: 'chat',
+          agentId: '1',
+          groupId: 'main_group',
+          location: this.data.location
+        });
+
+        if (response.response) {
+          this.addMessage('ai', response.response);
+        }
       }
     } catch (error) {
       console.error('AI响应失败:', error);
@@ -192,12 +226,14 @@ Page({
     }
   },
 
-  addMessage: function(type, content) {
+  addMessage: function(type, content, sender = '') {
     const { messages } = this.data;
     const newMessage = {
       id: messages.length + 1,
       type,
-      content
+      content,
+      sender,
+      time: new Date().toLocaleTimeString()
     };
     
     messages.push(newMessage);
@@ -212,11 +248,11 @@ Page({
       const response = await api.searchNearby({
         latitude,
         longitude,
-        radius: 1000, // 搜索半径
+        radius: 1000,
         keyword: '餐厅',
         page_size: 10,
         page_index: 1,
-        key: 'YOUR_API_KEY' // 替换为你的腾讯地图 API 密钥
+        key: 'YOUR_API_KEY'
       });
 
       if (response && response.data) {
@@ -242,12 +278,16 @@ Page({
   toggleRecommendations() {
     const { showRecommendations } = this.data;
     if (!showRecommendations) {
-      // 如果要显示推荐，先更新内容
-      this.fetchLatestRecommendations();
+      this.setData({
+        forceUpdate: true,
+        showRecommendations: true
+      });
+      this.checkAndUpdateRecommendations();
+    } else {
+      this.setData({
+        showRecommendations: false
+      });
     }
-    this.setData({
-      showRecommendations: !showRecommendations
-    });
   },
 
   autoHideRecommendations() {
@@ -255,7 +295,7 @@ Page({
       this.setData({
         showRecommendations: false
       });
-    }, 10000); // 10秒后自动隐藏
+    }, 10000);
   },
 
   startVoiceInput() {
@@ -264,7 +304,6 @@ Page({
 
   async updateRecommendations(aiResponse) {
     try {
-      // 这里可以根据AI响应来生成推荐内容
       const recommendations = [
         {
           id: 1,
@@ -282,7 +321,7 @@ Page({
 
       this.setData({
         recommendations,
-        showRecommendations: true  // 确保设置后立即显示
+        showRecommendations: true
       });
       console.log('更新推荐内容成功，当前状态:', this.data.showRecommendations);
     } catch (error) {
@@ -294,5 +333,64 @@ Page({
     this.setData({
       inputMessage: e.detail.value
     });
+  },
+
+  async loadSharedSession(shareId) {
+    try {
+      wx.showLoading({ title: '加载中...' });
+      const response = await api.getSharedSession(shareId);
+      
+      if (response.success) {
+        const { messages, recommendations, originalUser } = response.data;
+        
+        this.setData({
+          messages: messages.map(msg => ({
+            ...msg,
+            isOriginal: true
+          })),
+          recommendations,
+          originalUser,
+        });
+
+        this.addMessage('system', `以上是 ${originalUser.nickName} 的聊天记录，开始你的对话吧！`);
+      }
+      wx.hideLoading();
+    } catch (error) {
+      console.error('加载分享会话失败:', error);
+      wx.hideLoading();
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  onShareAppMessage: function() {
+    const shareId = this.generateShareId();
+    
+    this.saveSessionForSharing(shareId);
+    
+    return {
+      title: '来看看AI给我推荐的美食！',
+      path: `/pages/ai-chat/ai-chat?shareId=${shareId}`,
+      imageUrl: '/images/share-cover.png'
+    };
+  },
+
+  generateShareId() {
+    return `share_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  },
+
+  async saveSessionForSharing(shareId) {
+    try {
+      await api.saveSharedSession({
+        shareId,
+        messages: this.data.messages,
+        recommendations: this.data.recommendations,
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      console.error('保存分享会话失败:', error);
+    }
   }
 });

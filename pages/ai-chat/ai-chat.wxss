@@ -60,14 +60,15 @@
   flex: 1;
   padding: 30rpx;
   overflow: hidden;
-  height: calc(100vh - 280rpx - 140rpx - env(safe-area-inset-bottom));
+  height: calc(100vh - 280rpx - 280rpx);
+  margin-bottom: calc(env(safe-area-inset-bottom) + 100rpx);
 }
 
 .chat-list {
   height: 100%;
-  padding-bottom: 40rpx;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: 200rpx;
 }
 
 .message {
@@ -359,7 +360,7 @@
 .trigger-recommendations {
   position: fixed;
   right: 30rpx;
-  bottom: 140rpx;
+  bottom: calc(300rpx + env(safe-area-inset-bottom));
   width: 100rpx;
   height: 100rpx;
   background: linear-gradient(135deg, #6e8efb, #7b7fec);
@@ -383,8 +384,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 12rpx 24rpx;
-  padding-bottom: calc(12rpx + env(safe-area-inset-bottom));
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
   background: #fff;
   border-top: 1rpx solid rgba(0, 0, 0, 0.1);
   z-index: 97;
@@ -475,4 +476,89 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12rpx;
+}
+
+/* 系统消息样式 */
+.message.system {
+  justify-content: center;
+  margin: 20rpx 0;
+}
+
+.system .content {
+  background: rgba(0, 0, 0, 0.1);
+  color: #666;
+  font-size: 24rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 30rpx;
+}
+
+/* 原始AI消息样式 */
+.message.original-ai .content {
+  background: linear-gradient(135deg, #91EAE4, #86A8E7);
+  color: #fff;
+}
+
+.message .sender {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+/* 原始消息标记 */
+.message.isOriginal {
+  opacity: 0.8;
+}
+
+/* 操作按钮区域 */
+.action-buttons {
+  position: fixed;
+  right: 30rpx;
+  bottom: calc(180rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  z-index: 100;
+}
+
+/* 分享按钮样式 */
+.share-btn {
+  width: 100rpx !important;
+  height: 100rpx;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 20rpx rgba(255, 107, 107, 0.3);
+  border: none;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-bottom: 4rpx;
+}
+
+.share-btn text {
+  font-size: 20rpx;
+  color: #fff;
+  line-height: 1;
+}
+
+/* 添加按钮点击效果 */
+.share-btn:active {
+  transform: scale(0.95);
+  opacity: 0.9;
+}
+
+/* 确保最后一条消息有足够的底部间距 */
+.message:last-child {
+  margin-bottom: 120rpx;
 }

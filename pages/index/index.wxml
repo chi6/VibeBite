@@ -1,80 +1,44 @@
 <!--index.wxml-->
 <view class="container">
-  <!-- 顶部渐变区域 -->
-  <view class="header">
-    <view class="welcome-text">
-      <text class="title">欢迎使用</text>
-      <text class="subtitle">AI智能助手</text>
-    </view>
-  </view>
-
-  <!-- AI状态区域 -->
-  <view class="status-section">
-    <view class="ai-status">
-      <image class="ai-animation" src="/images/dog.gif" mode="aspectFit"></image>
-      <text class="status-title">AI当前状态</text>
-      <view class="status-details">
-        <text class="status-item">心情: {{aiStatus.mood}}</text>
-        <text class="status-item">活跃度: {{aiStatus.activity}}</text>
-        <text class="status-item">在想什么呢: {{aiStatus.thought}}</text>
-      </view>
-    </view>
-  </view>
-
-  <!-- 餐饮喜好区域 -->
-  <view class="preferences-section">
-    <text class="preferences-title">餐饮喜好</text>
-    <view class="preferences-details">
-      <text class="preferences-summary">{{preferences.summary}}</text>
-    </view>
-  </view>
-
-  <!-- 功能导航区 -->
-  <view class="nav-container">
-    <view class="nav-group">
-      <navigator url="/pages/ai-chat/ai-chat" class="nav-item">
-        <image class="nav-icon" src="/images/chat-icon.png" mode="aspectFit"></image>
-        <text class="nav-text">AI对话</text>
-      </navigator>
-      
-      <navigator url="/pages/mood/mood" class="nav-item">
-        <image class="nav-icon" src="/images/mood-icon.png" mode="aspectFit"></image>
-        <text class="nav-text">心情分析</text>
-      </navigator>
-
-      <navigator url="/pages/recommendation/recommendation" class="nav-item">
-        <image class="nav-icon" src="/images/recommend-icon.png" mode="aspectFit"></image>
-        <text class="nav-text">智能推荐</text>
-      </navigator>
-    </view>
-  </view>
-
-  <!-- 快捷对话入口 -->
-  <view class="chat-section">
-    <button class="chat-btn" bindtap="goToAIChat">
-      <image class="ai-icon" src="/images/ai-icon.png" mode="aspectFit"></image>
-      <view class="btn-text">
-        <text class="btn-title">与AI助手对话</text>
-        <text class="btn-desc">让AI为您推荐美食</text>
-      </view>
-    </button>
-  </view>
-
-  <!-- 最近活动区域 -->
-  <view class="recent-activity">
-    <view class="section-title">
-      <text class="title-text">最近活动</text>
-      <view class="title-line"></view>
-    </view>
-    <scroll-view class="activity-list" scroll-y="true">
-      <view class="activity-item" wx:for="{{activities}}" wx:key="id">
-        <image class="activity-icon" src="{{item.icon}}" mode="aspectFit"></image>
-        <view class="activity-info">
-          <text class="activity-title">{{item.title}}</text>
-          <text class="activity-time">{{item.time}}</text>
+  <!-- 主要内容区域 -->
+  <view class="main-content">
+    <!-- AI状态卡片 -->
+    <view class="card ai-status-card">
+      <view class="ai-header">
+        <image class="ai-animation" src="/images/dog.gif" mode="aspectFit"></image>
+        <view class="ai-title">
+          <text class="title">AI智能助手</text>
+          <text class="subtitle">让美食推荐更懂你的心</text>
         </view>
       </view>
-    </scroll-view>
+      <view class="status-tags">
+        <text class="status-tag">心情: {{aiStatus.mood}}</text>
+        <text class="status-tag">活跃度: {{aiStatus.activity}}</text>
+      </view>
+      <text class="ai-thought">{{aiStatus.thought}}</text>
+    </view>
+
+    <!-- 餐饮喜好卡片 -->
+    <view class="card preferences-card">
+      <view class="card-header">
+        <text class="card-title">猜你喜欢</text>
+        <text class="card-subtitle">基于你的饮食偏好</text>
+      </view>
+      <view class="preferences-content">
+        <text class="preferences-summary">{{preferences.summary}}</text>
+      </view>
+    </view>
+
+    <!-- 快捷对话入口 -->
+    <button class="chat-btn gradient-bg" bindtap="goToAIChat">
+      <view class="chat-btn-content">
+        <image class="ai-icon" src="/images/ai-icon.png" mode="aspectFit"></image>
+        <view class="btn-text">
+          <text class="btn-title">与AI助手对话</text>
+          <text class="btn-desc">让AI为您推荐美食</text>
+        </view>
+      </view>
+    </button>
   </view>
 </view>
 

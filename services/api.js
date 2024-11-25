@@ -191,6 +191,21 @@ const api = {
         timestamp: Date.now()
       }
     });
+  },
+
+  // 保存分享会话
+  saveSharedSession(data) {
+    return this.request('/api/share/save', {
+      method: 'POST',
+      data
+    });
+  },
+
+  // 获取分享会话
+  getSharedSession(shareId) {
+    return this.request(`/api/share/${shareId}`, {
+      method: 'GET'
+    });
   }
 };
 
