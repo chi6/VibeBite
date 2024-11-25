@@ -92,7 +92,7 @@ class AgentChatService:
             "solver": """你是一个解决方案专家你的职责是：
                         1. 根据分析专家的分析，提出具体的解决方案
                         2. 说明方案的可行性和潜在风险
-                        3. 与问题分析专家讨，优化解方案
+                        3. 与问分析专家讨，优化解方案
                         请用清晰条理的方式描述解决方案。""",
             "status_check": "你是徐老师，是徐佳铭的AI分身，性格像线条小狗，请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容，请用json格式返回，注意：1. 每一个字段都要是中文且有值。 2. 返回的内容风格要像二次元漫画风格。"
         }
@@ -331,7 +331,8 @@ class AgentChatService:
             with sqlite3.connect(db_path) as conn:
                 cursor = conn.cursor()
                 
-                print("删除旧表...")
+                print("删除旧...")
+                cursor.execute("DROP TABLE IF EXISTS preference_summaries")
                 cursor.execute("DROP TABLE IF EXISTS user_preferences")
                 cursor.execute("DROP TABLE IF EXISTS user_profiles")
                 cursor.execute("DROP TABLE IF EXISTS sessions")
@@ -379,23 +380,30 @@ class AgentChatService:
                     )
                 ''')
                 
-                # 创建用户偏好表
+                # 创建用户偏好表 - 更新表结构
                 print("- 创建 user_preferences 表")
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS user_preferences (
                         openid TEXT PRIMARY KEY,
-                        age_range TEXT,
-                        alcohol_preference TEXT,
-                        city TEXT,
-                        dietary_habits TEXT,
+                        dining_scene TEXT,
+                        dining_styles TEXT,
                         flavor_preferences TEXT,
-                        food_experience TEXT,
-                        gender TEXT,
-                        lifestyle TEXT,
-                        occupation TEXT,
-                        preferred_drinks TEXT,
-                        restaurant_types TEXT,
-                        special_preferences TEXT,
+                        alcohol_attitude TEXT,
+                        restrictions TEXT,
+                        custom_description TEXT,
+                        extracted_keywords TEXT,
+                        created_at TEXT,
+                        updated_at TEXT,
+                        FOREIGN KEY (openid) REFERENCES users (openid)
+                    )
+                ''')
+                
+                # 创建偏好总结表
+                print("- 创建 preference_summaries 表")
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS preference_summaries (
+                        openid TEXT PRIMARY KEY,
+                        summary TEXT,
                         created_at TEXT,
                         updated_at TEXT,
                         FOREIGN KEY (openid) REFERENCES users (openid)
@@ -407,7 +415,7 @@ class AgentChatService:
                 # 验证表是否创建成功
                 cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
                 tables = cursor.fetchall()
-                print("\n已创的表:", [table[0] for table in tables])
+                print("\n已创建的表:", [table[0] for table in tables])
                 
                 if os.path.exists(db_path):
                     print(f"\n数据库文件创建成功: {db_path}")
@@ -464,7 +472,7 @@ class AgentChatService:
             return None
 
     def user_profile(self):
-        """处理用户档案的获取和更新"""
+        """处理用户档案的获取更新"""
         if request.method == 'GET':
             return self.get_user_profile()
         else:  # POST
@@ -572,7 +580,7 @@ class AgentChatService:
             # 验证token
             auth_header = request.headers.get('Authorization')
             if not auth_header or not auth_header.startswith('Bearer '):
-                print("验证失败: 缺少或无效的Authorization header")
+                print("验证失败: 缺少��无效的Authorization header")
                 return jsonify({
                     "success": False,
                     "message": "未授权的访问",
@@ -588,7 +596,7 @@ class AgentChatService:
                     cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
                     result = cursor.fetchone()
                     if not result:
-                        print(f"验证失败: 无效的token: {token}")
+                        print(f"验证败: 无效的token: {token}")
                         return jsonify({
                             "success": False,
                             "message": "无效或过期的token",
@@ -675,7 +683,7 @@ class AgentChatService:
             print(f"更新用户档案错误: {str(e)}")
             return jsonify({
                 "success": False,
-                "message": "更新用户档案失败",
+                "message": "更新用户档案败",
                 "details": str(e),
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
@@ -749,7 +757,7 @@ class AgentChatService:
             # 生成token
             token = self._generate_session_token(openid, session_key)
             
-            # 保存会话信息到数据库
+            # 存会话信息到数据库
             if not self._save_user_session(token, openid):
                 return jsonify({
                     "error": "Session Storage Error",
@@ -844,12 +852,11 @@ class AgentChatService:
                     
                     openid = result[0]
                     
-                    # 获取用户偏好
+                    # 获取用户偏好 - 更新字段名以匹配新的表结构
                     cursor.execute('''
-                        SELECT age_range, alcohol_preference, city, dietary_habits,
-                               flavor_preferences, food_experience, gender, lifestyle,
-                               occupation, preferred_drinks, restaurant_types,
-                               special_preferences
+                        SELECT dining_scene, dining_styles, flavor_preferences,
+                               alcohol_attitude, restrictions, custom_description,
+                               extracted_keywords
                         FROM user_preferences
                         WHERE openid = ?
                     ''', (openid,))
@@ -858,33 +865,23 @@ class AgentChatService:
                     
                     if preferences_result:
                         preferences_data = {
-                            'ageRange': preferences_result[0],
-                            'alcoholPreference': preferences_result[1],
-                            'city': preferences_result[2],
-                            'dietaryHabits': preferences_result[3].split(',') if preferences_result[3] else [],
-                            'flavorPreferences': preferences_result[4].split(',') if preferences_result[4] else [],
-                            'foodExperience': preferences_result[5],
-                            'gender': preferences_result[6],
-                            'lifestyle': preferences_result[7].split(',') if preferences_result[7] else [],
-                            'occupation': preferences_result[8],
-                            'preferredDrinks': preferences_result[9].split(',') if preferences_result[9] else [],
-                            'restaurantTypes': preferences_result[10].split(',') if preferences_result[10] else [],
-                            'specialPreferences': preferences_result[11]
+                            'diningScene': preferences_result[0],
+                            'diningStyles': preferences_result[1].split(',') if preferences_result[1] else [],
+                            'flavorPreferences': preferences_result[2].split(',') if preferences_result[2] else [],
+                            'alcoholAttitude': preferences_result[3],
+                            'restrictions': preferences_result[4],
+                            'customDescription': preferences_result[5],
+                            'extractedKeywords': preferences_result[6].split(',') if preferences_result[6] else []
                         }
                     else:
                         preferences_data = {
-                            'ageRange': '',
-                            'alcoholPreference': '',
-                            'city': '',
-                            'dietaryHabits': [],
+                            'diningScene': '',
+                            'diningStyles': [],
                             'flavorPreferences': [],
-                            'foodExperience': '',
-                            'gender': '',
-                            'lifestyle': [],
-                            'occupation': '',
-                            'preferredDrinks': [],
-                            'restaurantTypes': [],
-                            'specialPreferences': ''
+                            'alcoholAttitude': '',
+                            'restrictions': '',
+                            'customDescription': '',
+                            'extractedKeywords': []
                         }
 
                     return jsonify({
@@ -930,6 +927,7 @@ class AgentChatService:
                 }), 401
 
             token = auth_header.split(' ')[1]
+            print(f"当前token: {token}")  # 添加日志
             
             try:
                 with sqlite3.connect('vibebite.db') as conn:
@@ -946,83 +944,80 @@ class AgentChatService:
                         }), 401
                     
                     openid = result[0]
+                    print(f"获取到的openid: {openid}")  # 添加日志
                     
-                    # 获取并验证请求数据
                     try:
-                        preferences_data = request.get_json()
-                        print("解析的请求数据:", preferences_data)
+                        request_data = request.get_json()
+                        print("接收到的原始数据:", request_data)
                         
-                        # 修改数据库结构以适应新的字段
-                        cursor.execute('''
-                            CREATE TABLE IF NOT EXISTS user_preferences (
-                                openid TEXT PRIMARY KEY,
-                                age_range TEXT,
-                                alcohol_preference TEXT,
-                                city TEXT,
-                                dietary_habits TEXT,
-                                flavor_preferences TEXT,
-                                food_experience TEXT,
-                                gender TEXT,
-                                lifestyle TEXT,
-                                occupation TEXT,
-                                preferred_drinks TEXT,
-                                restaurant_types TEXT,
-                                special_preferences TEXT,
-                                created_at TEXT,
-                                updated_at TEXT,
-                                FOREIGN KEY (openid) REFERENCES users (openid)
-                            )
-                        ''')
+                        # 从嵌套结构中获取preferences数据
+                        preferences_data = request_data.get('preferences', {})
+                        print("解析出的preferences数据:", preferences_data)
                         
                         # 将数组转换为字符串
-                        dietary_habits_str = ','.join(preferences_data.get('dietaryHabits', []))
+                        dining_styles_str = ','.join(preferences_data.get('diningStyles', []))
                         flavor_preferences_str = ','.join(preferences_data.get('flavorPreferences', []))
-                        lifestyle_str = ','.join(preferences_data.get('lifestyle', []))
-                        preferred_drinks_str = ','.join(preferences_data.get('preferredDrinks', []))
-                        restaurant_types_str = ','.join(preferences_data.get('restaurantTypes', []))
+                        extracted_keywords_str = ','.join(preferences_data.get('extractedKeywords', []))
+                        
+                        print("处理后的数据:")
+                        print(f"dining_styles_str: {dining_styles_str}")
+                        print(f"flavor_preferences_str: {flavor_preferences_str}")
+                        print(f"extracted_keywords_str: {extracted_keywords_str}")
+                        
+                        # 准备插入的数据
+                        insert_data = (
+                            openid,
+                            preferences_data.get('diningScene', ''),
+                            dining_styles_str,
+                            flavor_preferences_str,
+                            preferences_data.get('alcoholAttitude', ''),
+                            preferences_data.get('restrictions', ''),
+                            preferences_data.get('customDescription', ''),
+                            extracted_keywords_str,
+                            openid
+                        )
+                        print(f"准备插入的数据: {insert_data}")
                         
                         # 更新用户偏好
                         cursor.execute('''
                             INSERT OR REPLACE INTO user_preferences 
-                            (openid, age_range, alcohol_preference, city, dietary_habits,
-                             flavor_preferences, food_experience, gender, lifestyle,
-                             occupation, preferred_drinks, restaurant_types,
-                             special_preferences, created_at, updated_at)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                            (openid, dining_scene, dining_styles, flavor_preferences,
+                             alcohol_attitude, restrictions, custom_description,
+                             extracted_keywords, created_at, updated_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?,
                                 COALESCE((SELECT created_at FROM user_preferences WHERE openid = ?), CURRENT_TIMESTAMP),
                                 CURRENT_TIMESTAMP)
-                        ''', (
-                            openid,
-                            preferences_data.get('ageRange', ''),
-                            preferences_data.get('alcoholPreference', ''),
-                            preferences_data.get('city', ''),
-                            dietary_habits_str,
-                            flavor_preferences_str,
-                            preferences_data.get('foodExperience', ''),
-                            preferences_data.get('gender', ''),
-                            lifestyle_str,
-                            preferences_data.get('occupation', ''),
-                            preferred_drinks_str,
-                            restaurant_types_str,
-                            preferences_data.get('specialPreferences', ''),
-                            openid
-                        ))
+                        ''', insert_data)
                         
                         conn.commit()
-                        print(f"用户偏好更新成功: openid={openid}")
+                        
+                        # 验证数据是否保存成功
+                        cursor.execute('SELECT * FROM user_preferences WHERE openid = ?', (openid,))
+                        saved_data = cursor.fetchone()
+                        print(f"保存后的数据: {saved_data}")
 
                         return jsonify({
                             "success": True,
                             "message": "用户偏好更新成功",
                             "data": {
                                 "openid": openid,
-                                "preferences": preferences_data
+                                "preferences": preferences_data,
+                                "savedData": {
+                                    "diningScene": saved_data[1],
+                                    "diningStyles": saved_data[2].split(',') if saved_data[2] else [],
+                                    "flavorPreferences": saved_data[3].split(',') if saved_data[3] else [],
+                                    "alcoholAttitude": saved_data[4],
+                                    "restrictions": saved_data[5],
+                                    "customDescription": saved_data[6],
+                                    "extractedKeywords": saved_data[7].split(',') if saved_data[7] else []
+                                }
                             },
                             "response_time": f"{time.time() - start_time:.3f}s"
                         })
 
                     except Exception as e:
                         print(f"请求数据处理失败: {str(e)}")
+                        print(f"错误详情: {e.__class__.__name__}")
                         return jsonify({
                             "success": False,
                             "message": "无效的请求数据格式",
@@ -1079,10 +1074,12 @@ class AgentChatService:
                 }), 401
 
             token = auth_header.split(' ')[1]
+            print(f"当前token: {token}")  # 添加日志
             
             try:
                 with sqlite3.connect('vibebite.db') as conn:
                     cursor = conn.cursor()
+                    
                     # 获取openid
                     cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
                     result = cursor.fetchone()
@@ -1090,76 +1087,99 @@ class AgentChatService:
                         print(f"验证失败: 无效的token: {token}")
                         return jsonify({
                             "success": False,
-                            "message": "效或过期的token",
+                            "message": "无效或过期的token",
                             "response_time": f"{time.time() - start_time:.3f}s"
                         }), 401
                     
                     openid = result[0]
+                    print(f"获取到的openid: {openid}")  # 添加日志
+                    
+                    # 检查表是否存在
+                    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='user_preferences'")
+                    if not cursor.fetchone():
+                        print("user_preferences 表不存在")
+                        return jsonify({
+                            "success": True,
+                            "data": {
+                                "summary": "系统尚未初始化完成，请稍后再试。",
+                                "hasPreferences": False
+                            },
+                            "response_time": f"{time.time() - start_time:.3f}s"
+                        })
                     
                     # 获取用户所有偏好数据
                     cursor.execute('''
-                        SELECT age_range, alcohol_preference, city, dietary_habits,
-                               flavor_preferences, food_experience, gender, lifestyle,
-                               occupation, preferred_drinks, restaurant_types,
-                               special_preferences
-                        FROM user_preferences
-                        WHERE openid = ?
+                        SELECT * FROM user_preferences WHERE openid = ?
                     ''', (openid,))
                     
                     preferences_result = cursor.fetchone()
+                    print(f"完整的偏好数据: {preferences_result}")  # 添加日志
                     
-                    if not preferences_result:
+                    if not preferences_result or all(not x for x in preferences_result[1:]):  # 跳过 openid 字段
+                        print("偏好数据为空或全部字段为空")
                         return jsonify({
-                            "success": False,
-                            "message": "未找到用户偏好数据",
+                            "success": True,
+                            "data": {
+                                "summary": "您还没有设置饮食偏好，请先完成偏好设置，以获取个性化推荐。",
+                                "hasPreferences": False
+                            },
                             "response_time": f"{time.time() - start_time:.3f}s"
-                        }), 404
+                        })
+                    
+                    # 获取列名
+                    cursor.execute('PRAGMA table_info(user_preferences)')
+                    columns = [column[1] for column in cursor.fetchall()]
+                    print(f"表的列名: {columns}")  # 添加日志
+                    
+                    # 构建字典形式的数据
+                    preferences_dict = dict(zip(columns, preferences_result))
+                    print(f"字典形式的数据: {preferences_dict}")  # 添加日志
                     
                     # 构建用户偏好数据
                     preferences_data = {
-                        'ageRange': preferences_result[0],
-                        'alcoholPreference': preferences_result[1],
-                        'city': preferences_result[2],
-                        'dietaryHabits': preferences_result[3].split(',') if preferences_result[3] else [],
-                        'flavorPreferences': preferences_result[4].split(',') if preferences_result[4] else [],
-                        'foodExperience': preferences_result[5],
-                        'gender': preferences_result[6],
-                        'lifestyle': preferences_result[7].split(',') if preferences_result[7] else [],
-                        'occupation': preferences_result[8],
-                        'preferredDrinks': preferences_result[9].split(',') if preferences_result[9] else [],
-                        'restaurantTypes': preferences_result[10].split(',') if preferences_result[10] else [],
-                        'specialPreferences': preferences_result[11]
+                        'diningScene': preferences_dict.get('dining_scene', ''),
+                        'diningStyles': preferences_dict.get('dining_styles', '').split(',') if preferences_dict.get('dining_styles') else [],
+                        'flavorPreferences': preferences_dict.get('flavor_preferences', '').split(',') if preferences_dict.get('flavor_preferences') else [],
+                        'alcoholAttitude': preferences_dict.get('alcohol_attitude', ''),
+                        'restrictions': preferences_dict.get('restrictions', ''),
+                        'customDescription': preferences_dict.get('custom_description', ''),
+                        'extractedKeywords': preferences_dict.get('extracted_keywords', '').split(',') if preferences_dict.get('extracted_keywords') else []
                     }
                     
+                    print(f"处理后的偏好数据: {preferences_data}")  # 添加日志
+
+                    # 如果所有值都为空，返回未设置信息
+                    if all(not v for v in preferences_data.values()):
+                        return jsonify({
+                            "success": True,
+                            "data": {
+                                "summary": "您还没有设置饮食偏好，请先完成偏好设置，以获取个性化推荐。",
+                                "hasPreferences": False
+                            },
+                            "response_time": f"{time.time() - start_time:.3f}s"
+                        })
+
                     # 构建提示词
                     prompt = f"""请根据以下用户信息，总结该用户的餐饮喜好特征和个性化推荐建议：
 
-用户基本信息：
-- 性别：{preferences_data['gender']}
-- 年龄段：{preferences_data['ageRange']}
-- 城市：{preferences_data['city']}
-- 职业：{preferences_data['occupation']}
-- 生活方式：{', '.join(preferences_data['lifestyle'])}
-
-饮食偏好：
-- 饮食习惯：{', '.join(preferences_data['dietaryHabits'])}
+用户用餐偏好：
+- 用餐场景：{preferences_data['diningScene']}
+- 用餐方式：{', '.join(preferences_data['diningStyles'])}
 - 口味偏好：{', '.join(preferences_data['flavorPreferences'])}
-- 餐厅类型：{', '.join(preferences_data['restaurantTypes'])}
-- 用餐经历：{preferences_data['foodExperience']}
+- 饮酒态度：{preferences_data['alcoholAttitude']}
 
-饮品偏好：
-- 酒精偏好：{preferences_data['alcoholPreference']}
-- 偏好饮品：{', '.join(preferences_data['preferredDrinks'])}
-
-特殊要求：{preferences_data['specialPreferences']}
+特殊需求：
+- 饮食限制：{preferences_data['restrictions'] if preferences_data['restrictions'] else '无'}
+- 自定义描述：{preferences_data['customDescription']}
+- 关键词：{', '.join(preferences_data['extractedKeywords'])}
 
 请从以下几个方面进行分析和总结：
-1. 用户的主要饮食特征
-2. 口味和餐厅偏好
-3. 饮品选择特点
-4. 个性化推荐建议
+1. 用户的主要用餐特征和场景偏好
+2. 口味和用餐方式特点
+3. 饮品选择倾向
+4. 个性化推荐建
 
-请用简洁专业的语言描述，突出关键特点。"""
+请用简洁专业的语言描述，突出关键特点。回答要分点并且要有具体的推荐。"""
 
                     # 调用大模型生成总结
                     request_id = str(uuid.uuid4())
@@ -1171,8 +1191,7 @@ class AgentChatService:
                         if summary != "没有找到响应":
                             break
                         time.sleep(0.1)
-
-                    #responses = self.agents[agent_id].process_task(task_name, message)
+                    
                     # 创建或更新summary表
                     cursor.execute('''
                         CREATE TABLE IF NOT EXISTS preference_summaries (
@@ -1198,7 +1217,8 @@ class AgentChatService:
                     return jsonify({
                         "success": True,
                         "data": {
-                            "summary": summary
+                            "summary": summary,
+                            "hasPreferences": True  # 添加标志位表示有偏好数据
                         },
                         "response_time": f"{time.time() - start_time:.3f}s"
                     })
@@ -1321,7 +1341,7 @@ class AgentChatService:
                         }
                         recommendations.append(recommendation)
                 
-                # 处理图片结果
+                # 处���图片结果
                 images = []
                 if 'images' in search_results:
                     for image in search_results['images'][:5]:
@@ -1361,7 +1381,7 @@ class AgentChatService:
 
 # 创建服实例
 service = AgentChatService()
-#service.clear_database()
+service.clear_database()
 
 if __name__ == '__main__':
     asyncio.run(service.run()) 
