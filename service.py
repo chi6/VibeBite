@@ -14,6 +14,7 @@ import uuid
 from dotenv import load_dotenv
 import sqlite3
 from datetime import datetime
+from bs4 import BeautifulSoup
 
 class AgentChatService:
     def __init__(self):
@@ -59,6 +60,7 @@ class AgentChatService:
         self.app.route('/api/user/profile', methods=['GET', 'POST'])(self.user_profile)
         self.app.route('/api/preferences', methods=['GET', 'POST'])(self.user_preferences)
         self.app.route('/api/preferences/summary', methods=['POST'])(self.get_preferences_summary)
+        self.app.route('/api/recommendations', methods=['POST'])(self.get_recommendations)
 
     def init_components(self):
         """初始化所有组件"""
@@ -90,7 +92,7 @@ class AgentChatService:
             "solver": """你是一个解决方案专家你的职责是：
                         1. 根据分析专家的分析，提出具体的解决方案
                         2. 说明方案的可行性和潜在风险
-                        3. 与问题分析专家讨，优化解决方案
+                        3. 与问题分析专家讨，优化解方案
                         请用清晰条理的方式描述解决方案。""",
             "status_check": "你是徐老师，是徐佳铭的AI分身，性格像线条小狗，请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容，请用json格式返回，注意：1. 每一个字段都要是中文且有值。 2. 返回的内容风格要像二次元漫画风格。"
         }
@@ -405,7 +407,7 @@ class AgentChatService:
                 # 验证表是否创建成功
                 cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
                 tables = cursor.fetchall()
-                print("\n已创��的表:", [table[0] for table in tables])
+                print("\n已创的表:", [table[0] for table in tables])
                 
                 if os.path.exists(db_path):
                     print(f"\n数据库文件创建成功: {db_path}")
@@ -492,7 +494,7 @@ class AgentChatService:
                     cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
                     result = cursor.fetchone()
                     if not result:
-                        print(f"验证失败: 无效的token: {token}")
+                        print(f"验失败: 无效的token: {token}")
                         return jsonify({
                             "success": False,
                             "message": "无效或过期的token",
@@ -716,7 +718,7 @@ class AgentChatService:
                 'grant_type': 'authorization_code'
             }
             
-            print("请求微信接口参数:", {**params, 'secret': '******'})  # 添加日志（隐藏secret）
+            print("请求微信接口参:", {**params, 'secret': '******'})  # 添加日志（隐藏secret）
             
             response = requests.get(url, params=params)
             wx_data = response.json()
@@ -795,7 +797,7 @@ class AgentChatService:
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 401
 
-        # 处理受保护的资源请求
+        # 处理保护的资源请求
         return jsonify({
             "message": "Access granted to protected resource",
             "openid": self.session_store[token],
@@ -920,7 +922,7 @@ class AgentChatService:
             # 验证token
             auth_header = request.headers.get('Authorization')
             if not auth_header or not auth_header.startswith('Bearer '):
-                print("验证失败: 缺少或无效���Authorization header")
+                print("验证失败: 缺少或无效的Authorization header")
                 return jsonify({
                     "success": False,
                     "message": "未授权的访问",
@@ -1088,7 +1090,7 @@ class AgentChatService:
                         print(f"验证失败: 无效的token: {token}")
                         return jsonify({
                             "success": False,
-                            "message": "无效或过期的token",
+                            "message": "效或过期的token",
                             "response_time": f"{time.time() - start_time:.3f}s"
                         }), 401
                     
@@ -1215,6 +1217,144 @@ class AgentChatService:
             return jsonify({
                 "success": False,
                 "message": "生成用户偏好总结失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
+
+    def get_recommendations(self):
+        """获取餐厅推荐信息"""
+        start_time = time.time()
+        
+        try:
+            # 验证token
+            auth_header = request.headers.get('Authorization')
+            if not auth_header or not auth_header.startswith('Bearer '):
+                print("验证失败: 缺少或无效的Authorization header")
+                return jsonify({
+                    "success": False,
+                    "message": "未授权的访问",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 401
+
+            token = auth_header.split(' ')[1]
+            
+            try:
+                data = request.get_json()
+                location = data.get('location', 'China')
+                messages = data.get('messages', [])
+                timestamp = data.get('timestamp')
+                
+                # 构建搜索关键词
+                search_query = f"餐厅 美食 推荐 {location}"
+                
+                # 调用Google搜索API
+                google_api_url = "https://google.serper.dev/search"
+                headers = {
+                    'X-API-KEY': '5e0ade74a776ca00770d7155a6ed361f25fde09a',
+                    'Content-Type': 'application/json'
+                }
+                search_data = {
+                    "q": search_query,
+                    "location": location,
+                    "gl": "cn",
+                    "hl": "zh-cn"
+                }
+                
+                response = requests.post(google_api_url, headers=headers, json=search_data)
+                search_results = response.json()
+                
+                # 处理搜索结果
+                recommendations = []
+                
+                # 处理有机搜索结果
+                if 'organic' in search_results:
+                    for result in search_results['organic'][:5]:
+                        # 获取网页快照
+                        snapshot_images = []
+                        try:
+                            # 增加超时时间，添加headers模拟浏览器
+                            headers = {
+                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                                'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'
+                            }
+                            page_response = requests.get(
+                                result.get('link', ''),
+                                timeout=10,
+                                headers=headers,
+                                verify=False
+                            )
+                            
+                            if page_response.status_code == 200:
+                                content_type = page_response.headers.get('content-type', '')
+                                if 'text/html' in content_type.lower():
+                                    page_response.encoding = page_response.apparent_encoding
+                                    soup = BeautifulSoup(page_response.text, 'html.parser')
+                                    
+                                    # 只获取图片
+                                    for img in soup.find_all('img')[:3]:
+                                        src = img.get('src', '')
+                                        if not src:
+                                            continue
+                                        # 处理相对URL
+                                        if src.startswith('//'):
+                                            src = 'https:' + src
+                                        elif src.startswith('/'):
+                                            base_url = '/'.join(result.get('link', '').split('/')[:3])
+                                            src = base_url + src
+                                        if src.startswith('http'):
+                                            snapshot_images.append(src)
+                                
+                        except Exception as e:
+                            print(f"获取页面图片失败: {str(e)}")
+                        
+                        recommendation = {
+                            'title': result.get('title', ''),
+                            'description': result.get('snippet', ''),
+                            'link': result.get('link', ''),
+                            'type': 'restaurant',
+                            'position': result.get('position', 0),
+                            'date': result.get('date', ''),
+                            'location': location,
+                            'timestamp': timestamp,
+                            'snapshotImages': snapshot_images  # 只返回图片列表
+                        }
+                        recommendations.append(recommendation)
+                
+                # 处理图片结果
+                images = []
+                if 'images' in search_results:
+                    for image in search_results['images'][:5]:
+                        images.append({
+                            'title': image.get('title', ''),
+                            'imageUrl': image.get('imageUrl', ''),
+                            'link': image.get('link', '')
+                        })
+                
+                return jsonify({
+                    "success": True,
+                    "data": {
+                        "recommendations": recommendations,
+                        "images": images,
+                        "searchParameters": search_results.get('searchParameters', {})
+                    },
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                })
+
+            except requests.RequestException as e:
+                print(f"Google API请求错误: {str(e)}")
+                return jsonify({
+                    "success": False,
+                    "message": "获取推荐信息失败",
+                    "details": str(e),
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 500
+
+        except Exception as e:
+            print(f"获取推荐信息错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "获取推荐信息失败",
                 "details": str(e),
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
