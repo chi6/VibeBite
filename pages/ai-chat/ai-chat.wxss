@@ -148,89 +148,75 @@
 .floating-recommendations {
   position: fixed;
   right: -100%;
-  bottom: calc(140rpx + constant(safe-area-inset-bottom));
-  bottom: calc(140rpx + env(safe-area-inset-bottom));
-  width: 650rpx;
-  max-height: calc(70vh - 140rpx);
+  bottom: 120rpx;
+  width: 680rpx;
+  height: 800rpx;
   background: rgba(255, 255, 255, 0.98);
   border-radius: 30rpx 0 0 30rpx;
   box-shadow: -4rpx 0 30rpx rgba(0, 0, 0, 0.12);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 99;
   backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
 }
 
 .floating-recommendations.show {
   right: 0;
-  transform: translateX(0);
-}
-
-/* 添加遮罩层 */
-.recommendations-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 98;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.4s ease;
-}
-
-.recommendations-mask.show {
-  opacity: 1;
-  visibility: visible;
 }
 
 .recommendations-header {
+  padding: 24rpx 30rpx;
+  border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24rpx 30rpx;
-  border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
 }
 
-.recommendations-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
+/* 标签页样式 */
+.tab-header {
   display: flex;
-  align-items: center;
+  padding: 20rpx 30rpx;
+  border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
+  background: #fff;
+  flex-shrink: 0;
 }
 
-.recommendations-title::before {
+.tab-item {
+  padding: 16rpx 30rpx;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+  transition: all 0.3s ease;
+  margin-right: 20rpx;
+}
+
+.tab-item.active {
+  color: #6e8efb;
+  font-weight: 500;
+}
+
+.tab-item.active::after {
   content: '';
-  width: 8rpx;
-  height: 32rpx;
+  position: absolute;
+  bottom: -4rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 4rpx;
   background: #6e8efb;
-  margin-right: 16rpx;
   border-radius: 4rpx;
 }
 
-.close-btn {
-  width: 60rpx;
-  height: 60rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40rpx;
-  color: #999;
-  transition: all 0.3s ease;
-}
-
-.close-btn:active {
-  transform: scale(0.9);
-}
-
-.recommendations-list {
-  padding: 24rpx;
-  max-height: calc(70vh - 200rpx);
+/* 推荐内容区域 */
+.recommendations-content {
+  flex: 1;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  padding: 20rpx;
 }
 
+/* 餐厅推荐卡样式 */
 .recommendation-card {
   background: #fff;
   border-radius: 20rpx;
@@ -238,126 +224,142 @@
   margin-bottom: 24rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
   border: 2rpx solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
 }
 
-.recommendation-card:active {
-  transform: scale(0.98);
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
 }
 
-.recommendation-tag {
-  display: inline-block;
-  padding: 6rpx 20rpx;
-  background: rgba(110, 142, 251, 0.1);
-  color: #6e8efb;
-  border-radius: 20rpx;
-  font-size: 24rpx;
-  margin-bottom: 16rpx;
-}
-
-.recommendation-content {
-  margin: 16rpx 0;
-}
-
-.recommendation-title {
-  font-size: 30rpx;
+.restaurant-name {
+  font-size: 32rpx;
   font-weight: 600;
+  color: #333;
+}
+
+.distance {
+  font-size: 24rpx;
+  color: #6e8efb;
+  background: rgba(110, 142, 251, 0.1);
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.description {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  margin: 16rpx 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 图片网格样式 */
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  padding: 20rpx;
+}
+
+.image-item {
+  position: relative;
+  border-radius: 16rpx;
+  overflow: hidden;
+  aspect-ratio: 1;
+}
+
+.image-item image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16rpx;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: #fff;
+  font-size: 24rpx;
+}
+
+/* 问题列表样式 */
+.question-list {
+  padding: 20rpx;
+}
+
+.question-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.question {
+  font-size: 28rpx;
+  font-weight: 500;
   color: #333;
   margin-bottom: 12rpx;
   display: block;
 }
 
-.recommendation-desc {
+.answer {
   font-size: 26rpx;
   color: #666;
-  line-height: 1.5;
+  line-height: 1.6;
   display: block;
 }
 
-.recommendation-action {
-  margin-top: 20rpx;
+/* 相关搜索标签样式 */
+.related-searches {
+  padding: 20rpx 30rpx;
+  border-top: 2rpx solid rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
 }
 
-.action-btn {
+.search-tags {
+  white-space: nowrap;
+  padding-bottom: 10rpx;
+}
+
+.search-tag {
+  display: inline-block;
+  padding: 12rpx 24rpx;
+  background: #f5f6fa;
+  color: #666;
+  font-size: 26rpx;
+  border-radius: 30rpx;
+  margin-right: 16rpx;
+  transition: all 0.3s ease;
+}
+
+.search-tag:active {
   background: #6e8efb;
   color: #fff;
-  font-size: 26rpx;
-  padding: 12rpx 30rpx;
-  border-radius: 30rpx;
-  border: none;
-  box-shadow: 0 4rpx 12rpx rgba(110, 142, 251, 0.2);
-}
-
-/* 输入区域样式优化 */
-.input-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20rpx 30rpx;
-  padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
-  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
-  background: rgba(255, 255, 255, 0.98);
-  border-top: 2rpx solid rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(10px);
-  z-index: 97;
-}
-
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  background: #f5f6fa;
-  border-radius: 40rpx;
-  padding: 10rpx 20rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
-}
-
-.chat-input {
-  flex: 1;
-  height: 72rpx;
-  font-size: 28rpx;
-  padding: 0 20rpx;
-}
-
-.input-actions {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-}
-
-.voice-btn {
-  width: 64rpx;
-  height: 64rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(110, 142, 251, 0.1);
-  border-radius: 50%;
-}
-
-.voice-btn image {
-  width: 36rpx;
-  height: 36rpx;
-}
-
-.send-btn {
-  background: linear-gradient(135deg, #6e8efb, #7b7fec);
-  color: #fff;
-  padding: 0 40rpx;
-  height: 64rpx;
-  line-height: 64rpx;
-  border-radius: 32rpx;
-  font-size: 28rpx;
-  font-weight: 500;
-  box-shadow: 0 4rpx 12rpx rgba(110, 142, 251, 0.2);
 }
 
 /* 触发按钮样式优化 */
 .trigger-recommendations {
   position: fixed;
   right: 30rpx;
-  bottom: calc(140rpx + constant(safe-area-inset-bottom));
-  bottom: calc(140rpx + env(safe-area-inset-bottom));
+  bottom: 140rpx;
   width: 100rpx;
   height: 100rpx;
   background: linear-gradient(135deg, #6e8efb, #7b7fec);
@@ -367,15 +369,110 @@
   justify-content: center;
   box-shadow: 0 4rpx 20rpx rgba(110, 142, 251, 0.3);
   z-index: 100;
-  transition: all 0.3s ease;
-}
-
-.trigger-recommendations:active {
-  transform: scale(0.9);
 }
 
 .trigger-recommendations image {
   width: 50rpx;
   height: 50rpx;
   opacity: 0.9;
+}
+
+/* 输入区域样式优化 */
+.input-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12rpx 24rpx;
+  padding-bottom: calc(12rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.1);
+  z-index: 97;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f5f6fa;
+  border-radius: 32rpx;
+  padding: 8rpx 12rpx;
+}
+
+.chat-input {
+  flex: 1;
+  height: 64rpx;
+  font-size: 28rpx;
+  padding: 0 16rpx;
+  min-height: unset;
+  line-height: 64rpx;
+}
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.voice-btn {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(110, 142, 251, 0.1);
+  border-radius: 50%;
+}
+
+.voice-btn image {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.send-btn {
+  background: linear-gradient(135deg, #6e8efb, #7b7fec);
+  color: #fff;
+  padding: 0 32rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  border-radius: 28rpx;
+  font-size: 26rpx;
+  margin: 0;
+  min-height: unset;
+}
+
+/* 快照图片样式 */
+.snapshot-images {
+  margin: 16rpx 0;
+  white-space: nowrap;
+  height: 160rpx;
+}
+
+.snapshot-container {
+  display: inline-flex;
+  gap: 12rpx;
+  padding: 4rpx;
+}
+
+.snapshot {
+  width: 200rpx;
+  height: 150rpx;
+  border-radius: 8rpx;
+  flex-shrink: 0;
+}
+
+/* 调整卡片样式以适应图片 */
+.recommendation-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  border: 2rpx solid rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
 }

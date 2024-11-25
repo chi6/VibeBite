@@ -8,21 +8,13 @@ Page({
     isLoading: false,
     location: null,
     aiInteractionContent: '欢迎来到AI互动区域',
-    recommendations: [
-      {
-        id: 1,
-        tag: '测试推荐',
-        title: '推荐主题1',
-        description: '这是一条测试推荐内容'
-      },
-      {
-        id: 2,
-        tag: '热门推荐',
-        title: '推荐主题2',
-        description: '这是另一条测试推荐内容'
-      }
-    ],
-    showRecommendations: false
+    recommendations: [],
+    images: [],
+    relatedQuestions: [],
+    relatedSearches: [],
+    showRecommendations: false,
+    lastRecommendationTime: 0,
+    currentTab: 'restaurants'
   },
 
   onLoad: function() {
@@ -30,40 +22,135 @@ Page({
       title: 'AI 助手'
     });
     
-    // 添加初始消息
     this.addMessage('ai', '你好！我是你的AI助手。我可以帮你推荐餐厅，你想吃什么类型的食物？');
-
-    // 获取位置信息后获取推荐内容
-    this.getLocation();
+    // this.getLocation();
+    
+    // 开始定期获取推荐
+    this.startPeriodicRecommendations();
   },
 
-  // 获取位置信息 TODO:页面跳转不过来了
-  getLocation: function() {
-    wx.getLocation({
-      type: 'wgs84',
-      success: (res) => {
-        const { latitude, longitude } = res;
+  // 定期获取推荐的功能
+  startPeriodicRecommendations() {
+    // 每30秒检查一次是否需要更新推荐
+    this.recommendationTimer = setInterval(() => {
+      this.checkAndUpdateRecommendations();
+    }, 30000);
+  },
+
+  onUnload() {
+    // 清除定时器
+    if (this.recommendationTimer) {
+      clearInterval(this.recommendationTimer);
+    }
+  },
+
+  async checkAndUpdateRecommendations() {
+    const currentTime = Date.now();
+    // 如果距离上次更新超过2分钟，则更新推荐
+    if (currentTime - this.data.lastRecommendationTime > 120000) {
+      await this.fetchLatestRecommendations();
+    }
+  },
+
+  async fetchLatestRecommendations() {
+    try {
+      wx.showLoading({
+        title: '更新推荐中...',
+        mask: true
+      });
+
+      const response = await api.getRecommendations({
+        location: this.data.location,
+        messages: this.data.messages.slice(-5),
+        timestamp: Date.now()
+      });
+
+      if (response.success && response.data) {
+        // 处理推荐数据
+        const recommendations = response.data.recommendations.map(item => ({
+          ...item,
+          formattedDate: new Date(item.timestamp).toLocaleDateString('zh-CN'),
+          distance: this.calculateDistance(item.location),
+          // 确保快照图片是数组
+          snapshotImages: Array.isArray(item.snapshotImages) ? item.snapshotImages : []
+        }));
+
+        // 更新数据
         this.setData({
-          location: { latitude, longitude }
+          recommendations,
+          images: response.data.images || [],
+          searchParameters: response.data.searchParameters || {},
+          lastRecommendationTime: Date.now(),
+          showRecommendations: true
         });
-        console.log('当前位置：', latitude, longitude);
-        // 使用腾讯地图 SDK 搜索附近餐厅
-        //this.searchNearbyRestaurants(latitude, longitude);
-      },
-      fail: (err) => {
-        console.error('获取位置信息失败:', err);
-        wx.showToast({
-          title: '无法获取位置信息',
-          icon: 'none'
-        });
+
+        console.log('推荐更新成功，响应时间:', response.response_time);
       }
+
+      wx.hideLoading();
+    } catch (error) {
+      console.error('获取推荐失败:', error);
+      wx.hideLoading();
+      wx.showToast({
+        title: '获取推荐失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  calculateDistance(locationStr) {
+    if (!this.data.location || !locationStr) return '未知距离';
+    // TODO: 实现实际的距离计算逻辑
+    return '1.2km'; // 临时返回固定值
+  },
+
+  switchTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    this.setData({
+      currentTab: tab
     });
   },
 
-  onInputChange: function(e) {
+  handleRecommendationTap(e) {
+    const { type, link } = e.currentTarget.dataset;
+    if (link) {
+      switch (type) {
+        case 'restaurant':
+          // 检查是否有快照图片
+          const restaurant = this.data.recommendations.find(r => r.link === link);
+          if (restaurant && restaurant.snapshotImages && restaurant.snapshotImages.length > 0) {
+            // 如果有快照图片，显示图片预览
+            wx.previewImage({
+              current: restaurant.snapshotImages[0], // 显示第一张图片
+              urls: restaurant.snapshotImages // 所有图片URL数组
+            });
+          } else {
+            // 如果没有快照图片，跳转到详情页
+            wx.navigateTo({
+              url: `/pages/restaurant-detail/restaurant-detail?url=${encodeURIComponent(link)}`
+            });
+          }
+          break;
+        case 'image':
+          wx.previewImage({
+            urls: [link]
+          });
+          break;
+        default:
+          wx.showToast({
+            title: '功能开发中',
+            icon: 'none'
+          });
+      }
+    }
+  },
+
+  handleSearchTap(e) {
+    const searchTerm = e.currentTarget.dataset.term;
     this.setData({
-      inputMessage: e.detail.value
+      inputMessage: searchTerm
     });
+    this.sendMessage();
   },
 
   async sendMessage() {
@@ -88,14 +175,8 @@ Page({
       if (response && response.response) {
         this.addMessage('ai', response.response);
         
-        // 分析AI响应，更新推荐内容
-        await this.updateRecommendations(response);
-        
-        // 显示推荐窗口
-        this.setData({
-          showRecommendations: true
-        });
-
+        // 发送消息后立即获取新的推荐
+        await this.fetchLatestRecommendations();
       } else {
         throw new Error('Invalid response from AI');
       }
@@ -160,7 +241,10 @@ Page({
 
   toggleRecommendations() {
     const { showRecommendations } = this.data;
-    console.log('切换推荐窗口状态:', !showRecommendations);
+    if (!showRecommendations) {
+      // 如果要显示推荐，先更新内容
+      this.fetchLatestRecommendations();
+    }
     this.setData({
       showRecommendations: !showRecommendations
     });
@@ -204,5 +288,11 @@ Page({
     } catch (error) {
       console.error('更新推荐失败:', error);
     }
+  },
+
+  onInputChange(e) {
+    this.setData({
+      inputMessage: e.detail.value
+    });
   }
 });

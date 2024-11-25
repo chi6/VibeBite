@@ -47,27 +47,94 @@
   <!-- 浮动推荐窗口 -->
   <view class="floating-recommendations {{showRecommendations ? 'show' : ''}}">
     <view class="recommendations-header">
-      <text class="recommendations-title">AI分析推荐</text>
+      <text class="recommendations-title">AI智能推荐</text>
       <view class="close-btn" bindtap="toggleRecommendations">×</view>
     </view>
-    <scroll-view 
-      scroll-y="true" 
-      class="recommendations-list"
-      enhanced="true"
-      show-scrollbar="false">
-      <block wx:for="{{recommendations}}" wx:key="id">
-        <view class="recommendation-card">
-          <view class="recommendation-tag">{{item.tag}}</view>
-          <view class="recommendation-content">
-            <text class="recommendation-title">{{item.title}}</text>
-            <text class="recommendation-desc">{{item.description}}</text>
+    
+    <!-- 标签页切换 -->
+    <view class="tab-header">
+      <view class="tab-item {{currentTab === 'restaurants' ? 'active' : ''}}" 
+            bindtap="switchTab" 
+            data-tab="restaurants">餐厅推荐</view>
+      <view class="tab-item {{currentTab === 'images' ? 'active' : ''}}" 
+            bindtap="switchTab" 
+            data-tab="images">美食图片</view>
+      <view class="tab-item {{currentTab === 'questions' ? 'active' : ''}}" 
+            bindtap="switchTab" 
+            data-tab="questions">相关问题</view>
+    </view>
+
+    <scroll-view scroll-y="true" class="recommendations-content">
+      <!-- 餐厅推荐列表 -->
+      <view class="recommendation-list" hidden="{{currentTab !== 'restaurants'}}">
+        <view class="recommendation-card" 
+              wx:for="{{recommendations}}" 
+              wx:key="position"
+              bindtap="handleRecommendationTap"
+              data-type="restaurant"
+              data-link="{{item.link}}">
+          <view class="card-header">
+            <text class="restaurant-name">{{item.title}}</text>
+            <text class="distance">{{item.distance}}</text>
           </view>
-          <view class="recommendation-action">
-            <button class="action-btn">查看详情</button>
+          <text class="description">{{item.description}}</text>
+          
+          <!-- 添加快照图片展示 -->
+          <scroll-view class="snapshot-images" scroll-x="true" wx:if="{{item.snapshotImages.length > 0}}">
+            <view class="snapshot-container">
+              <image class="snapshot" 
+                     wx:for="{{item.snapshotImages}}" 
+                     wx:key="*this" 
+                     wx:for-item="imageUrl"
+                     src="{{imageUrl}}" 
+                     mode="aspectFill"></image>
+            </view>
+          </scroll-view>
+
+          <view class="card-footer">
+            <text class="location">{{item.location}}</text>
+            <text class="date">{{item.formattedDate}}</text>
           </view>
         </view>
-      </block>
+      </view>
+
+      <!-- 美食图片展示 -->
+      <view class="image-grid" hidden="{{currentTab !== 'images'}}">
+        <view class="image-item" 
+              wx:for="{{images}}" 
+              wx:key="imageUrl"
+              bindtap="handleRecommendationTap"
+              data-type="image"
+              data-link="{{item.imageUrl}}">
+          <image src="{{item.imageUrl}}" mode="aspectFill"></image>
+          <text class="image-title">{{item.title}}</text>
+        </view>
+      </view>
+
+      <!-- 相关问题列表 -->
+      <view class="question-list" hidden="{{currentTab !== 'questions'}}">
+        <view class="question-item" 
+              wx:for="{{relatedQuestions}}" 
+              wx:key="question"
+              bindtap="handleRecommendationTap"
+              data-type="question"
+              data-question="{{item.question}}">
+          <text class="question">{{item.question}}</text>
+          <text class="answer">{{item.answer}}</text>
+        </view>
+      </view>
     </scroll-view>
+
+    <!-- 相关搜索词 -->
+    <view class="related-searches">
+      <scroll-view scroll-x="true" class="search-tags">
+        <text class="search-tag" 
+              wx:for="{{relatedSearches}}" 
+              wx:key="*this"
+              bindtap="handleSearchTap"
+              data-term="{{item}}">{{item}}</text>
+      </scroll-view>
+    </view>
   </view>
 
   <!-- 输入区域 - 现代化设计 -->

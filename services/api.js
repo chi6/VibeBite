@@ -1,4 +1,4 @@
-const BASE_URL = 'http://192.168.10.100:5000';  // 生产环境
+const BASE_URL = 'http://127.0.0.1:5000';  // 生产环境
 
 const api = {
   // 基础请求方法
@@ -175,6 +175,18 @@ const api = {
     return this.request('/api/preferences/summary', {
       method: 'POST',
       data: {}
+    });
+  },
+
+  // 获取基于对话的推荐
+  getRecommendations(data) {
+    return this.request('/api/recommendations', {
+      method: 'POST',
+      data: {
+        location: data.location,
+        messages: data.messages,
+        timestamp: Date.now()
+      }
     });
   }
 };
