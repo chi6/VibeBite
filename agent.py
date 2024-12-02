@@ -14,17 +14,19 @@ class Agent:
         name: str,
         llm_client: ChatGptClient,
         prompt_manager: PromptManager,
+        openid: str = None,
         rag_tools: RAGTools = None
     ):
         self.agent_id = agent_id
         self.name = name
         self.llm_client = llm_client
         self.prompt_manager = prompt_manager
+        self.openid = openid
         self.memory: List[Dict[str, Any]] = []
         self.rag_tools = rag_tools
         
     def construct_prompt(self, task_name, input_text) -> str:
-        meta_prompt = self.prompt_manager.get_prompt(task_name)
+        meta_prompt = self.prompt_manager.get_prompt(task_name, self.openid)
         if not meta_prompt:
             return "prompt not found"
         
@@ -50,13 +52,22 @@ class Agent:
 
 
     def process_task(self, task_name: str, input_text: str) -> str:
+        """处理任务并返回响应"""
         system_prompt, user_prompt = self.construct_prompt(task_name, input_text)
         if not system_prompt or not user_prompt:
             return "未找到对应任务的prompt"
-            
+        
+        # 获取用户特定的prompt(如果存在)
+        prompt_content = self.prompt_manager.get_prompt(task_name, self.openid)
+        print(f"用户特定的prompt: {prompt_content}")
+        if prompt_content:
+            system_prompt["content"] = prompt_content  # 使用用户特定的prompt作为system prompt
+        
         messages = [system_prompt, user_prompt]
         request_id = str(uuid.uuid4())
-        print(user_prompt["content"])
+        print(f"使用的system prompt: {system_prompt['content']}")  # 添加日志
+        print(f"使用的user prompt: {user_prompt['content']}")  # 添加日志
+        
         self.llm_client.add_request(self.agent_id, system_prompt["content"], user_prompt["content"], request_id)
         
         response = ""
@@ -114,3 +125,9 @@ class Agent:
             f"历史记录 {i+1}:\n输入: {m['input']}\n输出: {m['output']}"
             for i, m in enumerate(self.memory[-3:])  # 只使用最近3条记录
         ])
+
+    def update_system_prompt(self, new_prompt: str):
+        """更新agent的system prompt"""
+        if self.openid:
+            self.prompt_manager.update_user_prompt(self.openid, "chat", new_prompt)
+            print(f"已更新用户 {self.openid} 的system prompt: {new_prompt}")

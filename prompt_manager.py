@@ -4,27 +4,26 @@ from typing import Dict, Optional
 from config import Config  # 确保导入 Config 类或模块
 
 class PromptManager:
-    def __init__(self, prompt_path: str = Config.PROMPT_PATH):
-        self.prompt_path = prompt_path
-        self.prompts: Dict[str, str] = {}
-        self._load_prompts()
-    
-    def _load_prompts(self):
-        if not os.path.exists(self.prompt_path):
-            os.makedirs(self.prompt_path)
+    def __init__(self):
+        self.prompts = {}
+        self.user_prompts = {}  # 存储用户特定的prompt
         
-        for file in os.listdir(self.prompt_path):
-            if file.endswith('.json'):
-                with open(os.path.join(self.prompt_path, file), 'r', encoding='utf-8') as f:
-                    self.prompts.update(json.load(f))
-    
-    def get_prompt(self, task_name: str) -> Optional[str]:
-        return self.prompts.get(task_name)
-    
     def add_prompt(self, task_name: str, prompt: str):
+        """添加基础prompt"""
         self.prompts[task_name] = prompt
-        self._save_prompts()
-    
-    def _save_prompts(self):
-        with open(os.path.join(self.prompt_path, 'prompts.json'), 'w', encoding='utf-8') as f:
-            json.dump(self.prompts, f, ensure_ascii=False, indent=2)
+        
+    def get_prompt(self, task_name: str, openid: str = None) -> str:
+        """获取prompt,优先返回用户特定的prompt"""
+        if openid and openid in self.user_prompts:
+            print(f"用户特定的prompt: {self.user_prompts[openid]}")
+            user_prompts = self.user_prompts[openid]
+            if task_name in user_prompts:
+                return user_prompts[task_name]
+        return self.prompts.get(task_name, "")
+        
+    def update_user_prompt(self, openid: str, task_name: str, prompt: str):
+        """更新用户特定的prompt"""
+        if openid not in self.user_prompts:
+            self.user_prompts[openid] = {}
+        self.user_prompts[openid][task_name] = prompt
+        print(f"更新用户特定的prompt: {prompt}")

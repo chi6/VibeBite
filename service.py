@@ -64,6 +64,7 @@ class AgentChatService:
         self.app.route('/api/recommendations', methods=['POST'])(self.get_recommendations)
         self.app.route('/api/share/save', methods=['POST'])(self.save_shared_session)
         self.app.route('/api/share/<share_id>', methods=['GET'])(self.get_shared_session)
+        self.app.route('/api/update_pref', methods=['POST'])(self.update_user_preferences)
 
     def init_components(self):
         """初始化所有组件"""
@@ -93,7 +94,7 @@ class AgentChatService:
                         3. 与解决方案专家讨论，确保方案的可行性
                         请用简洁专业的语言进行沟通。""",
             "solver": """你是一个解决方案专家你的职责是：
-                        1. 根据分析专家的分析，提出具体的解决方案
+                        1. ���据分析专家的分析，提出具体的解决方案
                         2. 说明方案的可行性和潜在风险
                         3. 与问分析专家讨，优化解方案
                         请用清晰条理的方式描述解决方案。""",
@@ -120,9 +121,9 @@ class AgentChatService:
         """初始化默认agents和groups"""
         # 创建默认agents
         default_agents = [
-            Agent("1", "通用助手", self.llm_client, self.prompt_manager),
-            Agent("2", "分析专家", self.llm_client, self.prompt_manager),
-            Agent("3", "领域专家", self.llm_client, self.prompt_manager)
+            Agent("1", "通用助手", self.llm_client, self.prompt_manager, openid="1"),
+            Agent("2", "分析专家", self.llm_client, self.prompt_manager, openid="2"),
+            Agent("3", "领域专家", self.llm_client, self.prompt_manager, openid="3")
         ]
         
         for agent in default_agents:
@@ -147,21 +148,30 @@ class AgentChatService:
             
         agent_id = data.get('agent_id')
         name = data.get('name', f"Agent_{agent_id}")
+        openid = data.get('openid')
         
-        if agent_id in self.agents:
+        if not openid:
+            return jsonify({
+                "error": "Missing openid",
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 400
+        
+        agent_key = f"{openid}_{agent_id}"
+        
+        if agent_key in self.agents:
             return jsonify({
                 "error": "Agent ID already exists",
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 400
-            
+        
         new_agent = Agent(
             agent_id,
             name,
             self.llm_client,
             self.prompt_manager,
-            #self.rag_tools
+            openid=openid,
         )
-        self.agents[agent_id] = new_agent
+        self.agents[agent_key] = new_agent
         
         return jsonify({
             "agent_id": agent_id,
@@ -487,6 +497,107 @@ class AgentChatService:
         except Exception as e:
             print(f"获取用户信息错误: {str(e)}")
             return None
+
+    def update_user_preferences(self):
+        """更新用户偏好并更新agent的prompt"""
+        start_time = time.time()
+        
+        try:
+            # 验证token
+            auth_header = request.headers.get('Authorization')
+            if not auth_header or not auth_header.startswith('Bearer '):
+                return jsonify({
+                    "success": False,
+                    "message": "未授权的访问",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 401
+
+            token = auth_header.split(' ')[1]
+            
+            with sqlite3.connect('vibebite.db') as conn:
+                cursor = conn.cursor()
+                # 获取openid
+                cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
+                result = cursor.fetchone()
+                if not result:
+                    return jsonify({
+                        "success": False,
+                        "message": "无效的token",
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    }), 401
+                
+                openid = result[0]
+                
+                # 获取用户偏好总结
+                cursor.execute('''
+                    SELECT summary FROM preference_summaries 
+                    WHERE openid = ?
+                ''', (openid,))
+                
+                summary_result = cursor.fetchone()
+                if not summary_result:
+                    return jsonify({
+                        "success": False,
+                        "message": "未找到用户偏好总结",
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    }), 404
+                    
+                user_summary = summary_result[0]
+                
+                # 构建新的system prompt
+                new_system_prompt = f"""你是一个智能助手。
+
+用户偏好总结:
+{user_summary}
+
+请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。"""
+
+                # 获取请求数据中的agent_id
+                data = request.get_json()
+                agent_id = data.get('agent_id')
+                
+                if agent_id:
+                    # 如果指定了agent_id,只更新该agent
+                    if agent_id in self.agents:
+                        self.agents[agent_id].update_system_prompt(new_system_prompt)
+                        print(f"已更新agent {agent_id}的prompt")
+                    else:
+                        return jsonify({
+                            "success": False,
+                            "message": f"未找到指定的agent: {agent_id}",
+                            "response_time": f"{time.time() - start_time:.3f}s"
+                        }), 404
+                else:
+                    if updated_count == 0:
+                        print(f"未找到与用户{openid}关联的agent")
+                
+                return jsonify({
+                    "success": True,
+                    "message": "用户偏好已更新到AI系统",
+                    "data": {
+                        "summary": user_summary,
+                        "updated_agents": updated_count if not agent_id else 1
+                    },
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                })
+
+        except sqlite3.Error as e:
+            print(f"数据库操作错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "数据库操作失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
+            
+        except Exception as e:
+            print(f"更新用户偏好错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "更新用户偏好失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
 
     def user_profile(self):
         """处理用户档案的获取更新"""
@@ -822,7 +933,7 @@ class AgentChatService:
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 401
 
-        # 处理保护的资源请求
+        # 处理保护的资���请求
         return jsonify({
             "message": "Access granted to protected resource",
             "openid": self.session_store[token],
@@ -1150,7 +1261,7 @@ class AgentChatService:
                     
                     # 构建字典形式的数据
                     preferences_dict = dict(zip(columns, preferences_result))
-                    print(f"字典形式的数据: {preferences_dict}")  # 添加日志
+                    print(f"字典形式的数��: {preferences_dict}")  # 添加日志
                     
                     # 构建用户偏好数据
                     preferences_data = {
@@ -1490,4 +1601,4 @@ service.clear_database()
 
 if __name__ == '__main__':
     asyncio.run(service.run()) 
-    service.run_flask()
+    service.run_flask(port=8080)
