@@ -1,4 +1,4 @@
-const BASE_URL = 'http://127.0.0.1:5000';  // 生产环境
+const BASE_URL = 'http://106.52.168.146:80';  // 生产环境
 
 const api = {
   // 基础请求方法
@@ -205,6 +205,16 @@ const api = {
   getSharedSession(shareId) {
     return this.request(`/api/share/${shareId}`, {
       method: 'GET'
+    });
+  },
+
+  // 添加更新偏好的 API 方法
+  updatePreferences(agentId) {
+    return this.request('/api/update_pref', {
+      method: 'POST',
+      data: {
+        agent_id: agentId
+      }
     });
   }
 };

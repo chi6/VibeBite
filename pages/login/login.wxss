@@ -72,6 +72,10 @@
 .wechat-login-btn {
   width: 100%;
   height: 88rpx;
+  min-height: 88rpx;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+  white-space: nowrap;
   line-height: 88rpx;
   background: linear-gradient(135deg, #07c160, #0ab956);
   color: #fff;
@@ -93,7 +97,9 @@
 .wechat-icon {
   width: 44rpx;
   height: 44rpx;
+  min-width: 44rpx;
   margin-right: 16rpx;
+  flex-shrink: 0;
 }
 
 /* 隐私政策 */
