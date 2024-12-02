@@ -66,24 +66,42 @@ Page({
   },
 
   goToAIChat() {
-    // 传入 agentId 参数
-    api.updatePreferences(this.data.agentId).then(() => {
-      wx.navigateTo({
-        url: '/pages/ai-chat/ai-chat',
-        fail: (err) => {
-          console.error('跳转失败:', err);
+    // 先获取位置信息
+    wx.getLocation({
+      type: 'gcj02',
+      success: (res) => {
+        const location = {
+          latitude: res.latitude,
+          longitude: res.longitude
+        };
+        
+        // 传入 agentId 和 location 参数
+        api.updatePreferences(this.data.agentId, location).then(() => {
+          wx.navigateTo({
+            url: '/pages/ai-chat/ai-chat',
+            fail: (err) => {
+              console.error('跳转失败:', err);
+              wx.showToast({
+                title: '页面跳转失败',
+                icon: 'none'
+              });
+            }
+          });
+        }).catch(error => {
+          console.error('更新偏好失败:', error);
           wx.showToast({
-            title: '页面跳转失败',
+            title: '更新偏好失败',
             icon: 'none'
           });
-        }
-      });
-    }).catch(error => {
-      console.error('更新偏好失败:', error);
-      wx.showToast({
-        title: '更新偏好失败',
-        icon: 'none'
-      });
+        });
+      },
+      fail: (err) => {
+        console.error('获取位置失败:', err);
+        wx.showToast({
+          title: '获取位置失败',
+          icon: 'none'
+        });
+      }
     });
   }
 });

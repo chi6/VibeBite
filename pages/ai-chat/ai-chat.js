@@ -18,7 +18,8 @@ Page({
     forceUpdate: false,
     shareId: '',
     isSharedSession: false,
-    originalUser: null
+    originalUser: null,
+    agentId: '1'
   },
 
   onLoad: function(options) {
@@ -33,6 +34,9 @@ Page({
       });
       this.loadSharedSession(options.shareId);
     } else {
+      this.setData({
+        agentId: '1'
+      });
       this.addMessage('ai', '你好！我是你的AI助手。我可以帮你推荐餐厅，你想吃什么类型的食物？');
     }
     
@@ -82,6 +86,7 @@ Page({
       const response = await api.getRecommendations({
         location: this.data.location,
         messages: this.data.messages.slice(-5),
+        agentId: this.data.agentId,
         timestamp: Date.now()
       });
 
@@ -220,7 +225,7 @@ Page({
         title: 'AI响应失败',
         icon: 'none'
       });
-      this.addMessage('ai', '抱歉，我现在遇到了一些问题。请稍后再试。');
+      this.addMessage('ai', '��歉，我现在遇到了一些问题。请稍后再试。');
     } finally {
       this.setData({ isLoading: false });
     }

@@ -188,6 +188,7 @@ const api = {
       data: {
         location: data.location,
         messages: data.messages,
+        agentId: data.agentId,
         timestamp: Date.now()
       }
     });
@@ -209,11 +210,12 @@ const api = {
   },
 
   // 添加更新偏好的 API 方法
-  updatePreferences(agentId) {
+  updatePreferences(agentId, location) {
     return this.request('/api/update_pref', {
       method: 'POST',
       data: {
-        agent_id: agentId
+        agent_id: agentId,
+        location: location
       }
     });
   }
