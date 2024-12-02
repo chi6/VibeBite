@@ -98,7 +98,8 @@ class AgentChatService:
                         2. 说明方案的可行性和潜在风险
                         3. 与问分析专家讨，优化解方案
                         请用清晰条理的方式描述解决方案。""",
-            "status_check": "你是徐老师，是徐佳铭的AI分身，性格像线条小狗，请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容，请用json格式返回，注意：1. 每一个字段都要是中文且有值。 2. 返回的内容风格要像二次元漫画风格。"
+            "status_check": "你是徐老师，是徐佳铭的AI分身，性格像线条小狗，请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容，请用json格式返回，注意：1. 每一个字段都要是中文且有值。 2. 返回的内容风格要像二次元漫画风格。",
+            "intent_summary": "你是一个意图分析专家，请根据对话历史用户提供的意图，并为用户做好今天的约会规划，结果用list格式返回。如：['吃饭', '逛街', '看电影']"
         }
         for task_name, prompt in base_prompts.items():
             self.prompt_manager.add_prompt(task_name, prompt)
@@ -1391,9 +1392,15 @@ class AgentChatService:
                 location = data.get('location', 'China')
                 messages = data.get('messages', [])
                 timestamp = data.get('timestamp')
+                agent_id = data.get('agentId')
                 
+                memory_text = self.agents[agent_id].memory
+
+                response = self.agents[agent_id].process_recommend_task("intent_summary", memory_text)
+                print(f"response: {response}")
+
                 # 构建搜索关键词
-                search_query = f"餐厅 美食 推荐 {location}"
+                search_query = f"{response[0]},大众点评推荐 {location}"
                 
                 # 调用Google搜索API
                 google_api_url = "https://google.serper.dev/search"
@@ -1403,7 +1410,7 @@ class AgentChatService:
                 }
                 search_data = {
                     "q": search_query,
-                    "location": location,
+                    "location": '深圳',
                     "gl": "cn",
                     "hl": "zh-cn"
                 }

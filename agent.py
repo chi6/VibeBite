@@ -50,6 +50,36 @@ class Agent:
 
         return system_prompt, user_prompt
 
+    def process_recommend_task(self, task_name: str, input_text: str) -> str:
+        """处理任务并返回响应"""
+        meta_prompt = self.prompt_manager.get_prompt(task_name, self.openid)
+        system_prompt = {"role": "system", "content": ""}
+        user_prompt = {"role": "user", "content": ""}
+
+        user_prompt["content"] += meta_prompt
+
+        user_prompt["content"] += "\n当前用户的输入为：{}".format(input_text)
+       
+        if not system_prompt or not user_prompt:
+            return "未找到对应任务的prompt"
+
+        messages = [system_prompt, user_prompt]
+        request_id = str(uuid.uuid4())
+        print(f"使用的system prompt: {system_prompt['content']}")  # 添加日志
+        print(f"使用的user prompt: {user_prompt['content']}")  # 添加日志
+        
+        self.llm_client.add_request(self.agent_id, system_prompt["content"], user_prompt["content"], request_id)
+        
+        response = ""
+        for _ in range(100):
+            response = self.llm_client.get_chat(request_id)
+            response_content = response['response'].choices[0].message.content
+            if response_content != "没有找到响应":
+                break
+            time.sleep(0.1)
+
+        res = response_content
+        return res
 
     def process_task(self, task_name: str, input_text: str) -> str:
         """处理任务并返回响应"""
