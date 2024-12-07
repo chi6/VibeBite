@@ -91,9 +91,11 @@ Page({
       });
 
       if (response.success && response.data) {
-        const recommendations = response.data.recommendations.map(item => ({
+        const recommendationsList = response.data.recommendations.original_recommendations || [];
+        
+        const recommendations = recommendationsList.map(item => ({
           ...item,
-          formattedDate: new Date(item.timestamp).toLocaleDateString('zh-CN'),
+          formattedDate: new Date().toLocaleDateString('zh-CN'),
           distance: this.calculateDistance(item.location),
           snapshotImages: Array.isArray(item.snapshotImages) ? item.snapshotImages : []
         }));
@@ -225,7 +227,7 @@ Page({
         title: 'AI响应失败',
         icon: 'none'
       });
-      this.addMessage('ai', '��歉，我现在遇到了一些问题。请稍后再试。');
+      this.addMessage('ai', '抱歉，我现在遇到了一些问题。请稍后再试。');
     } finally {
       this.setData({ isLoading: false });
     }
