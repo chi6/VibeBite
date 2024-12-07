@@ -94,7 +94,7 @@ class AgentChatService:
                         3. 与解决方案专家讨论，确保方案的可行性
                         请用简洁专业的语言进行沟通。""",
             "solver": """你是一个解决方案专家你的职责是：
-                        1. ���据分析专家的分析，提出具体的解决方案
+                        1. 根据分析专家的分析，提出具体的解决方案
                         2. 说明方案的可行性和潜在风险
                         3. 与问分析专家讨，优化解方案
                         请用清晰条理的方式描述解决方案。""",
@@ -934,7 +934,7 @@ class AgentChatService:
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 401
 
-        # 处理保护的资���请求
+        # 处理保护的资源请求
         return jsonify({
             "message": "Access granted to protected resource",
             "openid": self.session_store[token],
@@ -949,7 +949,7 @@ class AgentChatService:
             return self.update_preferences()
 
     def get_preferences(self):
-        """获取用户偏好"""
+        """��取用户偏好"""
         start_time = time.time()
         
         try:
@@ -1262,7 +1262,7 @@ class AgentChatService:
                     
                     # 构建字典形式的数据
                     preferences_dict = dict(zip(columns, preferences_result))
-                    print(f"字典形式的数��: {preferences_dict}")  # 添加日志
+                    print(f"字典形式的数: {preferences_dict}")  # 添加日志
                     
                     # 构建用户偏好数据
                     preferences_data = {
@@ -1378,7 +1378,6 @@ class AgentChatService:
             # 验证token
             auth_header = request.headers.get('Authorization')
             if not auth_header or not auth_header.startswith('Bearer '):
-                print("验证失败: 缺少或无效的Authorization header")
                 return jsonify({
                     "success": False,
                     "message": "未授权的访问",
@@ -1389,76 +1388,112 @@ class AgentChatService:
             
             try:
                 data = request.get_json()
-                location = data.get('location', 'China')
+                location = data.get('location', '深圳')
                 messages = data.get('messages', [])
                 timestamp = data.get('timestamp')
                 agent_id = data.get('agentId')
                 
-                memory_text = self.agents[agent_id].memory
-
-                response = self.agents[agent_id].process_recommend_task("intent_summary", memory_text)
-                print(f"response: {response}")
-
-                # 构建搜索关键词
-                search_query = f"{response[0]},大众点评推荐 {location}"
+                print(f"当前agents: {self.agents.keys()}")  # 打印所有agent keys
+                print(f"请求的agent_id: {agent_id}")  # 打印请求的agent_id
                 
-                # 调用Google搜索API
-                google_api_url = "https://google.serper.dev/search"
-                headers = {
-                    'X-API-KEY': '5e0ade74a776ca00770d7155a6ed361f25fde09a',
-                    'Content-Type': 'application/json'
-                }
-                search_data = {
-                    "q": search_query,
-                    "location": '深圳',
-                    "gl": "cn",
-                    "hl": "zh-cn"
-                }
+                # 获取agent的对话历史
+                if agent_id not in self.agents:
+                    print(f"未找到agent_id: {agent_id}")
+                    return jsonify({
+                        "success": False,
+                        "message": f"未找到指定的agent: {agent_id}",
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    }), 404
                 
-                # 设置较短的超时时间
-                response = requests.post(google_api_url, headers=headers, json=search_data, timeout=5)
-                search_results = response.json()
+                agent = self.agents[agent_id]
+                chat_history = agent.memory
+                print(f"对话历史: {chat_history}")
                 
-                # 处理搜索结果
+                # 分析用户意图
+                memory_text = "\n".join([
+                    f"用户: {msg['user_input']}\nAI: {msg['agent_output']}"
+                    for msg in chat_history[-5:]  # 只使用最近5条记录
+                ])
+                
+                # 使用agent的process_recommend_task方法分析意图
+                intent_analysis = agent.process_recommend_task("intent_summary", memory_text)
+                print(f"意图分析结果: {intent_analysis}")
+                
+                try:
+                    # 将字符串形式的列表转换为Python列表
+                    intent_list = eval(intent_analysis)
+                    if not isinstance(intent_list, list):
+                        raise ValueError("意图分析结果不是列表格式")
+                except Exception as e:
+                    print(f"意图分析结果格式错误: {str(e)}")
+                    intent_list = ["用餐"]  # 默认意图
+                
                 recommendations = []
-                
-                # 处理有机搜索结果
-                if 'organic' in search_results:
-                    for result in search_results['organic'][:5]:
-                        recommendation = {
-                            'title': result.get('title', ''),
-                            'description': result.get('snippet', ''),
-                            'link': result.get('link', ''),
-                            'type': 'restaurant',
-                            'position': result.get('position', 0),
-                            'date': result.get('date', ''),
-                            'location': location,
-                            'timestamp': timestamp
-                        }
-                        recommendations.append(recommendation)
-                
-                # 处理图片结果
                 images = []
-                if 'images' in search_results:
-                    for image in search_results['images'][:5]:
-                        images.append({
-                            'title': image.get('title', ''),
-                            'imageUrl': image.get('imageUrl', ''),
-                            'link': image.get('link', '')
-                        })
+                
+                # 根据每个意图进行搜索
+                for intent in intent_list:
+                    search_query = f"{intent} {location} 推荐"
+                    print(f"搜索关键词: {search_query}")
+                    
+                    # 调用Google搜索API
+                    google_api_url = "https://google.serper.dev/search"
+                    headers = {
+                        'X-API-KEY': '5e0ade74a776ca00770d7155a6ed361f25fde09a',
+                        'Content-Type': 'application/json'
+                    }
+                    search_data = {
+                        "q": search_query,
+                        "gl": "cn",
+                        "hl": "zh-cn",
+                        "location": "中国"
+                    }
+                    
+                    try:
+                        response = requests.post(google_api_url, headers=headers, json=search_data, timeout=5)
+                        search_results = response.json()
+                        print(f"搜索结果: {search_results}")
+                        
+                        # 处理搜索结果
+                        processed_results = self._process_search_results(search_results, intent)
+                        recommendations.extend(processed_results)
+                        
+                        # 处理图片结果
+                        if 'images' in search_results:
+                            for image in search_results['images'][:3]:  # 每个意图取前3张图
+                                images.append({
+                                    'title': image.get('title', ''),
+                                    'imageUrl': image.get('imageUrl', ''),
+                                    'link': image.get('link', ''),
+                                    'type': intent
+                                })
+                            
+                    except requests.RequestException as e:
+                        print(f"搜索API请求错误: {str(e)}")
+                        continue
+                
+                # 使用大模型整合结果
+                if recommendations:
+                    organized_results = self._organize_recommendations(recommendations, intent_list)
+                else:
+                    organized_results = {"error": "未找到相关推荐"}
                 
                 return jsonify({
                     "success": True,
                     "data": {
-                        "recommendations": recommendations,
+                        "intent_analysis": intent_list,
+                        "recommendations": organized_results,
                         "images": images,
-                        "searchParameters": search_results.get('searchParameters', {})
+                        "searchParameters": {
+                            "location": location,
+                            "timestamp": timestamp
+                        }
                     },
                     "response_time": f"{time.time() - start_time:.3f}s"
                 })
 
-            except requests.RequestException as e:
-                print(f"Google API请求错误: {str(e)}")
+            except Exception as e:
+                print(f"处理推荐请求错误: {str(e)}")
                 return jsonify({
                     "success": False,
                     "message": "获取推荐信息失败",
@@ -1601,6 +1636,208 @@ class AgentChatService:
                 "details": str(e),
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
+
+    def _process_search_results(self, results: dict, result_type: str) -> list:
+        """处理搜索结果,包括抓取网页内容"""
+        processed_results = []
+        if 'organic' in results:
+            for result in results['organic'][:3]:  # 只取前3个结果
+                try:
+                    # 获取网页内容
+                    headers = {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                    }
+                    response = requests.get(result.get('link', ''), headers=headers, timeout=5)
+                    response.encoding = 'utf-8'  # 设置编码
+                    
+                    # 使用BeautifulSoup解析网页
+                    soup = BeautifulSoup(response.text, 'html.parser')
+                    
+                    # 提取关键信息
+                    page_content = {
+                        'title': soup.title.string if soup.title else result.get('title', ''),
+                        'description': result.get('snippet', ''),
+                        'link': result.get('link', ''),
+                        'type': result_type,
+                        'position': result.get('position', 0),
+                        'details': {}
+                    }
+                    
+                    # 根据不同网站类型提取不同信息
+                    if 'dianping.com' in result.get('link', ''):
+                        # 提取大众点评特有信息
+                        page_content['details'] = self._extract_dianping_info(soup)
+                    elif 'meituan.com' in result.get('link', ''):
+                        # 提取美团特有信息
+                        page_content['details'] = self._extract_meituan_info(soup)
+                    else:
+                        # 提取通用信息
+                        page_content['details'] = self._extract_general_info(soup)
+                    
+                    processed_results.append(page_content)
+                    print(f"成功处理页面: {result.get('link', '')}")
+                    
+                except Exception as e:
+                    print(f"处理页面失败: {str(e)}")
+                    # 如果抓取失败,仍然添加基本信息
+                    processed_results.append({
+                        'title': result.get('title', ''),
+                        'description': result.get('snippet', ''),
+                        'link': result.get('link', ''),
+                        'type': result_type,
+                        'position': result.get('position', 0),
+                        'details': {}
+                    })
+                    
+        return processed_results
+
+    def _extract_dianping_info(self, soup: BeautifulSoup) -> dict:
+        """提取大众点评页面信息"""
+        details = {
+            'rating': '',
+            'price': '',
+            'address': '',
+            'categories': [],
+            'popular_dishes': [],
+            'business_hours': '',
+            'reviews': []
+        }
+        
+        try:
+            # 提取评分
+            rating_elem = soup.find('div', class_='star')
+            if rating_elem:
+                details['rating'] = rating_elem.text.strip()
+            
+            # 提取价格
+            price_elem = soup.find('div', class_='price')
+            if price_elem:
+                details['price'] = price_elem.text.strip()
+            
+            # 提取地址
+            address_elem = soup.find('div', class_='address')
+            if address_elem:
+                details['address'] = address_elem.text.strip()
+            
+            # 提取分类
+            category_elems = soup.find_all('div', class_='tag')
+            details['categories'] = [elem.text.strip() for elem in category_elems]
+            
+            # 提取热门菜品
+            dish_elems = soup.find_all('div', class_='recommend-dish')
+            details['popular_dishes'] = [elem.text.strip() for elem in dish_elems]
+            
+            # 提取营业时间
+            hours_elem = soup.find('div', class_='business-hours')
+            if hours_elem:
+                details['business_hours'] = hours_elem.text.strip()
+            
+            # 提取评论
+            review_elems = soup.find_all('div', class_='review-item')
+            for elem in review_elems[:3]:  # 只取前3条评论
+                review_text = elem.find('div', class_='review-text')
+                if review_text:
+                    details['reviews'].append(review_text.text.strip())
+                
+        except Exception as e:
+            print(f"提取大众点评信息失败: {str(e)}")
+        
+        return details
+
+    def _extract_meituan_info(self, soup: BeautifulSoup) -> dict:
+        """提取美团页面信息"""
+        details = {
+            'rating': '',
+            'price': '',
+            'address': '',
+            'categories': [],
+            'features': [],
+            'business_hours': ''
+        }
+        
+        try:
+            # 提取美团特有信息
+            # ... (类似大众点评的提取逻辑)
+            pass
+        except Exception as e:
+            print(f"提取美团信息失败: {str(e)}")
+        
+        return details
+
+    def _extract_general_info(self, soup: BeautifulSoup) -> dict:
+        """提取通用网页信息"""
+        details = {
+            'main_content': '',
+            'images': [],
+            'contact': ''
+        }
+        
+        try:
+            # 提取主要内容
+            main_content = soup.find('main') or soup.find('article') or soup.find('div', class_='content')
+            if main_content:
+                details['main_content'] = main_content.text.strip()[:500]  # 限制长度
+            
+            # 提取图片
+            img_elems = soup.find_all('img')
+            details['images'] = [img.get('src') for img in img_elems if img.get('src')][:5]  # 只取前5张图
+            
+            # 提取联系方式
+            contact_elem = soup.find('div', class_=['contact', 'footer'])
+            if contact_elem:
+                details['contact'] = contact_elem.text.strip()
+            
+        except Exception as e:
+            print(f"提取通用信息失败: {str(e)}")
+        
+        return details
+
+    def _organize_recommendations(self, recommendations: list, intent_list: list) -> dict:
+        """整合并组织推荐结果"""
+        try:
+            # 构建提示词
+            organize_prompt = f"""基于以下用户意图和搜索结果，制定一个合理的行程安排：
+
+用户意图：
+{', '.join(intent_list)}
+
+搜索结果：
+{json.dumps(recommendations, ensure_ascii=False, indent=2)}
+
+请提供：
+1. 时间安排建议
+2. 具体场所推荐（包含地址和特色）
+3. 交通建议
+4. 其他注意事项
+
+请用清晰的结构化格式返回，突出重点信息。每个推荐地点要包含具体的地址和特色。"""
+
+            # 调用大模型整合结果
+            request_id = str(uuid.uuid4())
+            self.llm_client.add_request("system", "", organize_prompt, request_id)
+            
+            organized_result = ""
+            for _ in range(100):
+                response = self.llm_client.get_chat(request_id)
+                organized_result = response['response'].choices[0].message.content
+                if organized_result != "没有找到响应":
+                    break
+                time.sleep(0.1)
+            
+            return {
+                "original_recommendations": recommendations,
+                "organized_plan": organized_result,
+                "intents": intent_list
+            }
+            
+        except Exception as e:
+            print(f"整合推荐结果错误: {str(e)}")
+            return {
+                "error": "整合推荐结果失败",
+                "details": str(e),
+                "original_recommendations": recommendations,
+                "intents": intent_list
+            }
 
 # 创建服实例
 service = AgentChatService()
