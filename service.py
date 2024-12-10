@@ -1951,6 +1951,207 @@ class AgentChatService:
                 "intents": intent_list
             }
 
+    def _extract_general_info(self, soup: BeautifulSoup) -> dict:
+        """提取通用网页信息"""
+        details = {
+            'main_content': '',
+            'images': [],
+            'contact': '',
+            'rating': '',
+            'price': '',
+            'address': '',
+            'features': []
+        }
+        
+        try:
+            # 提取主要内容
+            main_content = soup.find('main') or soup.find('article') or soup.find('div', class_='content')
+            if main_content:
+                details['main_content'] = main_content.text.strip()[:500]  # 限制长度
+                
+            # 提取图片
+            img_elems = soup.find_all('img')
+            details['images'] = [img.get('src') for img in img_elems if img.get('src')][:5]  # 只取前5张图
+            
+            # 提取评分
+            rating_elem = soup.find(['div', 'span'], class_=['rating', 'score', 'star'])
+            if rating_elem:
+                details['rating'] = rating_elem.text.strip()
+                
+            # 提取价格
+            price_elem = soup.find(['div', 'span'], class_=['price', 'cost'])
+            if price_elem:
+                details['price'] = price_elem.text.strip()
+                
+            # 提取地址
+            address_elem = soup.find(['div', 'span'], class_=['address', 'location'])
+            if address_elem:
+                details['address'] = address_elem.text.strip()
+                
+            # 提取特色标签
+            feature_elems = soup.find_all(['div', 'span'], class_=['tag', 'feature', 'label'])
+            details['features'] = [elem.text.strip() for elem in feature_elems if elem.text.strip()][:5]
+                
+        except Exception as e:
+            print(f"提取通用信息失败: {str(e)}")
+            
+        return details
+
+    def _extract_dianping_info(self, soup: BeautifulSoup) -> dict:
+        """提取大众点评页面信息"""
+        details = {
+            'rating': '',
+            'price': '',
+            'address': '',
+            'categories': [],
+            'popular_dishes': [],
+            'business_hours': '',
+            'reviews': []
+        }
+        
+        try:
+            # 提取评分
+            rating_elem = soup.find('div', class_='star')
+            if rating_elem:
+                details['rating'] = rating_elem.text.strip()
+                
+            # 提取价格
+            price_elem = soup.find('div', class_='price')
+            if price_elem:
+                details['price'] = price_elem.text.strip()
+                
+            # 提取地址
+            address_elem = soup.find('div', class_='address')
+            if address_elem:
+                details['address'] = address_elem.text.strip()
+                
+            # 提取分类
+            category_elems = soup.find_all('div', class_='tag')
+            details['categories'] = [elem.text.strip() for elem in category_elems]
+            
+            # 提取热门菜品
+            dish_elems = soup.find_all('div', class_='recommend-dish')
+            details['popular_dishes'] = [elem.text.strip() for elem in dish_elems]
+            
+            # 提取营业时间
+            hours_elem = soup.find('div', class_='business-hours')
+            if hours_elem:
+                details['business_hours'] = hours_elem.text.strip()
+                
+            # 提取评论
+            review_elems = soup.find_all('div', class_='review-item')
+            for elem in review_elems[:3]:  # 只取前3条评论
+                review_text = elem.find('div', class_='review-text')
+                if review_text:
+                    details['reviews'].append(review_text.text.strip())
+                    
+        except Exception as e:
+            print(f"提取大众点评信息失败: {str(e)}")
+            
+        return details
+
+    def _extract_meituan_info(self, soup: BeautifulSoup) -> dict:
+        """提取美团页面信息"""
+        details = {
+            'rating': '',
+            'price': '',
+            'address': '',
+            'categories': [],
+            'features': [],
+            'business_hours': '',
+            'promotions': []
+        }
+        
+        try:
+            # 提取评分
+            rating_elem = soup.find(['div', 'span'], class_=['rating', 'score'])
+            if rating_elem:
+                details['rating'] = rating_elem.text.strip()
+                
+            # 提取价格
+            price_elem = soup.find(['div', 'span'], class_=['price', 'avg-price'])
+            if price_elem:
+                details['price'] = price_elem.text.strip()
+                
+            # 提取地址
+            address_elem = soup.find(['div', 'span'], class_=['address', 'location'])
+            if address_elem:
+                details['address'] = address_elem.text.strip()
+                
+            # 提取分类和特色
+            tag_elems = soup.find_all(['div', 'span'], class_=['tag', 'label'])
+            for elem in tag_elems:
+                text = elem.text.strip()
+                if text:
+                    if len(text) <= 4:  # 短标签作为分类
+                        details['categories'].append(text)
+                    else:  # 长标签作为特色
+                        details['features'].append(text)
+                        
+            # 提取营业时间
+            hours_elem = soup.find(['div', 'span'], class_=['business-hours', 'time'])
+            if hours_elem:
+                details['business_hours'] = hours_elem.text.strip()
+                
+            # 提取优惠信息
+            promo_elems = soup.find_all(['div', 'span'], class_=['promotion', 'discount'])
+            details['promotions'] = [elem.text.strip() for elem in promo_elems if elem.text.strip()]
+            
+        except Exception as e:
+            print(f"提取美团信息失败: {str(e)}")
+            
+        return details
+
+    def _extract_xiaohongshu_info(self, soup: BeautifulSoup) -> dict:
+        """提取小红书页面信息"""
+        details = {
+            'title': '',
+            'author': '',
+            'content': '',
+            'likes': '',
+            'comments': '',
+            'tags': [],
+            'images': []
+        }
+        
+        try:
+            # 提取标题
+            title_elem = soup.find(['h1', 'div'], class_=['title', 'note-title'])
+            if title_elem:
+                details['title'] = title_elem.text.strip()
+                
+            # 提取作者
+            author_elem = soup.find(['div', 'span'], class_=['author', 'nickname'])
+            if author_elem:
+                details['author'] = author_elem.text.strip()
+                
+            # 提取正文
+            content_elem = soup.find('div', class_=['content', 'note-content'])
+            if content_elem:
+                details['content'] = content_elem.text.strip()
+                
+            # 提取互动数据
+            likes_elem = soup.find(['div', 'span'], class_=['likes', 'like-count'])
+            if likes_elem:
+                details['likes'] = likes_elem.text.strip()
+                
+            comments_elem = soup.find(['div', 'span'], class_=['comments', 'comment-count'])
+            if comments_elem:
+                details['comments'] = comments_elem.text.strip()
+                
+            # 提取标签
+            tag_elems = soup.find_all(['div', 'span'], class_=['tag', 'hashtag'])
+            details['tags'] = [elem.text.strip() for elem in tag_elems if elem.text.strip()]
+            
+            # 提取图片
+            img_elems = soup.find_all('img', class_=['note-img', 'image'])
+            details['images'] = [img.get('src') for img in img_elems if img.get('src')]
+            
+        except Exception as e:
+            print(f"提取小红书信息失败: {str(e)}")
+            
+        return details
+
 # 创建服实例
 service = AgentChatService()
 service.clear_database()
