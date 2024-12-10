@@ -19,7 +19,9 @@ Page({
     shareId: '',
     isSharedSession: false,
     originalUser: null,
-    agentId: '1'
+    agentId: '1',
+    organizedPlan: '',
+    intents: []
   },
 
   onLoad: function(options) {
@@ -92,23 +94,38 @@ Page({
 
       if (response.success && response.data) {
         const recommendationsList = response.data.recommendations.original_recommendations || [];
+        const rawPlan = response.data.recommendations.organized_plan || '';
+        const intents = response.data.recommendations.intents || [];
+        
+        const formattedPlan = this.formatOrganizedPlan(rawPlan);
         
         const recommendations = recommendationsList.map(item => ({
           ...item,
           formattedDate: new Date().toLocaleDateString('zh-CN'),
           distance: this.calculateDistance(item.location),
-          snapshotImages: Array.isArray(item.snapshotImages) ? item.snapshotImages : []
+          snapshotImages: Array.isArray(item.images) ? item.images : 
+                         Array.isArray(item.snapshotImages) ? item.snapshotImages : 
+                         item.image ? [item.image] : []
+        }));
+
+        const images = (response.data.images || []).map(img => ({
+          imageUrl: typeof img === 'string' ? img : img.url || img.imageUrl,
+          title: img.title || '美食图片'
         }));
 
         this.setData({
           recommendations,
-          images: response.data.images || [],
+          images,
+          organizedPlan: formattedPlan,
+          intents,
           searchParameters: response.data.searchParameters || {},
           lastRecommendationTime: Date.now(),
           showRecommendations: true
         });
 
         console.log('推荐更新成功，响应时间:', response.response_time);
+        console.log('处理后的图片数据:', images);
+        console.log('处理后的推荐数据:', recommendations);
       }
 
       wx.hideLoading();
@@ -398,6 +415,48 @@ Page({
       });
     } catch (error) {
       console.error('保存分享会话失败:', error);
+    }
+  },
+
+  formatOrganizedPlan(rawPlan) {
+    if (!rawPlan) return null;
+
+    try {
+      const sections = rawPlan.split(/\d+\.\s+/).filter(Boolean);
+      
+      return sections.map(section => {
+        const lines = section.trim().split('\n');
+        const title = lines[0].trim();
+        const details = lines.slice(1)
+          .map(line => line.trim())
+          .filter(Boolean)
+          .map(line => {
+            if (line.startsWith('-')) {
+              return {
+                type: 'detail',
+                content: line.replace(/^-\s*/, '')
+              };
+            }
+            return {
+              type: 'text',
+              content: line
+            };
+          });
+
+        return {
+          title,
+          details
+        };
+      });
+    } catch (error) {
+      console.error('格式化计划失败:', error);
+      return [{
+        title: '推荐建议',
+        details: [{
+          type: 'text',
+          content: rawPlan
+        }]
+      }];
     }
   }
 });

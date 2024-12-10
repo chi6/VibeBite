@@ -58,8 +58,54 @@
       <text class="recommendations-title">AI智能推荐</text>
       <view class="close-btn" bindtap="toggleRecommendations">×</view>
     </view>
-    
-    <!-- 标签页切换 -->
+
+    <!-- 意图标签显示 -->
+    <view class="intents-container" wx:if="{{intents.length > 0}}">
+      <view class="intent-tags">
+        <text class="intent-tag" wx:for="{{intents}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- 图片预览部分 -->
+    <view class="image-section" wx:if="{{images.length > 0}}">
+      <scroll-view class="image-scroll" scroll-x="true">
+        <view class="image-scroll-container">
+          <image 
+            class="preview-image" 
+            wx:for="{{images}}" 
+            wx:key="imageUrl"
+            src="{{item.imageUrl}}"
+            mode="aspectFill"
+            bindtap="handleRecommendationTap"
+            data-type="image"
+            data-link="{{item.imageUrl}}"
+          ></image>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 计划内容显示 -->
+    <view class="plan-section" wx:if="{{organizedPlan}}">
+      <view class="plan-title">AI规划建议</view>
+      <scroll-view 
+        class="organized-plan" 
+        scroll-y="true"
+        enhanced="true"
+        show-scrollbar="true">
+        <view class="plan-block" wx:for="{{organizedPlan}}" wx:key="title">
+          <view class="block-title">{{item.title}}</view>
+          <view 
+            wx:for="{{item.details}}" 
+            wx:key="content" 
+            wx:for-item="detail"
+            class="block-detail {{detail.type === 'detail' ? 'with-dot' : ''}}">
+            {{detail.content}}
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 原有的标签页部分 -->
     <view class="tab-header">
       <view class="tab-item {{currentTab === 'restaurants' ? 'active' : ''}}" 
             bindtap="switchTab" 
@@ -81,27 +127,26 @@
               bindtap="handleRecommendationTap"
               data-type="restaurant"
               data-link="{{item.link}}">
-          <view class="card-header">
-            <text class="restaurant-name">{{item.title}}</text>
-            <text class="distance">{{item.distance}}</text>
-          </view>
-          <text class="description">{{item.description}}</text>
-          
-          <!-- 添加快照图片展示 -->
-          <scroll-view class="snapshot-images" scroll-x="true" wx:if="{{item.snapshotImages.length > 0}}">
-            <view class="snapshot-container">
-              <image class="snapshot" 
-                     wx:for="{{item.snapshotImages}}" 
-                     wx:key="*this" 
-                     wx:for-item="imageUrl"
-                     src="{{imageUrl}}" 
-                     mode="aspectFill"></image>
+          <view class="card-content">
+            <view class="card-header">
+              <text class="restaurant-name">{{item.title}}</text>
+              <text class="distance">{{item.distance}}</text>
             </view>
-          </scroll-view>
-
-          <view class="card-footer">
-            <text class="location">{{item.location}}</text>
-            <text class="date">{{item.formattedDate}}</text>
+            <text class="description">{{item.description}}</text>
+            <view class="card-footer">
+              <text class="location">{{item.location}}</text>
+              <text class="date">{{item.formattedDate}}</text>
+            </view>
+          </view>
+          
+          <view class="preview-image-wrapper" wx:if="{{item.snapshotImages.length > 0}}">
+            <image 
+              src="{{item.snapshotImages[0]}}" 
+              mode="aspectFill"
+            ></image>
+            <text class="image-count" wx:if="{{item.snapshotImages.length > 1}}">
+              +{{item.snapshotImages.length - 1}}
+            </text>
           </view>
         </view>
       </view>

@@ -214,58 +214,65 @@
 .recommendations-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20rpx;
+  padding-top: 0;
 }
 
 /* 餐厅推荐卡样式 */
 .recommendation-card {
+  display: flex;
   background: #fff;
   border-radius: 20rpx;
   padding: 24rpx;
   margin-bottom: 24rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
   border: 2rpx solid rgba(0, 0, 0, 0.05);
+  gap: 24rpx;
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12rpx;
+.card-content {
+  flex: 1;
+  min-width: 0; /* 防止文本溢出 */
 }
 
-.restaurant-name {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
+.preview-image-wrapper {
+  width: 200rpx;
+  height: 200rpx;
+  flex-shrink: 0;
+  border-radius: 12rpx;
+  overflow: hidden;
+  position: relative;
 }
 
-.distance {
-  font-size: 24rpx;
-  color: #6e8efb;
-  background: rgba(110, 142, 251, 0.1);
-  padding: 4rpx 16rpx;
+.preview-image-wrapper image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-count {
+  position: absolute;
+  right: 12rpx;
+  bottom: 12rpx;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
   border-radius: 20rpx;
 }
 
-.description {
-  font-size: 26rpx;
-  color: #666;
-  line-height: 1.6;
-  margin: 16rpx 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
+/* 调整卡片内容布局 */
+.card-header {
+  margin-bottom: 16rpx;
 }
 
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 16rpx;
-  font-size: 24rpx;
-  color: #999;
+.description {
+  margin: 12rpx 0;
+  -webkit-line-clamp: 3;
+}
+
+/* 移除旧的图片滚动样式 */
+.snapshot-images {
+  display: none;
 }
 
 /* 图片网格样式 */
@@ -561,4 +568,128 @@
 /* 确保最后一条消息有足够的底部间距 */
 .message:last-child {
   margin-bottom: 120rpx;
+}
+
+/* 添加意图标签样式 */
+.intents-container {
+  padding: 20rpx 30rpx;
+  border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
+}
+
+.intent-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.intent-tag {
+  background: linear-gradient(135deg, #6e8efb, #7b7fec);
+  color: #fff;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+
+/* 修改计划内容样式 */
+.plan-section {
+  margin: 20rpx 30rpx;
+  border-radius: 16rpx;
+  background: #fff;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.plan-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  padding: 24rpx;
+  border-bottom: 2rpx solid rgba(110, 142, 251, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.plan-title::before {
+  content: '';
+  width: 6rpx;
+  height: 28rpx;
+  background: #6e8efb;
+  margin-right: 16rpx;
+  border-radius: 4rpx;
+}
+
+.organized-plan {
+  padding: 0 24rpx;
+  max-height: 400rpx;
+  overflow-y: auto;
+}
+
+.plan-block {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.03);
+}
+
+.plan-block:last-child {
+  border-bottom: none;
+}
+
+.block-title {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12rpx;
+  display: flex;
+  align-items: center;
+}
+
+.block-title::before {
+  content: '';
+  width: 8rpx;
+  height: 8rpx;
+  background: #6e8efb;
+  border-radius: 50%;
+  margin-right: 12rpx;
+}
+
+.block-detail {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.6;
+  padding: 6rpx 0 6rpx 20rpx;
+  position: relative;
+}
+
+.block-detail.with-dot::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 16rpx;
+  width: 6rpx;
+  height: 6rpx;
+  background: #999;
+  border-radius: 50%;
+}
+
+/* 修改图片展示样式 */
+.image-section {
+  padding: 20rpx 30rpx;
+  border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
+}
+
+.image-scroll {
+  white-space: nowrap;
+  margin-top: 16rpx;
+}
+
+.image-scroll-container {
+  display: inline-flex;
+  gap: 16rpx;
+  padding: 4rpx;
+}
+
+.preview-image {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
