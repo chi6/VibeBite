@@ -16,6 +16,7 @@ import sqlite3
 from datetime import datetime
 from bs4 import BeautifulSoup
 import json
+import re
 
 class AgentChatService:
     def __init__(self):
@@ -949,7 +950,7 @@ class AgentChatService:
             return self.update_preferences()
 
     def get_preferences(self):
-        """��取用户偏好"""
+        """获取用户偏好"""
         start_time = time.time()
         
         try:
@@ -1430,13 +1431,13 @@ class AgentChatService:
                 
                 recommendations = []
                 images = []
-                
+                location = "深圳"
                 # 根据每个意图进行搜索
                 for intent in intent_list:
-                    search_query = f"{intent} {location} 推荐"
+                    search_query = f"{intent} {location} 小红书推荐"
                     print(f"搜索关键词: {search_query}")
                     
-                    # 调用Google搜索API
+                    # ���用Google搜索API
                     google_api_url = "https://google.serper.dev/search"
                     headers = {
                         'X-API-KEY': '5e0ade74a776ca00770d7155a6ed361f25fde09a',
@@ -1641,38 +1642,74 @@ class AgentChatService:
         """处理搜索结果,包括抓取网页内容"""
         processed_results = []
         if 'organic' in results:
-            for result in results['organic'][:3]:  # 只取前3个结果
+            for result in results['organic'][:1]:  # 只取前1个结果
                 try:
                     # 获取网页内容
                     headers = {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'Connection': 'keep-alive'
                     }
                     response = requests.get(result.get('link', ''), headers=headers, timeout=5)
-                    response.encoding = 'utf-8'  # 设置编码
+                    response.encoding = response.apparent_encoding  # 自动检测编码
                     
                     # 使用BeautifulSoup解析网页
                     soup = BeautifulSoup(response.text, 'html.parser')
                     
-                    # 提取关键信息
+                    # 基本信息提取
                     page_content = {
                         'title': soup.title.string if soup.title else result.get('title', ''),
                         'description': result.get('snippet', ''),
                         'link': result.get('link', ''),
                         'type': result_type,
                         'position': result.get('position', 0),
-                        'details': {}
+                        'details': {},
+                        'metadata': {
+                            'source': self._extract_domain(result.get('link', '')),
+                            'last_updated': self._extract_date(soup),
+                            'keywords': self._extract_meta_keywords(soup)
+                        }
                     }
                     
-                    # 根据不同网站类型提取不同信息
-                    if 'dianping.com' in result.get('link', ''):
-                        # 提取大众点评特有信息
+                    # 根据不同网站类型提取信息
+                    domain = self._extract_domain(result.get('link', ''))
+                    if 'dianping.com' in domain:
                         page_content['details'] = self._extract_dianping_info(soup)
-                    elif 'meituan.com' in result.get('link', ''):
-                        # 提取美团特有信息
+                    elif 'meituan.com' in domain:
                         page_content['details'] = self._extract_meituan_info(soup)
+                    elif 'ctrip.com' in domain or 'trip.com' in domain:
+                        page_content['details'] = self._extract_ctrip_info(soup)
+                    elif 'xiaohongshu.com' in domain:
+                        page_content['details'] = self._extract_xiaohongshu_info(soup)
                     else:
-                        # 提取通用信息
                         page_content['details'] = self._extract_general_info(soup)
+                    
+                    # 提取联系信息
+                    contact_info = self._extract_contact_info(soup)
+                    if contact_info:
+                        page_content['details']['contact'] = contact_info
+                    
+                    # 提取位置信息
+                    location_info = self._extract_location_info(soup)
+                    if location_info:
+                        page_content['details']['location'] = location_info
+                    
+                    # 提取营业时间
+                    business_hours = self._extract_business_hours(soup)
+                    if business_hours:
+                        page_content['details']['business_hours'] = business_hours
+                    
+                    # 提取价格信息
+                    price_info = self._extract_price_info(soup)
+                    if price_info:
+                        page_content['details']['price'] = price_info
+                    
+                    # 提取图片
+                    images = self._extract_images(soup)
+                    if images:
+                        page_content['details']['images'] = images
                     
                     processed_results.append(page_content)
                     print(f"成功处理页面: {result.get('link', '')}")
@@ -1686,111 +1723,186 @@ class AgentChatService:
                         'link': result.get('link', ''),
                         'type': result_type,
                         'position': result.get('position', 0),
-                        'details': {}
+                        'details': {},
+                        'error': str(e)
                     })
                     
         return processed_results
 
-    def _extract_dianping_info(self, soup: BeautifulSoup) -> dict:
-        """提取大众点评页面信息"""
-        details = {
-            'rating': '',
-            'price': '',
-            'address': '',
-            'categories': [],
-            'popular_dishes': [],
-            'business_hours': '',
-            'reviews': []
-        }
-        
+    def _extract_domain(self, url: str) -> str:
+        """从URL中提取域名"""
         try:
-            # 提取评分
-            rating_elem = soup.find('div', class_='star')
-            if rating_elem:
-                details['rating'] = rating_elem.text.strip()
-            
-            # 提取价格
-            price_elem = soup.find('div', class_='price')
-            if price_elem:
-                details['price'] = price_elem.text.strip()
-            
-            # 提取地址
-            address_elem = soup.find('div', class_='address')
-            if address_elem:
-                details['address'] = address_elem.text.strip()
-            
-            # 提取分类
-            category_elems = soup.find_all('div', class_='tag')
-            details['categories'] = [elem.text.strip() for elem in category_elems]
-            
-            # 提取热门菜品
-            dish_elems = soup.find_all('div', class_='recommend-dish')
-            details['popular_dishes'] = [elem.text.strip() for elem in dish_elems]
-            
-            # 提取营业时间
-            hours_elem = soup.find('div', class_='business-hours')
-            if hours_elem:
-                details['business_hours'] = hours_elem.text.strip()
-            
-            # 提取评论
-            review_elems = soup.find_all('div', class_='review-item')
-            for elem in review_elems[:3]:  # 只取前3条评论
-                review_text = elem.find('div', class_='review-text')
-                if review_text:
-                    details['reviews'].append(review_text.text.strip())
-                
-        except Exception as e:
-            print(f"提取大众点评信息失败: {str(e)}")
-        
-        return details
+            from urllib.parse import urlparse
+            return urlparse(url).netloc
+        except:
+            return url
 
-    def _extract_meituan_info(self, soup: BeautifulSoup) -> dict:
-        """提取美团页面信息"""
-        details = {
-            'rating': '',
-            'price': '',
-            'address': '',
-            'categories': [],
-            'features': [],
-            'business_hours': ''
-        }
-        
+    def _extract_date(self, soup: BeautifulSoup) -> str:
+        """提取页面更新日期"""
         try:
-            # 提取美团特有信息
-            # ... (类似大众点评的提取逻辑)
-            pass
-        except Exception as e:
-            print(f"提取美团信息失败: {str(e)}")
-        
-        return details
+            # 尝试多种可能的日期标签
+            date_tags = soup.find_all(['time', 'span', 'div'], class_=['date', 'time', 'update-time'])
+            for tag in date_tags:
+                if tag.string:
+                    return tag.string.strip()
+            return ""
+        except:
+            return ""
 
-    def _extract_general_info(self, soup: BeautifulSoup) -> dict:
-        """提取通用网页信息"""
-        details = {
-            'main_content': '',
-            'images': [],
-            'contact': ''
+    def _extract_meta_keywords(self, soup: BeautifulSoup) -> list:
+        """提取页面关键词"""
+        try:
+            keywords = soup.find('meta', {'name': 'keywords'})
+            if keywords and keywords.get('content'):
+                return [k.strip() for k in keywords['content'].split(',')]
+            return []
+        except:
+            return []
+
+    def _extract_contact_info(self, soup: BeautifulSoup) -> dict:
+        """提取联系信息"""
+        contact_info = {
+            'phone': '',
+            'email': '',
+            'social_media': [],
+            'website': ''
         }
         
         try:
-            # 提取主要内容
-            main_content = soup.find('main') or soup.find('article') or soup.find('div', class_='content')
-            if main_content:
-                details['main_content'] = main_content.text.strip()[:500]  # 限制长度
+            # 电话号码
+            phone_patterns = [
+                r'\d{3}[-.]?\d{3}[-.]?\d{4}',  # 标准电话格式
+                r'\d{2,4}[-.]?\d{7,8}'  # 座机格式
+            ]
+            for pattern in phone_patterns:
+                phones = re.findall(pattern, soup.text)
+                if phones:
+                    contact_info['phone'] = phones[0]
+                    break
             
-            # 提取图片
-            img_elems = soup.find_all('img')
-            details['images'] = [img.get('src') for img in img_elems if img.get('src')][:5]  # 只取前5张图
+            # 邮箱
+            email_pattern = r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}'
+            emails = re.findall(email_pattern, soup.text)
+            if emails:
+                contact_info['email'] = emails[0]
             
-            # 提取联系方式
-            contact_elem = soup.find('div', class_=['contact', 'footer'])
-            if contact_elem:
-                details['contact'] = contact_elem.text.strip()
+            # 社交媒体链接
+            social_patterns = ['weibo.com', 'weixin', 'douyin.com']
+            for link in soup.find_all('a', href=True):
+                for pattern in social_patterns:
+                    if pattern in link['href']:
+                        contact_info['social_media'].append(link['href'])
             
-        except Exception as e:
-            print(f"提取通用信息失败: {str(e)}")
+            return contact_info
+        except:
+            return contact_info
+
+    def _extract_location_info(self, soup: BeautifulSoup) -> dict:
+        """提取位置信息"""
+        location_info = {
+            'address': '',
+            'district': '',
+            'city': '',
+            'coordinates': {'lat': '', 'lng': ''}
+        }
         
-        return details
+        try:
+            # 地址
+            address_tags = soup.find_all(['div', 'span'], class_=['address', 'location', 'add'])
+            for tag in address_tags:
+                if tag.string and len(tag.string.strip()) > 5:
+                    location_info['address'] = tag.string.strip()
+                    break
+            
+            # 坐标
+            map_div = soup.find('div', class_=['map', 'amap'])
+            if map_div:
+                lat = map_div.get('data-lat')
+                lng = map_div.get('data-lng')
+                if lat and lng:
+                    location_info['coordinates'] = {'lat': lat, 'lng': lng}
+            
+            return location_info
+        except:
+            return location_info
+
+    def _extract_business_hours(self, soup: BeautifulSoup) -> dict:
+        """提取营业时间"""
+        hours_info = {
+            'regular_hours': {},
+            'holiday_hours': '',
+            'special_notes': ''
+        }
+        
+        try:
+            # 常规营业时间
+            hours_tags = soup.find_all(['div', 'span'], class_=['hours', 'time', 'business-hours'])
+            for tag in hours_tags:
+                if tag.string and ('营业' in tag.string or '时间' in tag.string):
+                    hours_info['regular_hours'] = tag.string.strip()
+                    break
+            
+            # 节假日时间
+            holiday_tags = soup.find_all(['div', 'span'], class_=['holiday', 'special-hours'])
+            for tag in holiday_tags:
+                if tag.string:
+                    hours_info['holiday_hours'] = tag.string.strip()
+                    break
+            
+            return hours_info
+        except:
+            return hours_info
+
+    def _extract_price_info(self, soup: BeautifulSoup) -> dict:
+        """提取价格信息"""
+        price_info = {
+            'price_range': '',
+            'average_cost': '',
+            'special_offers': []
+        }
+        
+        try:
+            # 价格区间
+            price_tags = soup.find_all(['div', 'span'], class_=['price', 'cost', 'avg-price'])
+            for tag in price_tags:
+                if tag.string and ('元' in tag.string or '¥' in tag.string):
+                    price_info['price_range'] = tag.string.strip()
+                    break
+            
+            # 特别优惠
+            offer_tags = soup.find_all(['div', 'span'], class_=['offer', 'discount', 'promotion'])
+            for tag in offer_tags:
+                if tag.string:
+                    price_info['special_offers'].append(tag.string.strip())
+            
+            return price_info
+        except:
+            return price_info
+
+    def _extract_images(self, soup: BeautifulSoup) -> list:
+        """提取图片信息"""
+        images = []
+        try:
+            # 查找所有图片标签
+            img_tags = soup.find_all('img')
+            for img in img_tags:
+                # 过滤掉小图标和广告
+                if img.get('src') and not any(x in img.get('src', '') for x in ['icon', 'logo', 'ad']):
+                    image_info = {
+                        'url': img.get('src', ''),
+                        'alt': img.get('alt', ''),
+                        'title': img.get('title', '')
+                    }
+                    # 检查图片尺寸
+                    if img.get('width') and img.get('height'):
+                        if int(img.get('width', 0)) > 100 and int(img.get('height', 0)) > 100:
+                            images.append(image_info)
+                    else:
+                        images.append(image_info)
+            
+            return images[:5]  # 只返回前5张图片
+        except:
+            return images
 
     def _organize_recommendations(self, recommendations: list, intent_list: list) -> dict:
         """整合并组织推荐结果"""
