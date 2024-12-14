@@ -210,31 +210,30 @@ class AgentChatService:
         print(data)
         if not data:
             return jsonify({
-                "uniqueId": int(time.time() * 1000000),  # 生成唯一ID
+                "uniqueId": int(time.time() * 1000000),
                 "taskInvoker": None,
                 "response": "Invalid JSON"
             }), 400
-            
-        agent_id = data.get('openid')
+        
+        openid = data.get('openid')  # 直接使用openid
         message = data.get('message')
         task_name = data.get('taskName', 'chat')
         group_id = data.get('groupId', 'main_group')
         
-        """if group_id not in self.groups:
+        if openid not in self.agents:
+            print(f"未找到openid: {openid}")
             return jsonify({
                 "uniqueId": int(time.time() * 1000000),
                 "taskInvoker": None,
-                "response": "Group not found"
-            }), 404"""
-            
-        #group = self.groups[group_id]
-        #responses = await group.group_chat(agent_id, message, task_name)
-        responses = self.agents[agent_id].process_task(task_name, message)
+                "response": f"未找到指定的agent: {openid}"
+            }), 404
+        
+        responses = self.agents[openid].process_task(task_name, message)
         print(responses)
         return jsonify({
-            "uniqueId": int(time.time() * 1000000),  # 生成唯一ID
-            "taskInvoker": None,  # 或者是 undefined
-            "response": responses  # AI的回复内容
+            "uniqueId": int(time.time() * 1000000),
+            "taskInvoker": None,
+            "response": responses
         })
         
     async def chat_group(self):
@@ -332,15 +331,15 @@ class AgentChatService:
         start_time = time.time()
         data = request.get_json()
         
-        agent_id = data.get('openid')
-        print("agent ids:", self.agents.keys(), "agent_id:", agent_id)
-        if agent_id not in self.agents:
+        openid = data.get('openid')  # 直接使用openid
+        print("agent ids:", self.agents.keys(), "openid:", openid)
+        if openid not in self.agents:
             return jsonify({
                 "error": "Agent not found",
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 404
-        # 假设Agent类有一个方法get_status来获取状态
-        status = await self.agents[agent_id].get_status()
+        
+        status = await self.agents[openid].get_status()
         
         return jsonify({
             "mood": status.get('mood'),
@@ -367,7 +366,7 @@ class AgentChatService:
             with sqlite3.connect(db_path) as conn:
                 cursor = conn.cursor()
                 
-                print("����除旧...")
+                print("除旧...")
                 cursor.execute("DROP TABLE IF EXISTS preference_summaries")
                 cursor.execute("DROP TABLE IF EXISTS user_preferences")
                 cursor.execute("DROP TABLE IF EXISTS user_profiles")
@@ -388,7 +387,7 @@ class AgentChatService:
                     )
                 ''')
                 
-                # 创建会话表
+                # ���建会话表
                 print("- 创建 sessions 表")
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS sessions (
@@ -536,6 +535,16 @@ class AgentChatService:
         start_time = time.time()
         
         try:
+            data = request.get_json()
+            openid = data.get('openid')  # 直接使用openid
+            
+            if not openid:
+                return jsonify({
+                    "success": False,
+                    "message": "缺少openid参数",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 400
+            
             # 验证token
             auth_header = request.headers.get('Authorization')
             if not auth_header or not auth_header.startswith('Bearer '):
@@ -585,24 +594,13 @@ class AgentChatService:
 
 请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。"""
 
-                # 获取请求数据中的agent_id
-                data = request.get_json()
-                agent_id = data.get('openid')
-                print(f"agent_id: {agent_id}")
-                if agent_id:
-                    # 如果指定了agent_id,只更新该agent
-                    if agent_id in self.agents:
-                        status_check_prompt = self.prompt_manager.get_prompt("status_check", agent_id)
-                        split_prompt = status_check_prompt.split("请返回")
-                        new_system_prompt = split_prompt[0] + "\n" + new_system_prompt
-                        self.agents[agent_id].update_system_prompt("chat", new_system_prompt)
-                        print(f"已更新agent {agent_id}的prompt")
-                    else:
-                        return jsonify({
-                            "success": False,
-                            "message": f"未找到指定的agent: {agent_id}",
-                            "response_time": f"{time.time() - start_time:.3f}s"
-                        }), 404
+                # 更新agent的prompt
+                if openid in self.agents:
+                    status_check_prompt = self.prompt_manager.get_prompt("status_check", openid)
+                    split_prompt = status_check_prompt.split("请返回")
+                    new_system_prompt = split_prompt[0] + "\n" + new_system_prompt
+                    self.agents[openid].update_system_prompt("chat", new_system_prompt)
+                    print(f"已更新agent {openid}的prompt")
                 else:
                     print(f"未找到与用户{openid}关联的agent")
                 
@@ -611,13 +609,13 @@ class AgentChatService:
                     "message": "用户偏好已更新到AI系统",
                     "data": {
                         "summary": user_summary,
-                        "updated_agents": 0 if not agent_id else 1
+                        "updated_agents": 0 if not openid else 1
                     },
                     "response_time": f"{time.time() - start_time:.3f}s"
                 })
 
         except sqlite3.Error as e:
-            print(f"���据库操作错误: {str(e)}")
+            print(f"数据库操作错误: {str(e)}")
             return jsonify({
                 "success": False,
                 "message": "数据库操作失败",
@@ -759,7 +757,7 @@ class AgentChatService:
                     cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
                     result = cursor.fetchone()
                     if not result:
-                        print(f"��证败: 无效的token: {token}")
+                        print(f"证败: 无效的token: {token}")
                         return jsonify({
                             "success": False,
                             "message": "无效或过期的token",
@@ -1002,57 +1000,44 @@ class AgentChatService:
         start_time = time.time()
         
         try:
-            # 验证token
-            auth_header = request.headers.get('Authorization')
-            if not auth_header or not auth_header.startswith('Bearer '):
-                print("验证失败: 缺少或无效的Authorization header")
+            data = request.args
+            openid = data.get('openid')
+            
+            if not openid:
                 return jsonify({
                     "success": False,
-                    "message": "未授权的访问",
+                    "message": "缺少openid参数",
                     "response_time": f"{time.time() - start_time:.3f}s"
-                }), 401
-
-            token = auth_header.split(' ')[1]
+                }), 400
             
             try:
                 with sqlite3.connect('vibebite.db') as conn:
                     cursor = conn.cursor()
-                    # 获取openid
-                    cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
-                    result = cursor.fetchone()
-                    if not result:
-                        print(f"验证失败: 无效的token: {token}")
-                        return jsonify({
-                            "success": False,
-                            "message": "无效或过期的token",
-                            "response_time": f"{time.time() - start_time:.3f}s"
-                        }), 401
                     
-                    openid = result[0]
-                    
-                    # 获取用户偏好 - 更新字段名以匹配新的表结构
+                    # 获取用户偏好数据
                     cursor.execute('''
                         SELECT dining_scene, dining_styles, flavor_preferences,
                                alcohol_attitude, restrictions, custom_description,
                                extracted_keywords
-                        FROM user_preferences
+                        FROM user_preferences 
                         WHERE openid = ?
                     ''', (openid,))
                     
-                    preferences_result = cursor.fetchone()
+                    result = cursor.fetchone()
                     
-                    if preferences_result:
-                        preferences_data = {
-                            'diningScene': preferences_result[0],
-                            'diningStyles': preferences_result[1].split(',') if preferences_result[1] else [],
-                            'flavorPreferences': preferences_result[2].split(',') if preferences_result[2] else [],
-                            'alcoholAttitude': preferences_result[3],
-                            'restrictions': preferences_result[4],
-                            'customDescription': preferences_result[5],
-                            'extractedKeywords': preferences_result[6].split(',') if preferences_result[6] else []
+                    if result:
+                        preferences = {
+                            'diningScene': result[0],
+                            'diningStyles': result[1].split(',') if result[1] else [],
+                            'flavorPreferences': result[2].split(',') if result[2] else [],
+                            'alcoholAttitude': result[3],
+                            'restrictions': result[4],
+                            'customDescription': result[5],
+                            'extractedKeywords': result[6].split(',') if result[6] else []
                         }
                     else:
-                        preferences_data = {
+                        # 如果没有设置，返回空值
+                        preferences = {
                             'diningScene': '',
                             'diningStyles': [],
                             'flavorPreferences': [],
@@ -1061,16 +1046,13 @@ class AgentChatService:
                             'customDescription': '',
                             'extractedKeywords': []
                         }
-
+                    
                     return jsonify({
                         "success": True,
-                        "data": {
-                            "openid": openid,
-                            "preferences": preferences_data
-                        },
+                        "data": preferences,
                         "response_time": f"{time.time() - start_time:.3f}s"
                     })
-
+                    
             except sqlite3.Error as e:
                 print(f"数据库操作错误: {str(e)}")
                 return jsonify({
@@ -1079,7 +1061,7 @@ class AgentChatService:
                     "details": str(e),
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 500
-
+                
         except Exception as e:
             print(f"获取用户偏好错误: {str(e)}")
             return jsonify({
@@ -1094,115 +1076,77 @@ class AgentChatService:
         start_time = time.time()
         
         try:
-            # 验证token
-            auth_header = request.headers.get('Authorization')
-            if not auth_header or not auth_header.startswith('Bearer '):
-                print("验证失败: 缺少或无效的Authorization header")
+            data = request.get_json()
+            openid = data.get('openid')
+            
+            if not openid:
                 return jsonify({
                     "success": False,
-                    "message": "未授权的访问",
+                    "message": "缺少openid参数",
                     "response_time": f"{time.time() - start_time:.3f}s"
-                }), 401
-
-            token = auth_header.split(' ')[1]
-            print(f"当前token: {token}")  # 添加日志
+                }), 400
             
             try:
+                preferences_data = data.get('preferences', {})
+                
+                # 将数组转换为字符串
+                dining_styles_str = ','.join(preferences_data.get('diningStyles', []))
+                flavor_preferences_str = ','.join(preferences_data.get('flavorPreferences', []))
+                extracted_keywords_str = ','.join(preferences_data.get('extractedKeywords', []))
+                
                 with sqlite3.connect('vibebite.db') as conn:
                     cursor = conn.cursor()
-                    # 获取openid
-                    cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
-                    result = cursor.fetchone()
-                    if not result:
-                        print(f"验证失败: 无效的token: {token}")
-                        return jsonify({
-                            "success": False,
-                            "message": "无效或过期的token",
-                            "response_time": f"{time.time() - start_time:.3f}s"
-                        }), 401
                     
-                    openid = result[0]
-                    print(f"获取到的openid: {openid}")  # 添加日志
+                    # 更新用户偏好
+                    cursor.execute('''
+                        INSERT OR REPLACE INTO user_preferences 
+                        (openid, dining_scene, dining_styles, flavor_preferences,
+                         alcohol_attitude, restrictions, custom_description,
+                         extracted_keywords, created_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?,
+                            COALESCE((SELECT created_at FROM user_preferences WHERE openid = ?), CURRENT_TIMESTAMP),
+                            CURRENT_TIMESTAMP)
+                    ''', (
+                        openid,
+                        preferences_data.get('diningScene', ''),
+                        dining_styles_str,
+                        flavor_preferences_str,
+                        preferences_data.get('alcoholAttitude', ''),
+                        preferences_data.get('restrictions', ''),
+                        preferences_data.get('customDescription', ''),
+                        extracted_keywords_str,
+                        openid
+                    ))
                     
-                    try:
-                        request_data = request.get_json()
-                        print("接收到的原始数据:", request_data)
-                        
-                        # 从嵌套结构中获取preferences数据
-                        preferences_data = request_data.get('preferences', {})
-                        print("解析出的preferences数据:", preferences_data)
-                        
-                        # 将数组转换为字符串
-                        dining_styles_str = ','.join(preferences_data.get('diningStyles', []))
-                        flavor_preferences_str = ','.join(preferences_data.get('flavorPreferences', []))
-                        extracted_keywords_str = ','.join(preferences_data.get('extractedKeywords', []))
-                        
-                        print("处理后的数据:")
-                        print(f"dining_styles_str: {dining_styles_str}")
-                        print(f"flavor_preferences_str: {flavor_preferences_str}")
-                        print(f"extracted_keywords_str: {extracted_keywords_str}")
-                        
-                        # 准备插入的数据
-                        insert_data = (
-                            openid,
-                            preferences_data.get('diningScene', ''),
-                            dining_styles_str,
-                            flavor_preferences_str,
-                            preferences_data.get('alcoholAttitude', ''),
-                            preferences_data.get('restrictions', ''),
-                            preferences_data.get('customDescription', ''),
-                            extracted_keywords_str,
-                            openid
-                        )
-                        print(f"准备插入的数据: {insert_data}")
-                        
-                        # 更新用户偏好
-                        cursor.execute('''
-                            INSERT OR REPLACE INTO user_preferences 
-                            (openid, dining_scene, dining_styles, flavor_preferences,
-                             alcohol_attitude, restrictions, custom_description,
-                             extracted_keywords, created_at, updated_at)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?,
-                                COALESCE((SELECT created_at FROM user_preferences WHERE openid = ?), CURRENT_TIMESTAMP),
-                                CURRENT_TIMESTAMP)
-                        ''', insert_data)
-                        
-                        conn.commit()
-                        
-                        # 验证数据是否保存成功
-                        cursor.execute('SELECT * FROM user_preferences WHERE openid = ?', (openid,))
-                        saved_data = cursor.fetchone()
-                        print(f"保存后的数据: {saved_data}")
-
+                    conn.commit()
+                    
+                    # 验证数据是否保存成功
+                    cursor.execute('SELECT * FROM user_preferences WHERE openid = ?', (openid,))
+                    saved_data = cursor.fetchone()
+                    print(f"保存后的数据: {saved_data}")
+                    
+                    if saved_data:
                         return jsonify({
                             "success": True,
                             "message": "用户偏好更新成功",
                             "data": {
-                                "openid": openid,
-                                "preferences": preferences_data,
-                                "savedData": {
-                                    "diningScene": saved_data[1],
-                                    "diningStyles": saved_data[2].split(',') if saved_data[2] else [],
-                                    "flavorPreferences": saved_data[3].split(',') if saved_data[3] else [],
-                                    "alcoholAttitude": saved_data[4],
-                                    "restrictions": saved_data[5],
-                                    "customDescription": saved_data[6],
-                                    "extractedKeywords": saved_data[7].split(',') if saved_data[7] else []
-                                }
+                                "diningScene": saved_data[1],
+                                "diningStyles": saved_data[2].split(',') if saved_data[2] else [],
+                                "flavorPreferences": saved_data[3].split(',') if saved_data[3] else [],
+                                "alcoholAttitude": saved_data[4],
+                                "restrictions": saved_data[5],
+                                "customDescription": saved_data[6],
+                                "extractedKeywords": saved_data[7].split(',') if saved_data[7] else []
                             },
                             "response_time": f"{time.time() - start_time:.3f}s"
                         })
-
-                    except Exception as e:
-                        print(f"请求数据处理失败: {str(e)}")
-                        print(f"错误详情: {e.__class__.__name__}")
+                    else:
                         return jsonify({
                             "success": False,
-                            "message": "无效的请求数据格式",
-                            "details": str(e),
+                            "message": "保存数据后未找到记录",
                             "response_time": f"{time.time() - start_time:.3f}s"
-                        }), 400
-
+                        }), 500
+                        
             except sqlite3.Error as e:
                 print(f"数据库操作错误: {str(e)}")
                 return jsonify({
@@ -1211,7 +1155,7 @@ class AgentChatService:
                     "details": str(e),
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 500
-
+                
         except Exception as e:
             print(f"更新用户偏好错误: {str(e)}")
             return jsonify({
@@ -1241,36 +1185,19 @@ class AgentChatService:
         start_time = time.time()
         
         try:
-            # 验证token
-            auth_header = request.headers.get('Authorization')
-            if not auth_header or not auth_header.startswith('Bearer '):
-                print("验证失败: 缺少或无效的Authorization header")
+            data = request.get_json()
+            openid = data.get('openid')  # 直接使用openid
+            
+            if not openid:
                 return jsonify({
                     "success": False,
-                    "message": "未授权的访问",
+                    "message": "缺少openid参数",
                     "response_time": f"{time.time() - start_time:.3f}s"
-                }), 401
-
-            token = auth_header.split(' ')[1]
-            print(f"当前token: {token}")  # 添加日志
+                }), 400
             
             try:
                 with sqlite3.connect('vibebite.db') as conn:
                     cursor = conn.cursor()
-                    
-                    # 获取openid
-                    cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
-                    result = cursor.fetchone()
-                    if not result:
-                        print(f"验证失败: 无效的token: {token}")
-                        return jsonify({
-                            "success": False,
-                            "message": "无效或过期的token",
-                            "response_time": f"{time.time() - start_time:.3f}s"
-                        }), 401
-                    
-                    openid = result[0]
-                    print(f"获取到的openid: {openid}")  # 添加日志
                     
                     # 检查表是否存在
                     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='user_preferences'")
@@ -1311,7 +1238,7 @@ class AgentChatService:
                     
                     # 构建字典形式的数据
                     preferences_dict = dict(zip(columns, preferences_result))
-                    print(f"字典形式的数: {preferences_dict}")  # 添加日志
+                    print(f"字典形式的数据: {preferences_dict}")  # 添加日志
                     
                     # 构建用户偏好数据
                     preferences_data = {
@@ -1324,7 +1251,7 @@ class AgentChatService:
                         'extractedKeywords': preferences_dict.get('extracted_keywords', '').split(',') if preferences_dict.get('extracted_keywords') else []
                     }
                     
-                    print(f"处理后的偏好数据: {preferences_data}")  # 添日志
+                    print(f"处理后的偏好数据: {preferences_data}")  # 添加日志
 
                     # 如果所有值都为空，返回未设置信息
                     if all(not v for v in preferences_data.values()):
@@ -1357,7 +1284,7 @@ class AgentChatService:
 3. 饮品选择倾向
 4. 个性化推荐建议
 
-请用简洁专业的语言描述，突出关键特点。回答要分点并且要有具体的推荐。生成的格式可以被前端解析"""
+请用简洁专业的语言描述，突出关键特点。回答要分点并且要有具体的推荐。"""
 
                     # 调用大模型生成总结
                     request_id = str(uuid.uuid4())
@@ -1369,17 +1296,6 @@ class AgentChatService:
                         if summary != "没有找到响应":
                             break
                         time.sleep(0.1)
-                    
-                    # 创建或更新summary表
-                    cursor.execute('''
-                        CREATE TABLE IF NOT EXISTS preference_summaries (
-                            openid TEXT PRIMARY KEY,
-                            summary TEXT,
-                            created_at TEXT,
-                            updated_at TEXT,
-                            FOREIGN KEY (openid) REFERENCES users (openid)
-                        )
-                    ''')
                     
                     # 保存总结
                     cursor.execute('''
@@ -1396,13 +1312,13 @@ class AgentChatService:
                         "success": True,
                         "data": {
                             "summary": summary,
-                            "hasPreferences": True  # 添加标志位表示有偏好数据
+                            "hasPreferences": True
                         },
                         "response_time": f"{time.time() - start_time:.3f}s"
                     })
 
             except sqlite3.Error as e:
-                print(f"数据库操作��误: {str(e)}")
+                print(f"数据库操作错误: {str(e)}")
                 return jsonify({
                     "success": False,
                     "message": "数据库操作失败",
@@ -1424,131 +1340,119 @@ class AgentChatService:
         start_time = time.time()
         
         try:
-            # 验证token
-            auth_header = request.headers.get('Authorization')
-            if not auth_header or not auth_header.startswith('Bearer '):
+            data = request.get_json()
+            location = data.get('location', '深圳')
+            messages = data.get('messages', [])
+            timestamp = data.get('timestamp')
+            openid = data.get('openid')  # 直接使用openid
+            
+            print(f"当前agents: {self.agents.keys()}")  # 打印所有agent keys
+            print(f"请求的openid: {openid}")  # 打印请求的openid
+            
+            # 获取agent的对话历史
+            if openid not in self.agents:
+                print(f"未找到openid: {openid}")
                 return jsonify({
                     "success": False,
-                    "message": "未授权的访问",
+                    "message": f"未找到指定的agent: {openid}",
                     "response_time": f"{time.time() - start_time:.3f}s"
-                }), 401
-
-            token = auth_header.split(' ')[1]
+                }), 404
+            
+            agent = self.agents[openid]
+            chat_history = agent.memory
+            print(f"对话历史: {chat_history}")
+            
+            # 分析用户意图
+            memory_text = "\n".join([
+                f"用户: {msg['user_input']}\nAI: {msg['agent_output']}"
+                for msg in chat_history[-5:]  # 只使用最近5条记录
+            ])
+            
+            # 使用agent的process_recommend_task方法分析意图
+            intent_analysis = agent.process_recommend_task("intent_summary", memory_text)
+            print(f"意图分析结果: {intent_analysis}")
             
             try:
-                data = request.get_json()
-                location = data.get('location', '深圳')
-                messages = data.get('messages', [])
-                timestamp = data.get('timestamp')
-                agent_id = data.get('openid')
+                # 将字符串形式的列表转换为Python列表
+                intent_list = eval(intent_analysis)
+                if not isinstance(intent_list, list):
+                    raise ValueError("意图分析结果不是列表格式")
+            except Exception as e:
+                print(f"意图分析结果格式错误: {str(e)}")
+                intent_list = ["用餐"]  # 默认意图
+            
+            recommendations = []
+            images = []
+            location = "深圳"
+            # 根据每个意图进行搜索
+            for intent in intent_list:
+                search_query = f"{intent} {location} 小红书推荐"
+                print(f"搜索关键词: {search_query}")
                 
-                print(f"当前agents: {self.agents.keys()}")  # 打印所有agent keys
-                print(f"请求的agent_id: {agent_id}")  # 打印请求的agent_id
-                
-                # 获取agent的对话历史
-                if agent_id not in self.agents:
-                    print(f"未找到agent_id: {agent_id}")
-                    return jsonify({
-                        "success": False,
-                        "message": f"未找到指定的agent: {agent_id}",
-                        "response_time": f"{time.time() - start_time:.3f}s"
-                    }), 404
-                
-                agent = self.agents[agent_id]
-                chat_history = agent.memory
-                print(f"对话历史: {chat_history}")
-                
-                # 分析用户意图
-                memory_text = "\n".join([
-                    f"用户: {msg['user_input']}\nAI: {msg['agent_output']}"
-                    for msg in chat_history[-5:]  # 只使用最近5条记录
-                ])
-                
-                # 使用agent的process_recommend_task方法分析意图
-                intent_analysis = agent.process_recommend_task("intent_summary", memory_text)
-                print(f"意图分析结果: {intent_analysis}")
+                # 用Google搜索API
+                google_api_url = "https://google.serper.dev/search"
+                headers = {
+                    'X-API-KEY': '5e0ade74a776ca00770d7155a6ed361f25fde09a',
+                    'Content-Type': 'application/json'
+                }
+                search_data = {
+                    "q": search_query,
+                    "gl": "cn",
+                    "hl": "zh-cn",
+                    "location": "中国"
+                }
                 
                 try:
-                    # 将字符串形式的列表转换为Python列表
-                    intent_list = eval(intent_analysis)
-                    if not isinstance(intent_list, list):
-                        raise ValueError("意图分析结果不是列表格式")
-                except Exception as e:
-                    print(f"意图分析结果格式错误: {str(e)}")
-                    intent_list = ["用餐"]  # 默认意图
-                
-                recommendations = []
-                images = []
-                location = "深圳"
-                # 根据每个意图进行搜索
-                for intent in intent_list:
-                    search_query = f"{intent} {location} 小红书推荐"
-                    print(f"搜索关键词: {search_query}")
+                    response = requests.post(google_api_url, headers=headers, json=search_data, timeout=5)
+                    search_results = response.json()
+                    print(f"搜索结果: {search_results}")
                     
-                    # 用Google搜索API
-                    google_api_url = "https://google.serper.dev/search"
-                    headers = {
-                        'X-API-KEY': '5e0ade74a776ca00770d7155a6ed361f25fde09a',
-                        'Content-Type': 'application/json'
-                    }
-                    search_data = {
-                        "q": search_query,
-                        "gl": "cn",
-                        "hl": "zh-cn",
-                        "location": "中国"
-                    }
+                    # 处理搜索结果
+                    processed_results = self._process_search_results(search_results, intent)
+                    recommendations.extend(processed_results)
                     
-                    try:
-                        response = requests.post(google_api_url, headers=headers, json=search_data, timeout=5)
-                        search_results = response.json()
-                        print(f"搜索结果: {search_results}")
+                    # 处理图片结果
+                    if 'images' in search_results:
+                        for image in search_results['images'][:3]:  # 每个意图取前3张图
+                            images.append({
+                                'title': image.get('title', ''),
+                                'imageUrl': image.get('imageUrl', ''),
+                                'link': image.get('link', ''),
+                                'type': intent
+                            })
                         
-                        # 处理搜索结果
-                        processed_results = self._process_search_results(search_results, intent)
-                        recommendations.extend(processed_results)
-                        
-                        # 处理图片结果
-                        if 'images' in search_results:
-                            for image in search_results['images'][:3]:  # 每个意图取前3张图
-                                images.append({
-                                    'title': image.get('title', ''),
-                                    'imageUrl': image.get('imageUrl', ''),
-                                    'link': image.get('link', ''),
-                                    'type': intent
-                                })
-                            
-                    except requests.RequestException as e:
-                        print(f"搜索API请求错误: {str(e)}")
-                        continue
-                
-                # 使用大模型整合结果
-                if recommendations:
-                    organized_results = self._organize_recommendations(recommendations, intent_list)
-                else:
-                    organized_results = {"error": "未找到相关推荐"}
-                
-                return jsonify({
-                    "success": True,
-                    "data": {
-                        "intent_analysis": intent_list,
-                        "recommendations": organized_results,
-                        "images": images,
-                        "searchParameters": {
-                            "location": location,
-                            "timestamp": timestamp
-                        }
-                    },
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                })
+                except requests.RequestException as e:
+                    print(f"搜索API请求错误: {str(e)}")
+                    continue
+            
+            # 使用大模型整合结果
+            if recommendations:
+                organized_results = self._organize_recommendations(recommendations, intent_list)
+            else:
+                organized_results = {"error": "未找到相关推荐"}
+            
+            return jsonify({
+                "success": True,
+                "data": {
+                    "intent_analysis": intent_list,
+                    "recommendations": organized_results,
+                    "images": images,
+                    "searchParameters": {
+                        "location": location,
+                        "timestamp": timestamp
+                    }
+                },
+                "response_time": f"{time.time() - start_time:.3f}s"
+            })
 
-            except Exception as e:
-                print(f"处理推荐请求错误: {str(e)}")
-                return jsonify({
-                    "success": False,
-                    "message": "获取推荐信息失败",
-                    "details": str(e),
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                }), 500
+        except Exception as e:
+            print(f"处理推荐请求错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "获取推荐信息失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
 
         except Exception as e:
             print(f"获取推荐信息错误: {str(e)}")
@@ -1786,7 +1690,7 @@ class AgentChatService:
             return url
 
     def _extract_date(self, soup: BeautifulSoup) -> str:
-        """提取页面更新日期"""
+        """提取网页更新日期"""
         try:
             # 尝试多种可能的日期标签
             date_tags = soup.find_all(['time', 'span', 'div'], class_=['date', 'time', 'update-time'])
@@ -2387,88 +2291,55 @@ class AgentChatService:
         start_time = time.time()
         
         try:
-            # 验证token
-            auth_header = request.headers.get('Authorization')
-            if not auth_header or not auth_header.startswith('Bearer '):
-                print("缺少Authorization header")
-                return jsonify({
-                    "success": False,
-                    "message": "未授权的访问",
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                }), 401
-
-            token = auth_header.split(' ')[1]
-            print(f"收到token: {token}")  # 添加日志
+            data = request.args
+            openid = data.get('openid')
             
-            # 从数据库验证token并获取openid
-            try:
-                with sqlite3.connect('vibebite.db') as conn:
-                    cursor = conn.cursor()
-                    # 打印所有sessions表的内容用于调试
-                    cursor.execute('SELECT * FROM sessions')
-                    all_sessions = cursor.fetchall()
-                    print(f"当前所有sessions: {all_sessions}")
-                    
-                    cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
-                    result = cursor.fetchone()
-                    
-                    if not result:
-                        print(f"数据库中未找到token: {token}")
-                        return jsonify({
-                            "success": False,
-                            "message": "无效的token",
-                            "response_time": f"{time.time() - start_time:.3f}s"
-                        }), 401
-                    
-                    openid = result[0]
-                    print(f"获取到openid: {openid}")
-                    
-                    # 获取AI设置
-                    cursor.execute('''
-                        SELECT name, personality, speaking_style, memories
-                        FROM ai_settings 
-                        WHERE openid = ?
-                    ''', (openid,))
-                    
-                    settings_result = cursor.fetchone()
-                    
-                    if settings_result:
-                        settings = {
-                            'name': settings_result[0],
-                            'personality': settings_result[1],
-                            'speakingStyle': settings_result[2],
-                            'memories': settings_result[3]
-                        }
-                    else:
-                        # 如果没有设置，返回默认值
-                        settings = {
-                            'name': '默认助手',
-                            'personality': '友好、耐心、专业',
-                            'speakingStyle': '正式但亲切',
-                            'memories': '我是一个AI助手，我的目标是帮助用户解决问题。'
-                        }
-                    
-                    print(f"返回的设置: {settings}")  # 添加日志
-                    return jsonify({
-                        "success": True,
-                        "data": settings,
-                        "response_time": f"{time.time() - start_time:.3f}s"
-                    })
-                    
-            except sqlite3.Error as e:
-                print(f"数据库查询错误: {str(e)}")
+            if not openid:
                 return jsonify({
                     "success": False,
-                    "message": "数据库查询失败",
-                    "details": str(e),
+                    "message": "缺少openid参数",
                     "response_time": f"{time.time() - start_time:.3f}s"
-                }), 500
-
-        except Exception as e:
-            print(f"获取AI设置错误: {str(e)}")
+                }), 400
+                
+            # 从数据库获取AI设置
+            with sqlite3.connect('vibebite.db') as conn:
+                cursor = conn.cursor()
+                
+                cursor.execute('''
+                    SELECT name, personality, speaking_style, memories
+                    FROM ai_settings 
+                    WHERE openid = ?
+                ''', (openid,))
+                
+                result = cursor.fetchone()
+                
+                if result:
+                    settings = {
+                        'name': result[0],
+                        'personality': result[1],
+                        'speakingStyle': result[2],
+                        'memories': result[3]
+                    }
+                else:
+                    # 如果没有设置，返回默认值
+                    settings = {
+                        'name': '默认助手',
+                        'personality': '友好、耐心、专业',
+                        'speakingStyle': '正式但亲切',
+                        'memories': '我是一个AI助手，我的目标是帮助用户解决问题。'
+                    }
+                
+                return jsonify({
+                    "success": True,
+                    "data": settings,
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                })
+                
+        except sqlite3.Error as e:
+            print(f"数据库操作错误: {str(e)}")
             return jsonify({
                 "success": False,
-                "message": "获取AI设置失败",
+                "message": "数据库操作失败",
                 "details": str(e),
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
