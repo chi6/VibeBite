@@ -156,8 +156,9 @@ class Agent:
             for i, m in enumerate(self.memory[-3:])  # 只使用最近3条记录
         ])
 
-    def update_system_prompt(self, new_prompt: str):
+    def update_system_prompt(self, task_name: str, new_prompt: str):
         """更新agent的system prompt"""
+        print(f"update_system_prompt, openid: {self.openid}")
         if self.openid:
-            self.prompt_manager.update_user_prompt(self.openid, "chat", new_prompt)
-            print(f"已更新用户 {self.openid} 的system prompt: {new_prompt}")
+            self.prompt_manager.update_user_prompt(self.openid, task_name, new_prompt)
+            print(f"已更新用户 {self.openid} 的, task_name: {task_name} 的system prompt: {new_prompt}")

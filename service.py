@@ -66,6 +66,9 @@ class AgentChatService:
         self.app.route('/api/share/save', methods=['POST'])(self.save_shared_session)
         self.app.route('/api/share/<share_id>', methods=['GET'])(self.get_shared_session)
         self.app.route('/api/update_pref', methods=['POST'])(self.update_user_preferences)
+        self.app.route('/api/ai/settings', methods=['POST'])(self.update_ai_settings)
+        self.app.route('/api/wx/openid', methods=['POST'])(self.get_wx_openid)
+        self.app.route('/api/ai/settings', methods=['GET', 'POST'])(self.ai_settings)
 
     def init_components(self):
         """初始化所有组件"""
@@ -99,7 +102,11 @@ class AgentChatService:
                         2. 说明方案的可行性和潜在风险
                         3. 与问分析专家讨，优化解方案
                         请用清晰条理的方式描述解决方案。""",
-            "status_check": "你是徐老师，是徐佳铭的AI分身，性格像线条小狗，请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容，请用json格式返回，注意：1. 每一个字段都要是中文且有值。 2. 返回的内容风格要像二次元漫画风格。",
+            "status_check": """请根据你的设定返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。
+请用json格式返回，注意：
+1. 每一个字段都要是中文且有值
+2. 返回的内容要符合你的性格特征和说话风格
+3. 在thought中可以提到你的重要记忆""",
             "intent_summary": "你是一个意图分析专家，请根据对话历史用户提供的意图，并为用户做好今天的约会规划，结果用list格式返回。如：['吃饭', '逛街', '看电影']"
         }
         for task_name, prompt in base_prompts.items():
@@ -121,22 +128,33 @@ class AgentChatService:
         
     def _init_default_agents(self):
         """初始化默认agents和groups"""
-        # 创建默认agents
-        default_agents = [
-            Agent("1", "通用助手", self.llm_client, self.prompt_manager, openid="1"),
-            Agent("2", "分析专家", self.llm_client, self.prompt_manager, openid="2"),
-            Agent("3", "领域专家", self.llm_client, self.prompt_manager, openid="3")
-        ]
-        
-        for agent in default_agents:
-            self.agents[agent.agent_id] = agent
+        try:
+            # 创建默认agents - 使用openid_agent_id作为key
+            system_openid = "system"
+            default_agents = [
+                Agent("1", "通用助手", self.llm_client, self.prompt_manager, openid=system_openid),
+                Agent("2", "分析专家", self.llm_client, self.prompt_manager, openid=system_openid),
+                Agent("3", "领域专家", self.llm_client, self.prompt_manager, openid=system_openid)
+            ]
             
-        # 创建默认group
-        default_group = Group("main_group", "主群组")
-        for agent in default_agents:
-            default_group.add_agent(agent)
-        self.groups[default_group.group_id] = default_group
-        
+            for agent in default_agents:
+                # 使用openid_agent_id格式作为key
+                agent_key = f"{system_openid}_{agent.agent_id}"
+                self.agents[agent_key] = agent
+                print(f"初始化agent: {agent_key}")  # 添加日志
+                
+            # 创建默认group
+            default_group = Group("main_group", "主群组")
+            for agent in default_agents:
+                default_group.add_agent(agent)
+            self.groups[default_group.group_id] = default_group
+            
+            print(f"已初始化的agents: {list(self.agents.keys())}")  # 打印所有初始化的agent keys
+            
+        except Exception as e:
+            print(f"初始化默认agents失败: {str(e)}")
+            raise
+
     def init_agent(self):
         """初始化新的agent"""
         start_time = time.time()
@@ -158,7 +176,9 @@ class AgentChatService:
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 400
         
-        agent_key = f"{openid}_{agent_id}"
+        # 使用openid_agent_id格式作为key
+        agent_key = f"{openid}"
+        print(f"创建agent, key: {agent_key}")  # 添加日志
         
         if agent_key in self.agents:
             return jsonify({
@@ -174,6 +194,7 @@ class AgentChatService:
             openid=openid,
         )
         self.agents[agent_key] = new_agent
+        print(f"当前所有agents: {list(self.agents.keys())}")  # 添加日志
         
         return jsonify({
             "agent_id": agent_id,
@@ -194,7 +215,7 @@ class AgentChatService:
                 "response": "Invalid JSON"
             }), 400
             
-        agent_id = data.get('agentId')
+        agent_id = data.get('openid')
         message = data.get('message')
         task_name = data.get('taskName', 'chat')
         group_id = data.get('groupId', 'main_group')
@@ -311,8 +332,8 @@ class AgentChatService:
         start_time = time.time()
         data = request.get_json()
         
-        agent_id = data.get('agent_id')
-        print(agent_id)
+        agent_id = data.get('openid')
+        print("agent ids:", self.agents.keys(), "agent_id:", agent_id)
         if agent_id not in self.agents:
             return jsonify({
                 "error": "Agent not found",
@@ -346,14 +367,14 @@ class AgentChatService:
             with sqlite3.connect(db_path) as conn:
                 cursor = conn.cursor()
                 
-                print("删除旧...")
+                print("����除旧...")
                 cursor.execute("DROP TABLE IF EXISTS preference_summaries")
                 cursor.execute("DROP TABLE IF EXISTS user_preferences")
                 cursor.execute("DROP TABLE IF EXISTS user_profiles")
                 cursor.execute("DROP TABLE IF EXISTS sessions")
                 cursor.execute("DROP TABLE IF EXISTS users")
                 
-                print("创建数据表...")
+                print("创建数据���...")
                 
                 # 创建用户表
                 print("- 创建 users 表")
@@ -372,10 +393,16 @@ class AgentChatService:
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS sessions (
                         token TEXT PRIMARY KEY,
-                        openid TEXT,
-                        created_at TEXT,
+                        openid TEXT NOT NULL,
+                        created_at TEXT NOT NULL,
                         FOREIGN KEY (openid) REFERENCES users (openid)
                     )
+                ''')
+                
+                # 添加索引以提高查询性能
+                cursor.execute('''
+                    CREATE INDEX IF NOT EXISTS idx_sessions_openid 
+                    ON sessions (openid)
                 ''')
                 
                 # 创建用户档案表
@@ -461,16 +488,20 @@ class AgentChatService:
             print(f"当前工作目录: {os.getcwd()}")
             raise
 
-    def _save_user_session(self, token, openid):
+    def _save_user_session(self, token: str, openid: str) -> bool:
         """保存用户会话信息到数据库"""
         try:
             with sqlite3.connect('vibebite.db') as conn:
                 cursor = conn.cursor()
+                # 先删除旧的session
+                cursor.execute('DELETE FROM sessions WHERE openid = ?', (openid,))
+                # 插入新的session
                 cursor.execute(
-                    'INSERT OR REPLACE INTO sessions (token, openid, created_at) VALUES (?, ?, ?)',
+                    'INSERT INTO sessions (token, openid, created_at) VALUES (?, ?, ?)',
                     (token, openid, datetime.now().isoformat())
                 )
                 conn.commit()
+                print(f"保存session成功: token={token}, openid={openid}")  # 添加日志
                 return True
         except Exception as e:
             print(f"保存会话信息错误: {str(e)}")
@@ -545,7 +576,7 @@ class AgentChatService:
                     }), 404
                     
                 user_summary = summary_result[0]
-                
+                meta_prompt = self.prompt_manager.get_prompt("status_check", openid)
                 # 构建新的system prompt
                 new_system_prompt = f"""你是一个智能助手。
 
@@ -556,12 +587,15 @@ class AgentChatService:
 
                 # 获取请求数据中的agent_id
                 data = request.get_json()
-                agent_id = data.get('agent_id')
-                
+                agent_id = data.get('openid')
+                print(f"agent_id: {agent_id}")
                 if agent_id:
                     # 如果指定了agent_id,只更新该agent
                     if agent_id in self.agents:
-                        self.agents[agent_id].update_system_prompt(new_system_prompt)
+                        status_check_prompt = self.prompt_manager.get_prompt("status_check", agent_id)
+                        split_prompt = status_check_prompt.split("请返回")
+                        new_system_prompt = split_prompt[0] + "\n" + new_system_prompt
+                        self.agents[agent_id].update_system_prompt("chat", new_system_prompt)
                         print(f"已更新agent {agent_id}的prompt")
                     else:
                         return jsonify({
@@ -570,21 +604,20 @@ class AgentChatService:
                             "response_time": f"{time.time() - start_time:.3f}s"
                         }), 404
                 else:
-                    if updated_count == 0:
-                        print(f"未找到与用户{openid}关联的agent")
+                    print(f"未找到与用户{openid}关联的agent")
                 
                 return jsonify({
                     "success": True,
                     "message": "用户偏好已更新到AI系统",
                     "data": {
                         "summary": user_summary,
-                        "updated_agents": updated_count if not agent_id else 1
+                        "updated_agents": 0 if not agent_id else 1
                     },
                     "response_time": f"{time.time() - start_time:.3f}s"
                 })
 
         except sqlite3.Error as e:
-            print(f"数据库操作错误: {str(e)}")
+            print(f"���据库操作错误: {str(e)}")
             return jsonify({
                 "success": False,
                 "message": "数据库操作失败",
@@ -726,7 +759,7 @@ class AgentChatService:
                     cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
                     result = cursor.fetchone()
                     if not result:
-                        print(f"验证败: 无效的token: {token}")
+                        print(f"��证败: 无效的token: {token}")
                         return jsonify({
                             "success": False,
                             "message": "无效或过期的token",
@@ -824,13 +857,11 @@ class AgentChatService:
         
         try:
             data = request.get_json()
-            print("收到登录请求数据:", data)  # 添加日志
-            
             code = data.get('code')
             if not code:
                 return jsonify({
-                    "error": "Missing code",
-                    "message": "请求中缺少code参数",
+                    "success": False,
+                    "message": "缺少code参数",
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 400
 
@@ -839,15 +870,7 @@ class AgentChatService:
             APP_ID = os.getenv('WX_APP_ID')
             APP_SECRET = os.getenv('WX_APP_SECRET')
             
-            if not APP_ID or not APP_SECRET:
-                print("环境变量配置错误: APP_ID或APP_SECRET未设置")  # 添加日志
-                return jsonify({
-                    "error": "Configuration error",
-                    "message": "服务器配置错误",
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                }), 500
-
-            # 调用微信的 code2Session 接口
+            # 调用微信接口获取openid
             url = "https://api.weixin.qq.com/sns/jscode2session"
             params = {
                 'appid': APP_ID,
@@ -856,55 +879,80 @@ class AgentChatService:
                 'grant_type': 'authorization_code'
             }
             
-            print("请求微信接口参:", {**params, 'secret': '******'})  # 添加日志（隐藏secret）
-            
             response = requests.get(url, params=params)
             wx_data = response.json()
-            print("微信接口返回:", wx_data)  # 添加日志
-
+            
             if 'errcode' in wx_data:
-                error_msg = wx_data.get('errmsg', '未知错误')
-                print(f"微信接口错误: {error_msg}")  # 添加日志
                 return jsonify({
-                    "error": "WeChat API Error",
-                    "message": error_msg,
-                    "errcode": wx_data.get('errcode'),
+                    "success": False,
+                    "message": wx_data.get('errmsg', '获取openid失败'),
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 400
-
-            # 获取openid和session_key
+            
             openid = wx_data.get('openid')
-            session_key = wx_data.get('session_key')
             
-            if not openid or not session_key:
-                print("微信接口返回数据不完整")  # 添加日志
-                return jsonify({
-                    "error": "Invalid Response",
-                    "message": "微信接口返回数据不完整",
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                }), 500
-
             # 生成token
-            token = self._generate_session_token(openid, session_key)
+            token = self._generate_session_token(openid, wx_data.get('session_key'))
+            print(f"生成新token: {token} 对应openid: {openid}")  # 添加日志
             
-            # 存会话信息到数据库
-            if not self._save_user_session(token, openid):
+            # 存储会话信息到数据库
+            try:
+                with sqlite3.connect('vibebite.db') as conn:
+                    cursor = conn.cursor()
+                    # 先删除旧的session
+                    cursor.execute('DELETE FROM sessions WHERE openid = ?', (openid,))
+                    # 插入新的session
+                    cursor.execute(
+                        'INSERT INTO sessions (token, openid, created_at) VALUES (?, ?, ?)',
+                        (token, openid, datetime.now().isoformat())
+                    )
+                    conn.commit()
+                    print(f"保存session成功: token={token}, openid={openid}")
+            except Exception as e:
+                print(f"保存session失败: {str(e)}")
                 return jsonify({
-                    "error": "Session Storage Error",
-                    "message": "保存会话息失败",
+                    "success": False,
+                    "message": "保存会话信息失败",
+                    "details": str(e),
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 500
 
+            # 检查session是否保存成功
+            cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
+            if not cursor.fetchone():
+                print(f"验证session保存失败: 未找到token {token}")
+                return jsonify({
+                    "success": False,
+                    "message": "会话信息保存验证失败",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 500
+            
+            # 检查是否已经存在该用户的agent
+            agent_key = f"{openid}"  # 默认创建id为1的agent
+            if agent_key not in self.agents:
+                print(f"为新用户{openid}创建agent")
+                # 创建新的agent
+                new_agent = Agent(
+                    agent_id="1",
+                    name="默认助手",
+                    llm_client=self.llm_client,
+                    prompt_manager=self.prompt_manager,
+                    openid=openid
+                )
+                self.agents[agent_key] = new_agent
+                print(f"创建agent成功: {agent_key}")
+            
             return jsonify({
                 "success": True,
                 "token": token,
+                "agent_id": "1",  # 返回创建的agent_id
                 "response_time": f"{time.time() - start_time:.3f}s"
             })
-
+            
         except Exception as e:
-            print(f"登录处理异常: {str(e)}")  # 添加日志
+            print(f"登录处理异常: {str(e)}")
             return jsonify({
-                "error": "Server Error",
+                "success": False,
                 "message": f"服务器处理异常: {str(e)}",
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
@@ -1276,7 +1324,7 @@ class AgentChatService:
                         'extractedKeywords': preferences_dict.get('extracted_keywords', '').split(',') if preferences_dict.get('extracted_keywords') else []
                     }
                     
-                    print(f"处理后的偏好数据: {preferences_data}")  # 添加日志
+                    print(f"处理后的偏好数据: {preferences_data}")  # 添日志
 
                     # 如果所有值都为空，返回未设置信息
                     if all(not v for v in preferences_data.values()):
@@ -1307,9 +1355,9 @@ class AgentChatService:
 1. 用户的主要用餐特征和场景偏好
 2. 口味和用餐方式特点
 3. 饮品选择倾向
-4. 个性化推荐建
+4. 个性化推荐建议
 
-请用简洁专业的语言描述，突出关键特点。回答要分点并且要有具体的推荐。"""
+请用简洁专业的语言描述，突出关键特点。回答要分点并且要有具体的推荐。生成的格式可以被前端解析"""
 
                     # 调用大模型生成总结
                     request_id = str(uuid.uuid4())
@@ -1354,7 +1402,7 @@ class AgentChatService:
                     })
 
             except sqlite3.Error as e:
-                print(f"数据库操作错误: {str(e)}")
+                print(f"数据库操作��误: {str(e)}")
                 return jsonify({
                     "success": False,
                     "message": "数据库操作失败",
@@ -1392,7 +1440,7 @@ class AgentChatService:
                 location = data.get('location', '深圳')
                 messages = data.get('messages', [])
                 timestamp = data.get('timestamp')
-                agent_id = data.get('agentId')
+                agent_id = data.get('openid')
                 
                 print(f"当前agents: {self.agents.keys()}")  # 打印所有agent keys
                 print(f"请求的agent_id: {agent_id}")  # 打印请求的agent_id
@@ -1437,7 +1485,7 @@ class AgentChatService:
                     search_query = f"{intent} {location} 小红书推荐"
                     print(f"搜索关键词: {search_query}")
                     
-                    # ���用Google搜索API
+                    # 用Google搜索API
                     google_api_url = "https://google.serper.dev/search"
                     headers = {
                         'X-API-KEY': '5e0ade74a776ca00770d7155a6ed361f25fde09a',
@@ -2151,6 +2199,279 @@ class AgentChatService:
             print(f"提取小红书信息失败: {str(e)}")
             
         return details
+
+    def get_wx_openid(self):
+        """获取微信openid"""
+        start_time = time.time()
+        
+        try:
+            data = request.get_json()
+            code = data.get('code')
+            if not code:
+                return jsonify({
+                    "success": False,
+                    "message": "缺少code参数",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 400
+
+            # 从环境变量获取小程序配置
+            load_dotenv()
+            APP_ID = os.getenv('WX_APP_ID')
+            APP_SECRET = os.getenv('WX_APP_SECRET')
+            
+            # 调用微信接口获取openid
+            url = "https://api.weixin.qq.com/sns/jscode2session"
+            params = {
+                'appid': APP_ID,
+                'secret': APP_SECRET,
+                'js_code': code,
+                'grant_type': 'authorization_code'
+            }
+            
+            response = requests.get(url, params=params)
+            wx_data = response.json()
+            
+            if 'errcode' in wx_data:
+                return jsonify({
+                    "success": False,
+                    "message": wx_data.get('errmsg', '获取openid失败'),
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 400
+            
+            return jsonify({
+                "success": True,
+                "openid": wx_data.get('openid'),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            })
+            
+        except Exception as e:
+            print(f"获取openid错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "获取openid失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
+
+    def update_ai_settings(self):
+        """更新AI设置"""
+        start_time = time.time()
+        
+        try:
+            data = request.get_json()
+            openid = data.get('openid')
+            name = data.get('name')
+            personality = data.get('personality')
+            speaking_style = data.get('speakingStyle')
+            memories = data.get('memories')
+            timestamp = data.get('timestamp')
+            
+            if not openid:
+                return jsonify({
+                    "success": False,
+                    "message": "缺少openid参数",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 400
+            
+            # 构建新的system prompt
+            system_prompt = f"""你是一个名叫{name}的AI助手。
+
+性格特征：
+{personality}
+
+说话风格：
+{speaking_style}
+
+重要记忆：
+{memories}
+
+请在对话中始终保持这些特征，提供友好且个性化的回答。"""
+
+            # 构建status_check的特定prompt
+            status_check_prompt = f"""你是一个名叫{name}的AI助手。
+
+性格特征：
+{personality}
+
+说话风格：
+{speaking_style}
+
+重要记忆：
+{memories}
+
+请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。
+请用json格式返回，注意：
+1. 每一个字段都要是中文且有值
+2. 返回的内容要符合你的性格特征和说话风格
+3. 在thought中可以提到你的重要记忆"""
+
+            # 更新数据库中的AI设置
+            with sqlite3.connect('vibebite.db') as conn:
+                cursor = conn.cursor()
+                
+                # 创建ai_settings表（如果不存在）
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS ai_settings (
+                        openid TEXT PRIMARY KEY,
+                        name TEXT,
+                        personality TEXT,
+                        speaking_style TEXT,
+                        memories TEXT,
+                        created_at TEXT,
+                        updated_at TEXT,
+                        FOREIGN KEY (openid) REFERENCES users (openid)
+                    )
+                ''')
+                
+                # 更新AI设置
+                cursor.execute('''
+                    INSERT OR REPLACE INTO ai_settings 
+                    (openid, name, personality, speaking_style, memories, 
+                     created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?,
+                        COALESCE((SELECT created_at FROM ai_settings WHERE openid = ?), CURRENT_TIMESTAMP),
+                        CURRENT_TIMESTAMP)
+                ''', (openid, name, personality, speaking_style, memories, openid))
+                
+                conn.commit()
+                
+                # 更新所有与该用户关联的agent的prompts
+                agent_keys = [key for key in self.agents.keys() if str(key).startswith(openid)]
+                print(f"agent_keys: {agent_keys}")
+                for agent_key in agent_keys:
+                    agent = self.agents[agent_key]
+                    # 更新通用prompt
+                    agent.update_system_prompt("status_check", status_check_prompt)
+                    # 更新status_check的特定prompt
+                    #agent.prompt_manager.update_user_prompt(openid, "status_check", status_check_prompt)
+                    print(f"已更新agent {agent_key}的prompts")
+                
+                return jsonify({
+                    "success": True,
+                    "message": "AI设置更新成功",
+                    "data": {
+                        "openid": openid,
+                        "name": name,
+                        "updatedAgents": len(agent_keys)
+                    },
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                })
+                
+        except sqlite3.Error as e:
+            print(f"数据库操作错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "数据库操作失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
+            
+        except Exception as e:
+            print(f"更新AI设置错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "更新AI设置失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
+
+    def ai_settings(self):
+        """处理AI设置的获取和更新"""
+        if request.method == 'GET':
+            return self.get_ai_settings()
+        else:  # POST
+            return self.update_ai_settings()
+
+    def get_ai_settings(self):
+        """获取AI设置"""
+        start_time = time.time()
+        
+        try:
+            # 验证token
+            auth_header = request.headers.get('Authorization')
+            if not auth_header or not auth_header.startswith('Bearer '):
+                print("缺少Authorization header")
+                return jsonify({
+                    "success": False,
+                    "message": "未授权的访问",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 401
+
+            token = auth_header.split(' ')[1]
+            print(f"收到token: {token}")  # 添加日志
+            
+            # 从数据库验证token并获取openid
+            try:
+                with sqlite3.connect('vibebite.db') as conn:
+                    cursor = conn.cursor()
+                    # 打印所有sessions表的内容用于调试
+                    cursor.execute('SELECT * FROM sessions')
+                    all_sessions = cursor.fetchall()
+                    print(f"当前所有sessions: {all_sessions}")
+                    
+                    cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
+                    result = cursor.fetchone()
+                    
+                    if not result:
+                        print(f"数据库中未找到token: {token}")
+                        return jsonify({
+                            "success": False,
+                            "message": "无效的token",
+                            "response_time": f"{time.time() - start_time:.3f}s"
+                        }), 401
+                    
+                    openid = result[0]
+                    print(f"获取到openid: {openid}")
+                    
+                    # 获取AI设置
+                    cursor.execute('''
+                        SELECT name, personality, speaking_style, memories
+                        FROM ai_settings 
+                        WHERE openid = ?
+                    ''', (openid,))
+                    
+                    settings_result = cursor.fetchone()
+                    
+                    if settings_result:
+                        settings = {
+                            'name': settings_result[0],
+                            'personality': settings_result[1],
+                            'speakingStyle': settings_result[2],
+                            'memories': settings_result[3]
+                        }
+                    else:
+                        # 如果没有设置，返回默认值
+                        settings = {
+                            'name': '默认助手',
+                            'personality': '友好、耐心、专业',
+                            'speakingStyle': '正式但亲切',
+                            'memories': '我是一个AI助手，我的目标是帮助用户解决问题。'
+                        }
+                    
+                    print(f"返回的设置: {settings}")  # 添加日志
+                    return jsonify({
+                        "success": True,
+                        "data": settings,
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    })
+                    
+            except sqlite3.Error as e:
+                print(f"数据库查询错误: {str(e)}")
+                return jsonify({
+                    "success": False,
+                    "message": "数据库查询失败",
+                    "details": str(e),
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 500
+
+        except Exception as e:
+            print(f"获取AI设置错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "获取AI设置失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
 
 # 创建服实例
 service = AgentChatService()
