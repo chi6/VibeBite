@@ -1,0 +1,82 @@
+<view class="container">
+  <view class="ai-avatar-section {{isCustomizing ? 'customizing' : ''}}">
+    <image 
+      class="avatar-img" 
+      src="/images/dog.gif" 
+      mode="aspectFit"
+      bindtouchstart="onCustomizeStart"
+      bindtouchend="onCustomizeEnd"
+    ></image>
+    <view class="avatar-hint">
+      <text class="hint-text">捏捏我来调教吧~</text>
+      <text class="hint-emoji">✨</text>
+    </view>
+  </view>
+
+  <view class="settings-form">
+    <view class="form-item">
+      <view class="label-container">
+        <text class="label-icon">👋</text>
+        <text class="label">给我起个名字</text>
+      </view>
+      <input 
+        class="input" 
+        value="{{aiName}}" 
+        placeholder="比如：小饭团、美食达人..." 
+        bindinput="onNameInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="label-container">
+        <text class="label-icon">🎭</text>
+        <text class="label">性格选择</text>
+      </view>
+      <picker 
+        bindchange="onPersonalityChange" 
+        value="{{personalities.indexOf(personality)}}" 
+        range="{{personalities}}"
+      >
+        <view class="picker">
+          <text class="picker-value">{{personality}}</text>
+          <text class="picker-arrow">❯</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="label-container">
+        <text class="label-icon">💭</text>
+        <text class="label">说话风格</text>
+      </view>
+      <picker 
+        bindchange="onStyleChange" 
+        value="{{speakingStyles.indexOf(speakingStyle)}}" 
+        range="{{speakingStyles}}"
+      >
+        <view class="picker">
+          <text class="picker-value">{{speakingStyle}}</text>
+          <text class="picker-arrow">❯</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="label-container">
+        <text class="label-icon">💝</text>
+        <text class="label">要记住的事</text>
+      </view>
+      <textarea 
+        class="textarea" 
+        value="{{memories}}" 
+        placeholder="比如：我最爱吃火锅、不能吃太辣..." 
+        bindinput="onMemoriesInput"
+      />
+    </view>
+  </view>
+
+  <button class="save-btn gradient-bg" bindtap="saveSettings">
+    <text class="btn-text">开始美食之旅</text>
+    <text class="btn-emoji">🚀</text>
+  </button>
+</view> 

@@ -97,13 +97,74 @@ page {
 }
 
 .preferences-content {
+  padding: 0;
+  background: transparent;
+}
+
+.pref-item {
+  display: flex;
+  align-items: flex-start;
   padding: 20rpx;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 16rpx;
+  margin-bottom: 16rpx;
 }
 
-.preferences-summary {
+.pref-icon {
+  font-size: 36rpx;
+  margin-right: 16rpx;
+  background: rgba(255, 255, 255, 0.9);
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pref-text {
+  flex: 1;
+}
+
+.pref-label {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.pref-value {
   font-size: 28rpx;
+  color: #333;
+  line-height: 1.4;
+}
+
+.pref-recommend {
+  margin-top: 24rpx;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+
+.recommend-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.recommend-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.recommend-title {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.recommend-content {
+  font-size: 26rpx;
   color: #666;
   line-height: 1.6;
 }
@@ -193,5 +254,25 @@ page {
   
   .ai-thought {
     color: #999;
+  }
+  
+  .pref-item, .pref-recommend {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .pref-label {
+    color: #999;
+  }
+  
+  .pref-value, .recommend-title {
+    color: #fff;
+  }
+  
+  .recommend-content {
+    color: #ccc;
+  }
+  
+  .pref-icon {
+    background: rgba(255, 255, 255, 0.15);
   }
 }

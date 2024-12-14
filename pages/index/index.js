@@ -1,5 +1,4 @@
 // index.js
-const defaultAvatarUrl = '/images/default-avatar.png'
 const api = require('../../services/api');
 
 Page({
@@ -7,22 +6,38 @@ Page({
     aiStatus: {
       mood: '加载中...',
       activity: '加载中...',
-      thought: '加载中...'
+      thought: '加载中...',
+      name: '加载中...'
     },
-    agentId: '1',
+    openid: '',
     preferences: {
       summary: '加载中...'
     }
   },
 
   onLoad() {
-    this.fetchAIStatus();
-    this.fetchPreferencesSummary();
+    wx.login({
+      success: (res) => {
+        if (res.code) {
+          api.request('/api/wx/openid', {
+            method: 'POST',
+            data: { code: res.code }
+          }).then(openidRes => {
+            this.setData({ openid: openidRes.openid });
+            this.fetchAIStatus();
+            this.fetchPreferencesSummary();
+            this.fetchAISettings();
+          }).catch(err => {
+            console.error('获取openid失败:', err);
+          });
+        }
+      }
+    });
   },
 
   fetchAIStatus() {
     const requestData = {
-      agent_id: this.data.agentId
+      openid: this.data.openid
     };
     api.getAIStatus(requestData).then(status => {
       this.setData({
@@ -50,9 +65,22 @@ Page({
     api.getPreferencesSummary().then(res => {
       wx.hideLoading();
       if (res.success && res.data) {
-        this.setData({
-          'preferences.summary': res.data.summary || '暂无餐饮喜好信息'
-        });
+        try {
+          const preferencesData = JSON.parse(res.data.summary);
+          this.setData({
+            preferences: {
+              diningFeatures: preferencesData["主要用餐特征和场景偏好"],
+              tastePreferences: preferencesData["口味和用餐方式特点"],
+              drinkPreferences: preferencesData["饮品选择倾向"],
+              recommendations: preferencesData["个性化推荐建议"]
+            }
+          });
+        } catch (e) {
+          console.error('解析偏好数据失败:', e);
+          this.setData({
+            'preferences.summary': '数据解析失败，请稍后重试'
+          });
+        }
       } else {
         throw new Error('获取数据失败');
       }
@@ -65,8 +93,19 @@ Page({
     });
   },
 
+  fetchAISettings() {
+    api.getAISettings().then(res => {
+      if (res.success && res.data) {
+        this.setData({
+          'aiStatus.name': res.data.name || 'AI智能助手'
+        });
+      }
+    }).catch(err => {
+      console.error('获取AI设置失败:', err);
+    });
+  },
+
   goToAIChat() {
-    // 先获取位置信息
     wx.getLocation({
       type: 'gcj02',
       success: (res) => {
@@ -75,10 +114,9 @@ Page({
           longitude: res.longitude
         };
         
-        // 传入 agentId 和 location 参数
-        api.updatePreferences(this.data.agentId, location).then(() => {
+        api.updatePreferences(this.data.openid, location).then(() => {
           wx.navigateTo({
-            url: '/pages/ai-chat/ai-chat',
+            url: `/pages/ai-chat/ai-chat?openid=${this.data.openid}&aiName=${this.data.aiStatus.name || 'AI 助手'}`,
             fail: (err) => {
               console.error('跳转失败:', err);
               wx.showToast({

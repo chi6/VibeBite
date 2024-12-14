@@ -2,32 +2,73 @@ import api from '../../services/api';
 
 Page({
   data: {
+    openid: '',
     messages: [],
-    inputMessage: '',
-    scrollToMessage: '',
+    inputValue: '',
+    scrollTop: 0,
     isLoading: false,
     location: null,
     aiInteractionContent: '欢迎来到AI互动区域',
     recommendations: [],
-    images: [],
-    relatedQuestions: [],
     relatedSearches: [],
     showRecommendations: false,
     lastRecommendationTime: 0,
-    currentTab: 'restaurants',
     forceUpdate: false,
     shareId: '',
     isSharedSession: false,
     originalUser: null,
-    agentId: '1',
     organizedPlan: '',
     intents: []
   },
 
   onLoad: function(options) {
-    wx.setNavigationBarTitle({
-      title: 'AI 助手'
+    // 从options中获取传递的openid和AI名字
+    if (options.openid) {
+      this.setData({ openid: options.openid });
+    } else {
+      // 如果没有传递openid，则重新获取
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            api.request('/api/wx/openid', {
+              method: 'POST',
+              data: { code: res.code }
+            }).then(openidRes => {
+              this.setData({ openid: openidRes.openid });
+            }).catch(err => {
+              console.error('获取openid失败:', err);
+            });
+          }
+        }
+      });
+    }
+
+    // 获取位置信息
+    wx.getLocation({
+      type: 'gcj02',
+      success: (res) => {
+        this.setData({
+          location: {
+            latitude: res.latitude,
+            longitude: res.longitude
+          }
+        });
+      },
+      fail: (err) => {
+        console.error('获取位置失败:', err);
+      }
     });
+
+    // 设置导航栏标题为传入的AI名字
+    if (options.aiName) {
+      wx.setNavigationBarTitle({
+        title: options.aiName
+      });
+    } else {
+      wx.setNavigationBarTitle({
+        title: 'AI 助手'
+      });
+    }
     
     if (options.shareId) {
       this.setData({
@@ -36,9 +77,6 @@ Page({
       });
       this.loadSharedSession(options.shareId);
     } else {
-      this.setData({
-        agentId: '1'
-      });
       this.addMessage('ai', '你好！我是你的AI助手。我可以帮你推荐餐厅，你想吃什么类型的食物？');
     }
     
@@ -79,16 +117,72 @@ Page({
   },
 
   async fetchLatestRecommendations() {
+    // 如果没有位置信息，尝试重新获取
+    if (!this.data.location) {
+      try {
+        const locationRes = await new Promise((resolve, reject) => {
+          wx.getLocation({
+            type: 'gcj02',
+            success: resolve,
+            fail: reject
+          });
+        });
+        
+        this.setData({
+          location: {
+            latitude: locationRes.latitude,
+            longitude: locationRes.longitude
+          }
+        });
+      } catch (error) {
+        console.error('获取位置失败:', error);
+      }
+    }
+
+    // 如果没有 openid，先获取
+    if (!this.data.openid) {
+      try {
+        const loginRes = await new Promise((resolve, reject) => {
+          wx.login({
+            success: resolve,
+            fail: reject
+          });
+        });
+
+        if (loginRes.code) {
+          const openidRes = await api.request('/api/wx/openid', {
+            method: 'POST',
+            data: { code: loginRes.code }
+          });
+          this.setData({ openid: openidRes.openid });
+        } else {
+          throw new Error('获取登录凭证失败');
+        }
+      } catch (error) {
+        console.error('获取openid失败:', error);
+        wx.showToast({
+          title: '获取用户信息失败',
+          icon: 'none'
+        });
+        return;
+      }
+    }
+
     try {
       wx.showLoading({
         title: '更新推荐中...',
         mask: true
       });
 
+      // 确保有 openid 和 location 再发送请求
+      if (!this.data.openid || !this.data.location) {
+        throw new Error('缺少必要的参数');
+      }
+
       const response = await api.getRecommendations({
         location: this.data.location,
         messages: this.data.messages.slice(-5),
-        agentId: this.data.agentId,
+        openid: this.data.openid,  // 使用 openid
         timestamp: Date.now()
       });
 
@@ -144,13 +238,6 @@ Page({
     return '1.2km';
   },
 
-  switchTab(e) {
-    const tab = e.currentTarget.dataset.tab;
-    this.setData({
-      currentTab: tab
-    });
-  },
-
   handleRecommendationTap(e) {
     const { type, link } = e.currentTarget.dataset;
     if (link) {
@@ -185,18 +272,18 @@ Page({
   handleSearchTap(e) {
     const searchTerm = e.currentTarget.dataset.term;
     this.setData({
-      inputMessage: searchTerm
+      inputValue: searchTerm
     });
     this.sendMessage();
   },
 
   async sendMessage() {
-    const { inputMessage, isLoading, isSharedSession, originalUser } = this.data;
-    if (inputMessage.trim() === '' || isLoading) return;
+    const { inputValue, isLoading, isSharedSession, originalUser } = this.data;
+    if (inputValue.trim() === '' || isLoading) return;
 
-    this.addMessage('user', inputMessage);
+    this.addMessage('user', inputValue);
     this.setData({ 
-      inputMessage: '',
+      inputValue: '',
       isLoading: true 
     });
 
@@ -204,17 +291,15 @@ Page({
       if (isSharedSession) {
         const [myResponse, originalResponse] = await Promise.all([
           api.aiChat({
-            message: inputMessage,
+            openid: this.data.openid,
+            message: inputValue,
             taskName: 'chat',
-            agentId: '1',
-            groupId: 'main_group',
             location: this.data.location
           }),
           api.aiChat({
-            message: inputMessage,
+            openid: originalUser.openid,
+            message: inputValue,
             taskName: 'chat',
-            agentId: originalUser.agentId,
-            groupId: originalUser.groupId,
             location: this.data.location
           })
         ]);
@@ -227,10 +312,9 @@ Page({
         }
       } else {
         const response = await api.aiChat({
-          message: inputMessage,
+          openid: this.data.openid,
+          message: inputValue,
           taskName: 'chat',
-          agentId: '1',
-          groupId: 'main_group',
           location: this.data.location
         });
 
@@ -355,7 +439,7 @@ Page({
 
   onInputChange(e) {
     this.setData({
-      inputMessage: e.detail.value
+      inputValue: e.detail.value
     });
   },
 
@@ -373,7 +457,10 @@ Page({
             isOriginal: true
           })),
           recommendations,
-          originalUser,
+          originalUser: {
+            ...originalUser,
+            openid: originalUser.openid
+          }
         });
 
         this.addMessage('system', `以上是 ${originalUser.nickName} 的聊天记录，开始你的对话吧！`);

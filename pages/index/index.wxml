@@ -7,7 +7,7 @@
       <view class="ai-header">
         <image class="ai-animation" src="/images/dog.gif" mode="aspectFit"></image>
         <view class="ai-title">
-          <text class="title">AI智能助手</text>
+          <text class="title">{{aiStatus.name}}</text>
           <text class="subtitle">让美食推荐更懂你的心</text>
         </view>
       </view>
@@ -22,10 +22,40 @@
     <view class="card preferences-card">
       <view class="card-header">
         <text class="card-title">猜你喜欢</text>
-        <text class="card-subtitle">基于你的饮食偏好</text>
+        <text class="card-subtitle">基于你的饮食偏好分析</text>
       </view>
       <view class="preferences-content">
-        <text class="preferences-summary">{{preferences.summary}}</text>
+        <view class="pref-item">
+          <view class="pref-icon">🍽️</view>
+          <view class="pref-text">
+            <text class="pref-label">用餐场景</text>
+            <text class="pref-value">喜欢和朋友一起热闹吃饭，特别喜欢火锅</text>
+          </view>
+        </view>
+        
+        <view class="pref-item">
+          <view class="pref-icon">👅</view>
+          <view class="pref-text">
+            <text class="pref-label">口味偏好</text>
+            <text class="pref-value">偏爱甜蜜快乐的口味，如甜点、果味</text>
+          </view>
+        </view>
+        
+        <view class="pref-item">
+          <view class="pref-icon">🥤</view>
+          <view class="pref-text">
+            <text class="pref-label">饮品选择</text>
+            <text class="pref-value">只喝无酒精饮品</text>
+          </view>
+        </view>
+        
+        <view class="pref-recommend">
+          <view class="recommend-header">
+            <view class="recommend-icon">💡</view>
+            <text class="recommend-title">个性化推荐</text>
+          </view>
+          <text class="recommend-content">推荐尝试一些带有果味或甜蜜口味的咖啡甜点，如草莓蛋糕、巧克力泡芙等，搭配无酒精饮品如鲜榨果汁、无酒精鸡尾酒等，同时可以考虑在饭后与朋友一起分享一份火锅，享受热闹的用餐氛围。</text>
+        </view>
       </view>
     </view>
 

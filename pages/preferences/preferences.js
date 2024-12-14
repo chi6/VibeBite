@@ -106,9 +106,25 @@ Page({
     api.submitPreferences(preferences)
       .then(() => {
         wx.hideLoading();
-        wx.reLaunch({
-          url: '/pages/index/index'
+        wx.showToast({
+          title: '保存成功',
+          icon: 'success',
+          duration: 1500
         });
+        
+        // 延迟跳转，让用户看到成功提示
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/ai-customization/ai-customization',
+            fail: (err) => {
+              console.error('跳转失败:', err);
+              wx.showToast({
+                title: '页面跳转失败',
+                icon: 'none'
+              });
+            }
+          });
+        }, 1500);
       })
       .catch(error => {
         console.error('保存偏好失败:', error);

@@ -153,26 +153,82 @@
   width: 680rpx;
   height: 800rpx;
   background: rgba(255, 255, 255, 0.98);
-  border-radius: 30rpx 0 0 30rpx;
-  box-shadow: -4rpx 0 30rpx rgba(0, 0, 0, 0.12);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 40rpx 0 0 40rpx;
+  box-shadow: -4rpx 0 30rpx rgba(110, 142, 251, 0.15);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 99;
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .floating-recommendations.show {
   right: 0;
+  animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+@keyframes bounceIn {
+  0% { right: -100%; }
+  60% { right: 20rpx; }
+  80% { right: -10rpx; }
+  100% { right: 0; }
+}
+
+/* 可爱的头部设计 */
 .recommendations-header {
-  padding: 24rpx 30rpx;
-  border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
+  padding: 30rpx;
+  background: linear-gradient(135deg, #6e8efb, #7b7fec);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+  border-radius: 30rpx 0 30rpx 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* .recommendations-header::after {
+  content: '';
+  position: absolute;
+  right: -20rpx;
+  top: -20rpx;
+  width: 100rpx;
+  height: 100rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+} */
+
+.recommendations-title {
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.recommendations-title::before {
+  content: '🌟';
+  font-size: 36rpx;
+}
+
+.close-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 40rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* 标签页样式 */
@@ -214,8 +270,44 @@
 .recommendations-content {
   flex: 1;
   overflow-y: auto;
-  padding-top: 0;
+  padding: 20rpx;
+  position: relative;
 }
+
+.recommendations-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40rpx;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 推荐卡片动画效果 */
+.recommendation-card {
+  transform: translateX(0);
+  transition: all 0.3s ease;
+  animation: slideIn 0.5s ease forwards;
+  opacity: 0;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(50rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.recommendation-card:nth-child(1) { animation-delay: 0.1s; }
+.recommendation-card:nth-child(2) { animation-delay: 0.2s; }
+.recommendation-card:nth-child(3) { animation-delay: 0.3s; }
 
 /* 餐厅推荐卡样式 */
 .recommendation-card {
@@ -573,7 +665,8 @@
 /* 添加意图标签样式 */
 .intents-container {
   padding: 20rpx 30rpx;
-  border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
+  border-bottom: 2rpx solid rgba(110, 142, 251, 0.1);
+  background: rgba(110, 142, 251, 0.05);
 }
 
 .intent-tags {
@@ -583,11 +676,20 @@
 }
 
 .intent-tag {
-  background: linear-gradient(135deg, #6e8efb, #7b7fec);
-  color: #fff;
+  background: #fff;
+  color: #6e8efb;
   padding: 8rpx 20rpx;
   border-radius: 20rpx;
   font-size: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(110, 142, 251, 0.1);
+  border: 2rpx solid rgba(110, 142, 251, 0.2);
+  transition: all 0.3s ease;
+}
+
+.intent-tag:active {
+  transform: scale(0.95);
+  background: #6e8efb;
+  color: #fff;
 }
 
 /* 修改计划内容样式 */
@@ -639,23 +741,35 @@
   margin-bottom: 12rpx;
   display: flex;
   align-items: center;
+  gap: 12rpx;
 }
 
 .block-title::before {
-  content: '';
-  width: 8rpx;
-  height: 8rpx;
-  background: #6e8efb;
-  border-radius: 50%;
-  margin-right: 12rpx;
+  content: '🎯';
+  font-size: 28rpx;
 }
 
 .block-detail {
   font-size: 24rpx;
   color: #666;
   line-height: 1.6;
-  padding: 6rpx 0 6rpx 20rpx;
+  padding: 6rpx 0 6rpx 32rpx;
   position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+}
+
+.detail-icon {
+  width: 28rpx;
+  height: 28rpx;
+  flex-shrink: 0;
+  margin-left: -32rpx;
+  margin-top: 4rpx;
+}
+
+.detail-text {
+  flex: 1;
 }
 
 .block-detail.with-dot::before {
@@ -693,3 +807,51 @@
   flex-shrink: 0;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
+
+/* 触发按钮样式优化 */
+.trigger-recommendations {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10rpx); }
+  100% { transform: translateY(0); }
+}
+
+/* 添加可爱的装饰元素 */
+.recommendations-header::before {
+  content: '✨';
+  position: absolute;
+  left: 20rpx;
+  top: 10rpx;
+  font-size: 24rpx;
+  opacity: 0.6;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* 搜索标签动画 */
+.search-tag {
+  animation: popIn 0.5s ease forwards;
+  opacity: 0;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.search-tag:nth-child(1) { animation-delay: 0.1s; }
+.search-tag:nth-child(2) { animation-delay: 0.2s; }
+.search-tag:nth-child(3) { animation-delay: 0.3s; }

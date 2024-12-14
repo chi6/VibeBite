@@ -66,24 +66,6 @@
       </view>
     </view>
 
-    <!-- 图片预览部分 -->
-    <view class="image-section" wx:if="{{images.length > 0}}">
-      <scroll-view class="image-scroll" scroll-x="true">
-        <view class="image-scroll-container">
-          <image 
-            class="preview-image" 
-            wx:for="{{images}}" 
-            wx:key="imageUrl"
-            src="{{item.imageUrl}}"
-            mode="aspectFill"
-            bindtap="handleRecommendationTap"
-            data-type="image"
-            data-link="{{item.imageUrl}}"
-          ></image>
-        </view>
-      </scroll-view>
-    </view>
-
     <!-- 计划内容显示 -->
     <view class="plan-section" wx:if="{{organizedPlan}}">
       <view class="plan-title">AI规划建议</view>
@@ -99,81 +81,41 @@
             wx:key="content" 
             wx:for-item="detail"
             class="block-detail {{detail.type === 'detail' ? 'with-dot' : ''}}">
-            {{detail.content}}
+            <text class="detail-icon">{{detail.type === 'detail' ? '🔸' : '📝'}}</text>
+            <text class="detail-text">{{detail.content}}</text>
           </view>
         </view>
       </scroll-view>
     </view>
 
-    <!-- 原有的标签页部分 -->
-    <view class="tab-header">
-      <view class="tab-item {{currentTab === 'restaurants' ? 'active' : ''}}" 
-            bindtap="switchTab" 
-            data-tab="restaurants">餐厅推荐</view>
-      <view class="tab-item {{currentTab === 'images' ? 'active' : ''}}" 
-            bindtap="switchTab" 
-            data-tab="images">美食图片</view>
-      <view class="tab-item {{currentTab === 'questions' ? 'active' : ''}}" 
-            bindtap="switchTab" 
-            data-tab="questions">相关问题</view>
-    </view>
-
+    <!-- 餐厅推荐列表 -->
     <scroll-view scroll-y="true" class="recommendations-content">
-      <!-- 餐厅推荐列表 -->
-      <view class="recommendation-list" hidden="{{currentTab !== 'restaurants'}}">
-        <view class="recommendation-card" 
-              wx:for="{{recommendations}}" 
-              wx:key="position"
-              bindtap="handleRecommendationTap"
-              data-type="restaurant"
-              data-link="{{item.link}}">
-          <view class="card-content">
-            <view class="card-header">
-              <text class="restaurant-name">{{item.title}}</text>
-              <text class="distance">{{item.distance}}</text>
-            </view>
-            <text class="description">{{item.description}}</text>
-            <view class="card-footer">
-              <text class="location">{{item.location}}</text>
-              <text class="date">{{item.formattedDate}}</text>
-            </view>
+      <view class="recommendation-card" 
+            wx:for="{{recommendations}}" 
+            wx:key="position"
+            bindtap="handleRecommendationTap"
+            data-type="restaurant"
+            data-link="{{item.link}}">
+        <view class="card-content">
+          <view class="card-header">
+            <text class="restaurant-name">{{item.title}}</text>
+            <text class="distance">{{item.distance}}</text>
           </view>
-          
-          <view class="preview-image-wrapper" wx:if="{{item.snapshotImages.length > 0}}">
-            <image 
-              src="{{item.snapshotImages[0]}}" 
-              mode="aspectFill"
-            ></image>
-            <text class="image-count" wx:if="{{item.snapshotImages.length > 1}}">
-              +{{item.snapshotImages.length - 1}}
-            </text>
+          <text class="description">{{item.description}}</text>
+          <view class="card-footer">
+            <text class="location">{{item.location}}</text>
+            <text class="date">{{item.formattedDate}}</text>
           </view>
         </view>
-      </view>
-
-      <!-- 美食图片展示 -->
-      <view class="image-grid" hidden="{{currentTab !== 'images'}}">
-        <view class="image-item" 
-              wx:for="{{images}}" 
-              wx:key="imageUrl"
-              bindtap="handleRecommendationTap"
-              data-type="image"
-              data-link="{{item.imageUrl}}">
-          <image src="{{item.imageUrl}}" mode="aspectFill"></image>
-          <text class="image-title">{{item.title}}</text>
-        </view>
-      </view>
-
-      <!-- 相关问题列表 -->
-      <view class="question-list" hidden="{{currentTab !== 'questions'}}">
-        <view class="question-item" 
-              wx:for="{{relatedQuestions}}" 
-              wx:key="question"
-              bindtap="handleRecommendationTap"
-              data-type="question"
-              data-question="{{item.question}}">
-          <text class="question">{{item.question}}</text>
-          <text class="answer">{{item.answer}}</text>
+        
+        <view class="preview-image-wrapper" wx:if="{{item.snapshotImages.length > 0}}">
+          <image 
+            src="{{item.snapshotImages[0]}}" 
+            mode="aspectFill"
+          ></image>
+          <text class="image-count" wx:if="{{item.snapshotImages.length > 1}}">
+            +{{item.snapshotImages.length - 1}}
+          </text>
         </view>
       </view>
     </scroll-view>

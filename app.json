@@ -8,6 +8,7 @@
     "pages/webview/webview",
     "pages/user-info/user-info",
     "pages/preferences/preferences",
+    "pages/ai-customization/ai-customization",
     "pages/ai-chat/ai-chat"
   ],
   "window": {

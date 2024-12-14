@@ -188,7 +188,7 @@ const api = {
       data: {
         location: data.location,
         messages: data.messages,
-        agentId: data.agentId,
+        openid: data.openid,
         timestamp: Date.now()
       }
     });
@@ -209,14 +209,74 @@ const api = {
     });
   },
 
-  // 添加更新偏好的 API 方法
-  updatePreferences(agentId, location) {
+  // 修改更新偏好的 API 方法
+  updatePreferences(openid, location) {
     return this.request('/api/update_pref', {
       method: 'POST',
       data: {
-        agent_id: agentId,
+        openid: openid,  // 将 agent_id 改为 openid
         location: location
       }
+    });
+  },
+
+  // 更新AI设置
+  updateAISettings(settings) {
+    return new Promise((resolve, reject) => {
+      // 获取微信登录凭证
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            // 使用登录凭证获取openid
+            this.request('/api/wx/openid', {
+              method: 'POST',
+              data: { code: res.code }
+            }).then(openidRes => {
+              // 使用openid更新AI设置
+              return this.request('/api/ai/settings', {
+                method: 'POST',
+                data: {
+                  openid: openidRes.openid,  // 使用openid替代uid
+                  name: settings.name,
+                  personality: settings.personality,
+                  speakingStyle: settings.speakingStyle,
+                  memories: settings.memories,
+                  timestamp: Date.now()
+                }
+              });
+            }).then(resolve).catch(reject);
+          } else {
+            reject(new Error('登录失败'));
+          }
+        },
+        fail: reject
+      });
+    });
+  },
+
+  // 获取AI设置
+  getAISettings() {
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            // 使用登录凭证获取openid
+            this.request('/api/wx/openid', {
+              method: 'POST',
+              data: { code: res.code }
+            }).then(openidRes => {
+              // 使用openid获取AI设置
+              return this.request('/api/ai/settings', {
+                method: 'GET',
+                data: { openid: openidRes.openid }
+              });
+            }).then(resolve).catch(reject);
+          } else {
+            reject(new Error('登录失败'));
+          }
+        },
+        fail: reject
+      });
     });
   }
 };
