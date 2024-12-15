@@ -18,7 +18,9 @@ Page({
     isSharedSession: false,
     originalUser: null,
     organizedPlan: '',
-    intents: []
+    intents: [],
+    recommendationHistory: [],
+    groupedRecommendations: []
   },
 
   onLoad: function(options) {
@@ -174,15 +176,10 @@ Page({
         mask: true
       });
 
-      // 确保有 openid 和 location 再发送请求
-      if (!this.data.openid || !this.data.location) {
-        throw new Error('缺少必要的参数');
-      }
-
       const response = await api.getRecommendations({
         location: this.data.location,
         messages: this.data.messages.slice(-5),
-        openid: this.data.openid,  // 使用 openid
+        openid: this.data.openid,
         timestamp: Date.now()
       });
 
@@ -193,33 +190,37 @@ Page({
         
         const formattedPlan = this.formatOrganizedPlan(rawPlan);
         
-        const recommendations = recommendationsList.map(item => ({
+        const newRecommendations = recommendationsList.map((item, index) => ({
           ...item,
+          uniqueId: `${Date.now()}_${index}`,
           formattedDate: new Date().toLocaleDateString('zh-CN'),
+          timestamp: Date.now(),
           distance: this.calculateDistance(item.location),
-          snapshotImages: Array.isArray(item.images) ? item.images : 
-                         Array.isArray(item.snapshotImages) ? item.snapshotImages : 
-                         item.image ? [item.image] : []
+          snapshot: item.snapshot || item.image || null,
+          domain: this.extractDomain(item.link)
         }));
 
-        const images = (response.data.images || []).map(img => ({
-          imageUrl: typeof img === 'string' ? img : img.url || img.imageUrl,
-          title: img.title || '美食图片'
-        }));
+        // 将新推荐添加到历史记录中
+        const updatedHistory = [...this.data.recommendationHistory, ...newRecommendations];
+
+        // 按时间戳排序，最新的在前面
+        updatedHistory.sort((a, b) => b.timestamp - a.timestamp);
+
+        // 按日期分组
+        const groupedRecommendations = this.groupRecommendationsByDate(updatedHistory);
 
         this.setData({
-          recommendations,
-          images,
+          recommendations: newRecommendations,
+          recommendationHistory: updatedHistory,
+          groupedRecommendations,
           organizedPlan: formattedPlan,
           intents,
-          searchParameters: response.data.searchParameters || {},
           lastRecommendationTime: Date.now(),
-          showRecommendations: true
+          forceUpdate: false
         });
 
-        console.log('推荐更新成功，响应时间:', response.response_time);
-        console.log('处理后的图片数据:', images);
-        console.log('处理后的推荐数据:', recommendations);
+        console.log('推荐更新成功，历史记录数:', updatedHistory.length);
+        console.log('分组后的推荐:', groupedRecommendations);
       }
 
       wx.hideLoading();
@@ -230,6 +231,7 @@ Page({
         title: '获取推荐失败',
         icon: 'none'
       });
+      this.setData({ forceUpdate: false });
     }
   },
 
@@ -386,11 +388,20 @@ Page({
   toggleRecommendations() {
     const { showRecommendations } = this.data;
     if (!showRecommendations) {
+      // 打开浮动窗口时，先显示历史记录
+      const groupedRecommendations = this.groupRecommendationsByDate(this.data.recommendationHistory);
       this.setData({
-        forceUpdate: true,
+        groupedRecommendations,
         showRecommendations: true
       });
-      this.checkAndUpdateRecommendations();
+      
+      // 同时获取新的推荐
+      this.setData({ forceUpdate: true });  // 强制更新标志
+      this.fetchLatestRecommendations().then(() => {
+        console.log('获取新推荐成功');
+      }).catch(error => {
+        console.error('获取新推荐失败:', error);
+      });
     } else {
       this.setData({
         showRecommendations: false
@@ -518,16 +529,17 @@ Page({
           .map(line => line.trim())
           .filter(Boolean)
           .map(line => {
-            if (line.startsWith('-')) {
-              return {
-                type: 'detail',
-                content: line.replace(/^-\s*/, '')
-              };
-            }
-            return {
-              type: 'text',
-              content: line
+            let detail = {
+              type: line.startsWith('-') ? 'detail' : 'text',
+              content: line.replace(/^-\s*/, '')
             };
+
+            // 处理快照数据
+            if (line.includes('[snapshot]')) {
+              detail.snapshots = this.extractSnapshots(line);
+            }
+
+            return detail;
           });
 
         return {
@@ -544,6 +556,114 @@ Page({
           content: rawPlan
         }]
       }];
+    }
+  },
+
+  extractSnapshots(text) {
+    const snapshotRegex = /\[snapshot\](.*?)\[\/snapshot\]/g;
+    const snapshots = [];
+    let match;
+
+    while ((match = snapshotRegex.exec(text)) !== null) {
+      try {
+        const snapshotData = JSON.parse(match[1]);
+        snapshots.push({
+          url: snapshotData.url,
+          image: snapshotData.image,
+          title: snapshotData.title
+        });
+      } catch (error) {
+        console.error('解析快照数据失败:', error);
+      }
+    }
+
+    return snapshots;
+  },
+
+  groupRecommendationsByDate(recommendations) {
+    const groups = {};
+    const today = new Date().toLocaleDateString('zh-CN');
+    
+    // 按日期分组
+    recommendations.forEach(item => {
+      const date = item.formattedDate || today;
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push({...item});  // 创建新对象避免引用问题
+    });
+    
+    // 转换为数组格式
+    const result = [];
+    for (let date in groups) {
+      result.push({
+        date,
+        items: groups[date].sort((a, b) => b.timestamp - a.timestamp)  // 确保每组内部也是按时间排序
+      });
+    }
+    
+    // 按日期倒序排序
+    result.sort((a, b) => {
+      const dateA = new Date(a.date.replace(/年|月|日/g, '/'));
+      const dateB = new Date(b.date.replace(/年|月|日/g, '/'));
+      return dateB - dateA;
+    });
+    
+    console.log('分组结果:', result);
+    return result;
+  },
+
+  // 添加处理链接点击的方法
+  handleLinkTap(e) {
+    const url = e.currentTarget.dataset.url;
+    if (url) {
+      wx.navigateTo({
+        url: `/pages/webview/webview?url=${encodeURIComponent(url)}`,
+        fail: (err) => {
+          console.error('打开链接失败:', err);
+          wx.showToast({
+            title: '打开链接失败',
+            icon: 'none'
+          });
+        }
+      });
+    }
+  },
+
+  extractDomain(url) {
+    if (!url) return '';
+    try {
+      const domain = new URL(url).hostname;
+      return domain.replace(/^www\./, '');
+    } catch (error) {
+      return '';
+    }
+  },
+
+  handleSnapshotTap(e) {
+    const { url, images } = e.currentTarget.dataset;
+    
+    // 如果有多张图片，使用预览图片功能
+    if (images && images.length > 0) {
+      const imageUrls = images.map(item => item.image);
+      const current = e.currentTarget.dataset.images.find(item => item.url === url)?.image;
+      
+      wx.previewImage({
+        current: current || imageUrls[0],
+        urls: imageUrls
+      });
+    } else if (url) {
+      // 如果只有链接，打开网页
+      wx.navigateTo({
+        url: `/pages/webview/webview?url=${encodeURIComponent(url)}`,
+        fail: (err) => {
+          console.error('打开链接失败:', err);
+          wx.showToast({
+            title: '打开链接失败',
+            icon: 'none'
+          });
+        }
+      });
     }
   }
 });

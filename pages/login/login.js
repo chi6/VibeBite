@@ -14,37 +14,63 @@ Page({
       wx.login({
         success: (res) => {
           if (res.code) {
-            // 获取openid
-            api.request('/api/wx/openid', {
-              method: 'POST',
-              data: { code: res.code }
-            }).then(openidRes => {
-              // 获取用户设置
-              return Promise.all([
-                api.getPreferences(),  // 获取偏好设置
-                api.getAISettings()    // 获取AI设置
-              ]);
-            }).then(([preferences, aiSettings]) => {
-              if (preferences.success && aiSettings.success && 
-                  preferences.data && aiSettings.data && 
-                  aiSettings.data.name) {  // 检查是否已设置AI名字
-                // 如果已经设置过AI和偏好，直接跳转到首页
-                wx.reLaunch({
-                  url: '/pages/index/index'
+            // 先进行登录
+            api.login(res.code, e.detail.userInfo)
+              .then(loginRes => {
+                if (loginRes.success) {
+                  // 登录成功后，获取用户设置
+                  return Promise.all([
+                    api.getPreferences(),
+                    api.getAISettings()
+                  ]);
+                } else {
+                  throw new Error('登录失败');
+                }
+              })
+              .then(([preferences, aiSettings]) => {
+                if (preferences.success && preferences.data) {
+                  console.log("preferences.data:", preferences.data);
+                  // 检查所有偏好字段是否为空
+                  const isPreferencesEmpty = 
+                    !preferences.data.alcoholAttitude &&
+                    !preferences.data.customDescription &&
+                    !preferences.data.diningScene &&
+                    preferences.data.diningStyles.length === 0 &&
+                    preferences.data.extractedKeywords.length === 0 &&
+                    preferences.data.flavorPreferences.length === 0 &&
+                    !preferences.data.restrictions;
+
+                  if (isPreferencesEmpty) {
+                    // 如果偏好内容都为空，跳转到偏好设置页面
+                    wx.navigateTo({
+                      url: '/pages/preferences/preferences'
+                    });
+                  } else if (aiSettings.success && aiSettings.data && aiSettings.data.name) {
+                    // 如果已经设置过AI和偏好，直接跳转到首页
+                    wx.reLaunch({
+                      url: '/pages/index/index'
+                    });
+                  } else {
+                    // 如果有偏好但没有AI设置，跳转到AI设置页面
+                    wx.navigateTo({
+                      url: '/pages/ai-customization/ai-customization'
+                    });
+                  }
+                } else {
+                  // 如果获取偏好失败，默认跳转到偏好设置页面
+                  wx.navigateTo({
+                    url: '/pages/preferences/preferences'
+                  });
+                }
+              })
+              .catch(error => {
+                console.error('登录或检查用户设置失败:', error);
+                wx.showToast({
+                  title: '登录失败，请重试',
+                  icon: 'none'
                 });
-              } else {
-                // 否则跳转到餐饮喜好填写页面
-                wx.navigateTo({
-                  url: '/pages/preferences/preferences'
-                });
-              }
-            }).catch(error => {
-              console.error('检查用户设置失败:', error);
-              // 出错时默认跳转到偏好设置页
-              wx.navigateTo({
-                url: '/pages/preferences/preferences'
+                this.setData({ isLoading: false });
               });
-            });
           } else {
             wx.showToast({
               title: '获取用户信息失败',

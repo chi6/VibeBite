@@ -29,7 +29,7 @@
           <view class="pref-icon">🍽️</view>
           <view class="pref-text">
             <text class="pref-label">用餐场景</text>
-            <text class="pref-value">喜欢和朋友一起热闹吃饭，特别喜欢火锅</text>
+            <text class="pref-value">{{preferences.diningFeatures}}</text>
           </view>
         </view>
         
@@ -37,7 +37,7 @@
           <view class="pref-icon">👅</view>
           <view class="pref-text">
             <text class="pref-label">口味偏好</text>
-            <text class="pref-value">偏爱甜蜜快乐的口味，如甜点、果味</text>
+            <text class="pref-value">{{preferences.tastePreferences}}</text>
           </view>
         </view>
         
@@ -45,7 +45,7 @@
           <view class="pref-icon">🥤</view>
           <view class="pref-text">
             <text class="pref-label">饮品选择</text>
-            <text class="pref-value">只喝无酒精饮品</text>
+            <text class="pref-value">{{preferences.drinkPreferences}}</text>
           </view>
         </view>
         
@@ -54,7 +54,7 @@
             <view class="recommend-icon">💡</view>
             <text class="recommend-title">个性化推荐</text>
           </view>
-          <text class="recommend-content">推荐尝试一些带有果味或甜蜜口味的咖啡甜点，如草莓蛋糕、巧克力泡芙等，搭配无酒精饮品如鲜榨果汁、无酒精鸡尾酒等，同时可以考虑在饭后与朋友一起分享一份火锅，享受热闹的用餐氛围。</text>
+          <text class="recommend-content">{{preferences.recommendations}}</text>
         </view>
       </view>
     </view>

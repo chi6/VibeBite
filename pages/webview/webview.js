@@ -5,14 +5,18 @@ Page({
    * Page initial data
    */
   data: {
-
+    url: ''
   },
 
   /**
    * Lifecycle function--Called when page load
    */
   onLoad(options) {
-
+    if (options.url) {
+      this.setData({
+        url: decodeURIComponent(options.url)
+      });
+    }
   },
 
   /**
@@ -62,5 +66,11 @@ Page({
    */
   onShareAppMessage() {
 
+  },
+
+  goBack: function() {
+    wx.navigateBack({
+      delta: 1
+    });
   }
 })

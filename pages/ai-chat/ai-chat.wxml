@@ -82,7 +82,47 @@
             wx:for-item="detail"
             class="block-detail {{detail.type === 'detail' ? 'with-dot' : ''}}">
             <text class="detail-icon">{{detail.type === 'detail' ? '🔸' : '📝'}}</text>
-            <text class="detail-text">{{detail.content}}</text>
+            <view class="detail-content">
+              <text class="detail-text">{{detail.content}}</text>
+              
+              <!-- 添加快照图片展示 -->
+              <view class="detail-snapshots" wx:if="{{detail.snapshots && detail.snapshots.length > 0}}">
+                <scroll-view scroll-x="true" class="snapshots-scroll">
+                  <view class="snapshots-container">
+                    <view 
+                      class="snapshot-item" 
+                      wx:for="{{detail.snapshots}}" 
+                      wx:key="url" 
+                      wx:for-item="snapshot"
+                      bindtap="handleSnapshotTap"
+                      data-url="{{snapshot.url}}"
+                      data-images="{{detail.snapshots}}">
+                      <image 
+                        class="snapshot-thumb" 
+                        src="{{snapshot.image}}" 
+                        mode="aspectFill"
+                        lazy-load="true"
+                      ></image>
+                      <text class="snapshot-title">{{snapshot.title}}</text>
+                    </view>
+                  </view>
+                </scroll-view>
+              </view>
+              
+              <!-- 链接显示 -->
+              <view class="detail-links" wx:if="{{detail.links && detail.links.length > 0}}">
+                <view 
+                  class="link-item" 
+                  wx:for="{{detail.links}}" 
+                  wx:key="url" 
+                  wx:for-item="link"
+                  bindtap="handleLinkTap"
+                  data-url="{{link.url}}">
+                  <text class="link-icon">🔗</text>
+                  <text class="link-text">{{link.title || '查看详情'}}</text>
+                </view>
+              </view>
+            </view>
           </view>
         </view>
       </scroll-view>
@@ -90,34 +130,38 @@
 
     <!-- 餐厅推荐列表 -->
     <scroll-view scroll-y="true" class="recommendations-content">
-      <view class="recommendation-card" 
-            wx:for="{{recommendations}}" 
-            wx:key="position"
-            bindtap="handleRecommendationTap"
-            data-type="restaurant"
-            data-link="{{item.link}}">
-        <view class="card-content">
-          <view class="card-header">
-            <text class="restaurant-name">{{item.title}}</text>
-            <text class="distance">{{item.distance}}</text>
-          </view>
-          <text class="description">{{item.description}}</text>
-          <view class="card-footer">
-            <text class="location">{{item.location}}</text>
-            <text class="date">{{item.formattedDate}}</text>
-          </view>
+      <!-- 按日期分组显示推荐 -->
+      <block wx:for="{{groupedRecommendations}}" wx:key="date" wx:for-item="group">
+        <view class="recommendation-date">
+          <text class="date-text">{{group.date}}</text>
+          <text class="recommendation-count">({{group.items.length}}条推荐)</text>
         </view>
         
-        <view class="preview-image-wrapper" wx:if="{{item.snapshotImages.length > 0}}">
-          <image 
-            src="{{item.snapshotImages[0]}}" 
-            mode="aspectFill"
-          ></image>
-          <text class="image-count" wx:if="{{item.snapshotImages.length > 1}}">
-            +{{item.snapshotImages.length - 1}}
-          </text>
+        <view class="recommendation-group">
+          <view class="link-card" 
+                wx:for="{{group.items}}" 
+                wx:key="uniqueId"
+                bindtap="handleLinkTap"
+                data-url="{{item.link}}">
+            <!-- 添加网页快照显示 -->
+            <view class="snapshot-preview" wx:if="{{item.snapshot}}">
+              <image 
+                class="snapshot-image" 
+                src="{{item.snapshot}}" 
+                mode="aspectFill"
+                lazy-load="true"
+              ></image>
+            </view>
+            <view class="link-content">
+              <text class="link-title">{{item.title}}</text>
+              <text class="link-description" wx:if="{{item.description}}">{{item.description}}</text>
+              <text class="link-type" wx:if="{{item.type}}">{{item.type}}</text>
+              <text class="link-domain" wx:if="{{item.domain}}">{{item.domain}}</text>
+            </view>
+            <text class="link-arrow">→</text>
+          </view>
         </view>
-      </view>
+      </block>
     </scroll-view>
 
     <!-- 相关搜索词 -->
@@ -130,6 +174,16 @@
               data-term="{{item}}">{{item}}</text>
       </scroll-view>
     </view>
+
+    <!-- 添加空状态提示 -->
+    <view class="empty-state" wx:if="{{!recommendations.length}}">
+      <view class="empty-state-icon">🤔</view>
+      <view class="empty-state-text">暂时没有推荐内容</view>
+      <view class="empty-state-text">试试发送一条消息吧</view>
+    </view>
+
+    <!-- 添加滚动到顶部按钮 -->
+    <view class="scroll-to-top {{showScrollTop ? 'show' : ''}}" bindtap="scrollToTop"></view>
   </view>
 
   <!-- 输入区域 - 现代化设计 -->
@@ -138,7 +192,7 @@
       <input 
         class="chat-input" 
         type="text" 
-        value="{{inputMessage}}" 
+        value="{{inputValue}}" 
         bindinput="onInputChange" 
         placeholder="说点什么吧..."
       />

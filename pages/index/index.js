@@ -41,11 +41,9 @@ Page({
     };
     api.getAIStatus(requestData).then(status => {
       this.setData({
-        aiStatus: {
-          mood: status.mood || '未知',
-          activity: status.activity || '未知',
-          thought: status.thought || '未知'
-        }
+        'aiStatus.mood': status.mood || '未知',
+        'aiStatus.activity': status.activity || '未知',
+        'aiStatus.thought': status.thought || '未知'
       });
     }).catch(error => {
       console.error('获取AI状态失败:', error);
@@ -66,19 +64,35 @@ Page({
       wx.hideLoading();
       if (res.success && res.data) {
         try {
-          const preferencesData = JSON.parse(res.data.summary);
-          this.setData({
-            preferences: {
-              diningFeatures: preferencesData["主要用餐特征和场景偏好"],
-              tastePreferences: preferencesData["口味和用餐方式特点"],
-              drinkPreferences: preferencesData["饮品选择倾向"],
-              recommendations: preferencesData["个性化推荐建议"]
-            }
-          });
+          const summaryText = res.data.summary;
+          
+          // 解析返回的文本内容
+          const sections = summaryText.split(/\d+\.\s+/).filter(Boolean);
+          const preferences = {
+            diningFeatures: sections[0]?.trim() || '暂无场景偏好',
+            tastePreferences: sections[1]?.trim() || '暂无口味偏好',
+            drinkPreferences: sections[2]?.trim() || '暂无饮品偏好',
+            recommendations: sections[3]?.trim() || '暂无个性化推荐'
+          };
+
+          // 移除标题部分
+          preferences.diningFeatures = preferences.diningFeatures.replace('用户主要用餐特征和场景偏好：', '');
+          preferences.tastePreferences = preferences.tastePreferences.replace('口味和用餐方式特点：', '');
+          preferences.drinkPreferences = preferences.drinkPreferences.replace('饮品选择倾向：', '');
+          preferences.recommendations = preferences.recommendations.replace('个性化推荐建议：', '')
+            .replace(/\s+- /g, '\n• '); // 将破折号替换为圆点，并添加换行
+
+          this.setData({ preferences });
+          console.log('解析后的偏好数据:', preferences);
         } catch (e) {
           console.error('解析偏好数据失败:', e);
           this.setData({
-            'preferences.summary': '数据解析失败，请稍后重试'
+            preferences: {
+              diningFeatures: '数据解析失败',
+              tastePreferences: '数据解析失败',
+              drinkPreferences: '数据解析失败',
+              recommendations: '数据解析失败'
+            }
           });
         }
       } else {
@@ -88,20 +102,34 @@ Page({
       wx.hideLoading();
       console.error('获取餐饮喜好总结失败:', error);
       this.setData({
-        'preferences.summary': '获取信息失败，请稍后重试'
+        preferences: {
+          diningFeatures: '获取信息失败',
+          tastePreferences: '获取信息失败',
+          drinkPreferences: '获取信息失败',
+          recommendations: '获取信息失败'
+        }
       });
     });
   },
 
   fetchAISettings() {
     api.getAISettings().then(res => {
+      console.log('AI设置响应:', res);
       if (res.success && res.data) {
         this.setData({
           'aiStatus.name': res.data.name || 'AI智能助手'
         });
+        console.log('更新后的AI名字:', this.data.aiStatus.name);
+      } else {
+        this.setData({
+          'aiStatus.name': 'AI智能助手'
+        });
       }
     }).catch(err => {
       console.error('获取AI设置失败:', err);
+      this.setData({
+        'aiStatus.name': 'AI智能助手'
+      });
     });
   },
 

@@ -155,29 +155,89 @@ const api = {
     });
   },
 
-  // 提交餐饮喜好信息
+  // 修改提交餐饮喜好信息的方法
   submitPreferences(preferences) {
-    return this.request('/api/preferences', {
-      method: 'POST',
-      data: {
-        preferences,
-        timestamp: Date.now()
-      }
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            // 先获取openid
+            this.request('/api/wx/openid', {
+              method: 'POST',
+              data: { code: res.code }
+            }).then(openidRes => {
+              // 使用获取到的openid提交偏好设置
+              return this.request('/api/preferences', {
+                method: 'POST',
+                data: {
+                  openid: openidRes.openid,
+                  preferences: preferences,
+                  timestamp: Date.now()
+                }
+              });
+            }).then(resolve).catch(reject);
+          } else {
+            reject(new Error('登录失败'));
+          }
+        },
+        fail: reject
+      });
     });
   },
 
   // 获取餐饮喜好信息
   getPreferences() {
-    return this.request('/api/preferences', {
-      method: 'GET'
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            // 先获取openid
+            this.request('/api/wx/openid', {
+              method: 'POST',
+              data: { code: res.code }
+            }).then(openidRes => {
+              // 使用获取到的openid请求偏好设置
+              return this.request('/api/preferences', {  // 修改API路径
+                method: 'GET',
+                data: { 
+                  openid: openidRes.openid 
+                }
+              });
+            }).then(resolve).catch(reject);
+          } else {
+            reject(new Error('登录失败'));
+          }
+        },
+        fail: reject
+      });
     });
   },
 
   // 获取餐饮喜好总结
   getPreferencesSummary() {
-    return this.request('/api/preferences/summary', {
-      method: 'POST',
-      data: {}
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            // 先获取openid
+            this.request('/api/wx/openid', {
+              method: 'POST',
+              data: { code: res.code }
+            }).then(openidRes => {
+              // 使用获取到的openid请求偏好总结
+              return this.request('/api/preferences/summary', {
+                method: 'POST',
+                data: { 
+                  openid: openidRes.openid 
+                }
+              });
+            }).then(resolve).catch(reject);
+          } else {
+            reject(new Error('登录失败'));
+          }
+        },
+        fail: reject
+      });
     });
   },
 
@@ -223,20 +283,19 @@ const api = {
   // 更新AI设置
   updateAISettings(settings) {
     return new Promise((resolve, reject) => {
-      // 获取微信登录凭证
       wx.login({
         success: (res) => {
           if (res.code) {
-            // 使用登录凭证获取openid
+            // 先获取openid
             this.request('/api/wx/openid', {
               method: 'POST',
               data: { code: res.code }
             }).then(openidRes => {
-              // 使用openid更新AI设置
-              return this.request('/api/ai/settings', {
+              // 使用获取到的openid更新AI设置
+              return this.request('/api/ai/settings', {  // 修改API路径
                 method: 'POST',
                 data: {
-                  openid: openidRes.openid,  // 使用openid替代uid
+                  openid: openidRes.openid,
                   name: settings.name,
                   personality: settings.personality,
                   speakingStyle: settings.speakingStyle,
@@ -260,15 +319,17 @@ const api = {
       wx.login({
         success: (res) => {
           if (res.code) {
-            // 使用登录凭证获取openid
+            // 先获取openid
             this.request('/api/wx/openid', {
               method: 'POST',
               data: { code: res.code }
             }).then(openidRes => {
-              // 使用openid获取AI设置
-              return this.request('/api/ai/settings', {
+              // 使用获取到的openid获取AI设置
+              return this.request('/api/ai/settings', {  // 修改API路径
                 method: 'GET',
-                data: { openid: openidRes.openid }
+                data: { 
+                  openid: openidRes.openid 
+                }
               });
             }).then(resolve).catch(reject);
           } else {

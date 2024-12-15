@@ -1,2 +1,10 @@
 <!--pages/webview/webview.wxml-->
-<text>pages/webview/webview.wxml</text>
+<view class="container">
+  <view class="nav-bar">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-arrow">←</text>
+      <text class="back-text">返回</text>
+    </view>
+  </view>
+  <web-view src="{{url}}"></web-view>
+</view>
