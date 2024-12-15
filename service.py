@@ -66,7 +66,6 @@ class AgentChatService:
         self.app.route('/api/share/save', methods=['POST'])(self.save_shared_session)
         self.app.route('/api/share/<share_id>', methods=['GET'])(self.get_shared_session)
         self.app.route('/api/update_pref', methods=['POST'])(self.update_user_preferences)
-        self.app.route('/api/ai/settings', methods=['POST'])(self.update_ai_settings)
         self.app.route('/api/wx/openid', methods=['POST'])(self.get_wx_openid)
         self.app.route('/api/ai/settings', methods=['GET', 'POST'])(self.ai_settings)
 
@@ -107,7 +106,7 @@ class AgentChatService:
 1. 每一个字段都要是中文且有值
 2. 返回的内容要符合你的性格特征和说话风格
 3. 在thought中可以提到你的重要记忆""",
-            "intent_summary": "你是一个意图分析专家，请根据对话历史用户提供的意图，并为用户做好今天的约会规划，结果用list格式返回。如：['吃饭', '逛街', '看电影']"
+            "intent_summary": "你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用list格式返回。如：['吃三文鱼']或['喝鸡尾酒']"
         }
         for task_name, prompt in base_prompts.items():
             self.prompt_manager.add_prompt(task_name, prompt)
@@ -545,47 +544,82 @@ class AgentChatService:
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 400
             
-            # 验证token
-            auth_header = request.headers.get('Authorization')
-            if not auth_header or not auth_header.startswith('Bearer '):
-                return jsonify({
-                    "success": False,
-                    "message": "未授权的访问",
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                }), 401
-
-            token = auth_header.split(' ')[1]
-            
+            # 获取用户偏好总结
             with sqlite3.connect('vibebite.db') as conn:
                 cursor = conn.cursor()
-                # 获取openid
-                cursor.execute('SELECT openid FROM sessions WHERE token = ?', (token,))
-                result = cursor.fetchone()
-                if not result:
-                    return jsonify({
-                        "success": False,
-                        "message": "无效的token",
-                        "response_time": f"{time.time() - start_time:.3f}s"
-                    }), 401
                 
-                openid = result[0]
-                
-                # 获取用户偏好总结
+                # 先获取用户偏好数据
                 cursor.execute('''
-                    SELECT summary FROM preference_summaries 
+                    SELECT dining_scene, dining_styles, flavor_preferences,
+                           alcohol_attitude, restrictions, custom_description,
+                           extracted_keywords
+                    FROM user_preferences 
                     WHERE openid = ?
                 ''', (openid,))
                 
-                summary_result = cursor.fetchone()
-                if not summary_result:
+                preferences_result = cursor.fetchone()
+                if not preferences_result:
                     return jsonify({
                         "success": False,
-                        "message": "未找到用户偏好总结",
+                        "message": "请先设置用户偏好",
                         "response_time": f"{time.time() - start_time:.3f}s"
                     }), 404
-                    
-                user_summary = summary_result[0]
-                meta_prompt = self.prompt_manager.get_prompt("status_check", openid)
+                
+                # 构建偏好数据
+                preferences_data = {
+                    'diningScene': preferences_result[0],
+                    'diningStyles': preferences_result[1].split(',') if preferences_result[1] else [],
+                    'flavorPreferences': preferences_result[2].split(',') if preferences_result[2] else [],
+                    'alcoholAttitude': preferences_result[3],
+                    'restrictions': preferences_result[4],
+                    'customDescription': preferences_result[5],
+                    'extractedKeywords': preferences_result[6].split(',') if preferences_result[6] else []
+                }
+                
+                # 构建提示词生成总结
+                prompt = f"""请根据以下用户信息，总结该用户的餐饮喜好特征和个性化推荐建议：
+
+用户用餐偏好：
+- 用餐场景：{preferences_data['diningScene']}
+- 用餐方式：{', '.join(preferences_data['diningStyles'])}
+- 口味偏好：{', '.join(preferences_data['flavorPreferences'])}
+- 饮酒态度：{preferences_data['alcoholAttitude']}
+
+特殊需求：
+- 饮食限制：{preferences_data['restrictions'] if preferences_data['restrictions'] else '无'}
+- 自定义描述：{preferences_data['customDescription']}
+- 关键词：{', '.join(preferences_data['extractedKeywords'])}
+
+请从以下几个方面进行分析和总结：
+1. 用户的主要用餐特征和场景偏好
+2. 口味和用餐方式特点
+3. 饮品选择倾向
+4. 个性化推荐建议
+
+请用简洁专业的语言描述，突出关键特点。"""
+
+                # 调用大模型生成总结
+                request_id = str(uuid.uuid4())
+                self.llm_client.add_request(openid, "", prompt, request_id)
+                response = ""
+                for _ in range(100):
+                    response = self.llm_client.get_chat(request_id)
+                    user_summary = response['response'].choices[0].message.content
+                    if user_summary != "没有找到响应":
+                        break
+                    time.sleep(0.1)
+                
+                # 保存总结
+                cursor.execute('''
+                    INSERT OR REPLACE INTO preference_summaries 
+                    (openid, summary, created_at, updated_at)
+                    VALUES (?, ?, 
+                        COALESCE((SELECT created_at FROM preference_summaries WHERE openid = ?), CURRENT_TIMESTAMP),
+                        CURRENT_TIMESTAMP)
+                ''', (openid, user_summary, openid))
+                
+                conn.commit()
+                
                 # 构建新的system prompt
                 new_system_prompt = f"""你是一个智能助手。
 
@@ -609,7 +643,7 @@ class AgentChatService:
                     "message": "用户偏好已更新到AI系统",
                     "data": {
                         "summary": user_summary,
-                        "updated_agents": 0 if not openid else 1
+                        "updatedAgents": 1 if openid in self.agents else 0
                     },
                     "response_time": f"{time.time() - start_time:.3f}s"
                 })
@@ -1860,7 +1894,7 @@ class AgentChatService:
         """整合并组织推荐结果"""
         try:
             # 构建提示词
-            organize_prompt = f"""基于以下用户意图和搜索结果，制定一个合理的行程安排：
+            organize_prompt = f"""基于以下用户意图和搜索结果，制定一个合理的推荐计划：
 
 用户意图：
 {', '.join(intent_list)}
@@ -1869,10 +1903,8 @@ class AgentChatService:
 {json.dumps(recommendations, ensure_ascii=False, indent=2)}
 
 请提供：
-1. 时间安排建议：-
-2. 具体场所推荐（包含地址和特色）：-
-3. 交通建议：-
-4. 其他注意事项：-
+1. 具体场所推荐（包含地址和特色）：-
+2. 其他注意事项：-
 
 请确保每个部分都以数字编号开头，突出重点信息。每个推荐地点要包含具体的地址和特色。"""
 
