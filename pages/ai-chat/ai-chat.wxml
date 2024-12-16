@@ -66,102 +66,96 @@
       </view>
     </view>
 
-    <!-- 计划内容显示 -->
-    <view class="plan-section" wx:if="{{organizedPlan}}">
-      <view class="plan-title">AI规划建议</view>
-      <scroll-view 
-        class="organized-plan" 
-        scroll-y="true"
-        enhanced="true"
-        show-scrollbar="true">
-        <view class="plan-block" wx:for="{{organizedPlan}}" wx:key="title">
-          <view class="block-title">{{item.title}}</view>
-          <view 
-            wx:for="{{item.details}}" 
-            wx:key="content" 
-            wx:for-item="detail"
-            class="block-detail {{detail.type === 'detail' ? 'with-dot' : ''}}">
-            <text class="detail-icon">{{detail.type === 'detail' ? '🔸' : '📝'}}</text>
-            <view class="detail-content">
-              <text class="detail-text">{{detail.content}}</text>
-              
-              <!-- 添加快照图片展示 -->
-              <view class="detail-snapshots" wx:if="{{detail.snapshots && detail.snapshots.length > 0}}">
-                <scroll-view scroll-x="true" class="snapshots-scroll">
-                  <view class="snapshots-container">
-                    <view 
-                      class="snapshot-item" 
-                      wx:for="{{detail.snapshots}}" 
-                      wx:key="url" 
-                      wx:for-item="snapshot"
-                      bindtap="handleSnapshotTap"
-                      data-url="{{snapshot.url}}"
-                      data-images="{{detail.snapshots}}">
-                      <image 
-                        class="snapshot-thumb" 
-                        src="{{snapshot.image}}" 
-                        mode="aspectFill"
-                        lazy-load="true"
-                      ></image>
-                      <text class="snapshot-title">{{snapshot.title}}</text>
-                    </view>
+    <!-- 在浮动窗口中合并 plan-section 和 recommendations-content -->
+    <scroll-view scroll-y="true" class="recommendations-content">
+      <!-- 计划内容显示 -->
+      <view class="plan-section" wx:if="{{organizedPlan}}">
+        <view class="section-title">AI规划建议</view>
+        <view class="plan-blocks">
+          <view class="plan-block" wx:for="{{organizedPlan}}" wx:key="title">
+            <view class="block-title">
+              <text class="title-text">{{item.title}}</text>
+            </view>
+            
+            <view 
+              wx:for="{{item.details}}" 
+              wx:key="content" 
+              wx:for-item="detail"
+              class="block-detail {{detail.type === 'detail' ? 'with-dot' : ''}}">
+              <text class="detail-icon">{{detail.type === 'detail' ? '🔸' : '📝'}}</text>
+              <view class="detail-content">
+                <view class="detail-main">
+                  <!-- 显示高亮关键词 -->
+                  <view class="detail-highlights" wx:if="{{detail.highlights.length > 0}}">
+                    <text class="highlight-tag" 
+                          wx:for="{{detail.highlights}}" 
+                          wx:key="*this" 
+                          wx:for-item="highlight">{{highlight}}</text>
                   </view>
-                </scroll-view>
-              </view>
-              
-              <!-- 链接显示 -->
-              <view class="detail-links" wx:if="{{detail.links && detail.links.length > 0}}">
-                <view 
-                  class="link-item" 
-                  wx:for="{{detail.links}}" 
-                  wx:key="url" 
-                  wx:for-item="link"
-                  bindtap="handleLinkTap"
-                  data-url="{{link.url}}">
-                  <text class="link-icon">🔗</text>
-                  <text class="link-text">{{link.title || '查看详情'}}</text>
+                  <text class="detail-text">{{detail.content}}</text>
+                  
+                  <!-- 显示地址信息 -->
+                  <view class="detail-address" wx:if="{{detail.address}}">
+                    <text class="address-icon">📍</text>
+                    <text class="address-text">{{detail.address}}</text>
+                  </view>
+                  
+                  <!-- 显示特色信息 -->
+                  <view class="detail-feature" wx:if="{{detail.feature}}">
+                    <text class="feature-icon">✨</text>
+                    <text class="feature-text">{{detail.feature}}</text>
+                  </view>
+                  
+                  <!-- 显示图片数量信息 -->
+                  <view class="detail-images" wx:if="{{detail.imageCount}}">
+                    <text class="images-icon">🖼️</text>
+                    <text class="images-text">{{detail.imageCount}}张实拍图片</text>
+                  </view>
                 </view>
               </view>
             </view>
           </view>
         </view>
-      </scroll-view>
-    </view>
+      </view>
 
-    <!-- 餐厅推荐列表 -->
-    <scroll-view scroll-y="true" class="recommendations-content">
-      <!-- 按日期分组显示推荐 -->
-      <block wx:for="{{groupedRecommendations}}" wx:key="date" wx:for-item="group">
-        <view class="recommendation-date">
-          <text class="date-text">{{group.date}}</text>
-          <text class="recommendation-count">({{group.items.length}}条推荐)</text>
-        </view>
-        
-        <view class="recommendation-group">
-          <view class="link-card" 
-                wx:for="{{group.items}}" 
-                wx:key="uniqueId"
-                bindtap="handleLinkTap"
-                data-url="{{item.link}}">
-            <!-- 添加网页快照显示 -->
-            <view class="snapshot-preview" wx:if="{{item.snapshot}}">
-              <image 
-                class="snapshot-image" 
-                src="{{item.snapshot}}" 
-                mode="aspectFill"
-                lazy-load="true"
-              ></image>
-            </view>
-            <view class="link-content">
-              <text class="link-title">{{item.title}}</text>
-              <text class="link-description" wx:if="{{item.description}}">{{item.description}}</text>
-              <text class="link-type" wx:if="{{item.type}}">{{item.type}}</text>
-              <text class="link-domain" wx:if="{{item.domain}}">{{item.domain}}</text>
-            </view>
-            <text class="link-arrow">→</text>
+      <!-- 分割线 -->
+      <view class="section-divider" wx:if="{{organizedPlan && groupedRecommendations.length > 0}}"></view>
+
+      <!-- 推荐列表 -->
+      <view class="recommendations-list">
+        <view class="section-title" wx:if="{{groupedRecommendations.length > 0}}">推荐列表</view>
+        <block wx:for="{{groupedRecommendations}}" wx:key="date" wx:for-item="group">
+          <view class="recommendation-date">
+            <text class="date-text">{{group.date}}</text>
+            <text class="recommendation-count">({{group.items.length}}条推荐)</text>
           </view>
-        </view>
-      </block>
+          
+          <view class="recommendation-group">
+            <view class="link-card" 
+                  wx:for="{{group.items}}" 
+                  wx:key="uniqueId"
+                  bindtap="handleLinkTap"
+                  data-url="{{item.link}}"
+                  data-snapshot="{{item.snapshot}}">
+              <view class="snapshot-preview" wx:if="{{item.snapshot}}">
+                <image 
+                  class="snapshot-image" 
+                  src="{{item.snapshot}}" 
+                  mode="aspectFill"
+                  lazy-load="true"
+                ></image>
+              </view>
+              <view class="link-content">
+                <text class="link-title">{{item.title}}</text>
+                <text class="link-description" wx:if="{{item.description}}">{{item.description}}</text>
+                <text class="link-type" wx:if="{{item.type}}">{{item.type}}</text>
+                <text class="link-domain" wx:if="{{item.domain}}">{{item.domain}}</text>
+              </view>
+              <text class="link-arrow">→</text>
+            </view>
+          </view>
+        </block>
+      </view>
     </scroll-view>
 
     <!-- 相关搜索词 -->

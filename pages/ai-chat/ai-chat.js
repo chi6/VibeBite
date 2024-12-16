@@ -196,8 +196,10 @@ Page({
           formattedDate: new Date().toLocaleDateString('zh-CN'),
           timestamp: Date.now(),
           distance: this.calculateDistance(item.location),
-          snapshot: item.snapshot || item.image || null,
-          domain: this.extractDomain(item.link)
+          snapshot: item.webSnapshot || item.snapshot || item.image || null,
+          domain: this.extractDomain(item.link),
+          description: item.description || item.summary || '',
+          title: item.title || this.extractTitle(item.link) || '推荐内容'
         }));
 
         // 将新推荐添加到历史记录中
@@ -524,19 +526,43 @@ Page({
       
       return sections.map(section => {
         const lines = section.trim().split('\n');
-        const title = lines[0].trim();
+        const title = lines[0].trim().replace(/\*\*/g, '');
         const details = lines.slice(1)
           .map(line => line.trim())
           .filter(Boolean)
           .map(line => {
+            let content = line.replace(/^-\s*/, '');
+            
+            content = content.replace(/\*\*/g, '');
+            
             let detail = {
               type: line.startsWith('-') ? 'detail' : 'text',
-              content: line.replace(/^-\s*/, '')
+              content: content,
+              highlights: [],
             };
 
-            // 处理快照数据
-            if (line.includes('[snapshot]')) {
-              detail.snapshots = this.extractSnapshots(line);
+            const boldMatches = line.match(/\*\*(.*?)\*\*/g);
+            if (boldMatches) {
+              detail.highlights = boldMatches.map(match => 
+                match.replace(/\*\*/g, '')
+              );
+            }
+
+            const addressMatch = content.match(/地址[：:](.*?)。/);
+            if (addressMatch) {
+              detail.address = addressMatch[1].trim();
+            }
+
+            const featureMatch = content.match(/特色[为是](.*?)。/);
+            if (featureMatch) {
+              detail.feature = featureMatch[1].trim();
+            }
+
+            if (content.includes('照片') || content.includes('实拍')) {
+              const imageMatch = content.match(/(\d+)\s*张.*?照片/);
+              if (imageMatch) {
+                detail.imageCount = parseInt(imageMatch[1]);
+              }
             }
 
             return detail;
@@ -544,7 +570,10 @@ Page({
 
         return {
           title,
-          details
+          details,
+          titleHighlights: lines[0].match(/\*\*(.*?)\*\*/g)?.map(match => 
+            match.replace(/\*\*/g, '')
+          ) || []
         };
       });
     } catch (error) {
@@ -615,26 +644,64 @@ Page({
 
   // 添加处理链接点击的方法
   handleLinkTap(e) {
-    const url = e.currentTarget.dataset.url;
-    if (url) {
-      wx.navigateTo({
-        url: `/pages/webview/webview?url=${encodeURIComponent(url)}`,
-        fail: (err) => {
-          console.error('打开链接失败:', err);
-          wx.showToast({
-            title: '打开链接失败',
-            icon: 'none'
+    const { url, snapshot } = e.currentTarget.dataset;
+    
+    // 如果有快照图片，先预览图片
+    if (snapshot) {
+      wx.previewImage({
+        current: snapshot,
+        urls: [snapshot],
+        success: () => {
+          // 预览后可以选择是否要打开链接
+          wx.showActionSheet({
+            itemList: ['打开链接', '取消'],
+            success: (res) => {
+              if (res.tapIndex === 0 && url) {
+                this.openWebView(url);
+              }
+            }
           });
         }
       });
+    } else if (url) {
+      this.openWebView(url);
     }
   },
 
+  // 封装打开网页的方法
+  openWebView(url) {
+    wx.navigateTo({
+      url: `/pages/webview/webview?url=${encodeURIComponent(url)}`,
+      fail: (err) => {
+        console.error('打开链接失败:', err);
+        wx.showToast({
+          title: '打开链接失败',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  // 添加提取网页标题的方法
+  extractTitle(url) {
+    if (!url) return '';
+    try {
+      const urlObj = new URL(url);
+      const pathParts = urlObj.pathname.split('/').filter(Boolean);
+      return pathParts[pathParts.length - 1] || urlObj.hostname;
+    } catch (error) {
+      return '';
+    }
+  },
+
+  // 优化提取域名的方法
   extractDomain(url) {
     if (!url) return '';
     try {
       const domain = new URL(url).hostname;
-      return domain.replace(/^www\./, '');
+      // 移除 www 前缀并限制长度
+      const cleanDomain = domain.replace(/^www\./, '');
+      return cleanDomain.length > 20 ? cleanDomain.substring(0, 20) + '...' : cleanDomain;
     } catch (error) {
       return '';
     }
