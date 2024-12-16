@@ -17,6 +17,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 import json
 import re
+import random
 
 class AgentChatService:
     def __init__(self):
@@ -227,7 +228,12 @@ class AgentChatService:
                 "response": f"未找到指定的agent: {openid}"
             }), 404
         
+        # 获取响应
         responses = self.agents[openid].process_task(task_name, message)
+        
+        # 异步触发意图分析
+        asyncio.create_task(self.analyze_intent(self.agents[openid]))
+        
         print(responses)
         return jsonify({
             "uniqueId": int(time.time() * 1000000),
@@ -1318,7 +1324,7 @@ class AgentChatService:
 3. 饮品选择倾向
 4. 个性化推荐建议
 
-请用简洁专业的语言描述，突出关键特点。回答要分点并且要有具体的推荐。"""
+请用简洁专业的语言描述。回答要分点并且要有具体的推荐。"""
 
                     # 调用大模型生成总结
                     request_id = str(uuid.uuid4())
@@ -1376,14 +1382,12 @@ class AgentChatService:
         try:
             data = request.get_json()
             location = data.get('location', '深圳')
-            messages = data.get('messages', [])
             timestamp = data.get('timestamp')
-            openid = data.get('openid')  # 直接使用openid
+            openid = data.get('openid')
             
-            print(f"当前agents: {self.agents.keys()}")  # 打印所有agent keys
-            print(f"请求的openid: {openid}")  # 打印请求的openid
+            print(f"当前agents: {self.agents.keys()}")
+            print(f"请求的openid: {openid}")
             
-            # 获取agent的对话历史
             if openid not in self.agents:
                 print(f"未找到openid: {openid}")
                 return jsonify({
@@ -1393,34 +1397,17 @@ class AgentChatService:
                 }), 404
             
             agent = self.agents[openid]
-            chat_history = agent.memory
-            print(f"对话历史: {chat_history}")
             
-            # 分析用户意图
-            memory_text = "\n".join([
-                f"用户: {msg['user_input']}\nAI: {msg['agent_output']}"
-                for msg in chat_history[-5:]  # 只使用最近5条记录
-            ])
-            
-            # 使用agent的process_recommend_task方法分析意图
-            intent_analysis = agent.process_recommend_task("intent_summary", memory_text)
-            print(f"意图分析结果: {intent_analysis}")
-            
-            try:
-                # 将字符串形式的列表转换为Python列表
-                intent_list = eval(intent_analysis)
-                if not isinstance(intent_list, list):
-                    raise ValueError("意图分析结果不是列表格式")
-            except Exception as e:
-                print(f"意图分析结果格式错误: {str(e)}")
-                intent_list = ["用餐"]  # 默认意图
+            # 使用存储的意图分析结果
+            intent_list = agent.intent_analysis if agent.intent_analysis else ["用餐"]
+            print(f"使用存储的意图分析结果: {intent_list}")
             
             recommendations = []
             images = []
             location = "深圳"
             # 根据每个意图进行搜索
-            for intent in intent_list:
-                search_query = f"{intent} {location} 小红书推荐"
+            for intent in intent_list[:3]:
+                search_query = f"{intent} {location} 大众点评推荐"
                 print(f"搜索关键词: {search_query}")
                 
                 # 用Google搜索API
@@ -1444,16 +1431,6 @@ class AgentChatService:
                     # 处理搜索结果
                     processed_results = self._process_search_results(search_results, intent)
                     recommendations.extend(processed_results)
-                    
-                    # 处理图片结果
-                    if 'images' in search_results:
-                        for image in search_results['images'][:3]:  # 每个意图取前3张图
-                            images.append({
-                                'title': image.get('title', ''),
-                                'imageUrl': image.get('imageUrl', ''),
-                                'link': image.get('link', ''),
-                                'type': intent
-                            })
                         
                 except requests.RequestException as e:
                     print(f"搜索API请求错误: {str(e)}")
@@ -1630,72 +1607,66 @@ class AgentChatService:
         if 'organic' in results:
             for result in results['organic'][:1]:  # 只取前1个结果
                 try:
-                    # 获取网页内容
+                    # 更新请求头
                     headers = {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
                         'Accept-Encoding': 'gzip, deflate, br',
-                        'Connection': 'keep-alive'
+                        'Connection': 'keep-alive',
+                        'Cache-Control': 'max-age=0',
+                        'Upgrade-Insecure-Requests': '1',
+                        'Referer': 'https://www.dianping.com',
+                        'Cookie': '_lxsdk_cuid=16b8f3c12c3c8-0f0b9c5c95c6f7-1633685d-13c680-16b8f3c12c3c8; _lxsdk=16b8f3c12c3c8-0f0b9c5c95c6f7-1633685d-13c680-16b8f3c12c3c8; _hc.v=1234567890123456789012345678901234567890'
                     }
-                    response = requests.get(result.get('link', ''), headers=headers, timeout=5)
-                    response.encoding = response.apparent_encoding  # 自动检测编码
                     
-                    # 使用BeautifulSoup解析网页
-                    soup = BeautifulSoup(response.text, 'html.parser')
+                    # 添加随机延迟
+                    time.sleep(random.uniform(1, 3))
                     
-                    # 基本信息提取
-                    page_content = {
-                        'title': soup.title.string if soup.title else result.get('title', ''),
-                        'description': result.get('snippet', ''),
-                        'link': result.get('link', ''),
-                        'type': result_type,
-                        'position': result.get('position', 0),
-                        'details': {},
-                        'metadata': {
-                            'source': self._extract_domain(result.get('link', '')),
-                            'last_updated': self._extract_date(soup),
-                            'keywords': self._extract_meta_keywords(soup)
+                    # 检查是否是大众点评链接
+                    is_dianping = 'dianping.com' in result.get('link', '')
+                    
+                    if is_dianping:
+                        # 对于大众点评，直接使用搜索结果中的信息
+                        page_content = {
+                            'title': result.get('title', '').replace(' - 大众点评网', ''),
+                            'description': result.get('snippet', ''),
+                            'link': result.get('link', ''),
+                            'type': result_type,
+                            'position': result.get('position', 0),
+                            'details': {
+                                'rating': self._extract_rating_from_snippet(result.get('snippet', '')),
+                                'price': self._extract_price_from_snippet(result.get('snippet', '')),
+                                'address': self._extract_address_from_snippet(result.get('snippet', '')),
+                                'categories': self._extract_categories_from_title(result.get('title', '')),
+                                'images': []  # 大众点评图片暂时不抓取
+                            },
+                            'metadata': {
+                                'source': '大众点评',
+                                'last_updated': datetime.now().strftime('%Y-%m-%d'),
+                                'keywords': self._extract_keywords_from_title(result.get('title', ''))
+                            }
                         }
-                    }
-                    
-                    # 根据不同网站类型提取信息
-                    domain = self._extract_domain(result.get('link', ''))
-                    if 'dianping.com' in domain:
-                        page_content['details'] = self._extract_dianping_info(soup)
-                    elif 'meituan.com' in domain:
-                        page_content['details'] = self._extract_meituan_info(soup)
-                    elif 'ctrip.com' in domain or 'trip.com' in domain:
-                        page_content['details'] = self._extract_ctrip_info(soup)
-                    elif 'xiaohongshu.com' in domain:
-                        page_content['details'] = self._extract_xiaohongshu_info(soup)
                     else:
-                        page_content['details'] = self._extract_general_info(soup)
-                    
-                    # 提取联系信息
-                    contact_info = self._extract_contact_info(soup)
-                    if contact_info:
-                        page_content['details']['contact'] = contact_info
-                    
-                    # 提取位置信息
-                    location_info = self._extract_location_info(soup)
-                    if location_info:
-                        page_content['details']['location'] = location_info
-                    
-                    # 提取营业时间
-                    business_hours = self._extract_business_hours(soup)
-                    if business_hours:
-                        page_content['details']['business_hours'] = business_hours
-                    
-                    # 提取价格信息
-                    price_info = self._extract_price_info(soup)
-                    if price_info:
-                        page_content['details']['price'] = price_info
-                    
-                    # 提取图片
-                    images = self._extract_images(soup)
-                    if images:
-                        page_content['details']['images'] = images
+                        # 非大众点评网站正常抓取
+                        response = requests.get(result.get('link', ''), headers=headers, timeout=5)
+                        response.encoding = response.apparent_encoding
+                        
+                        soup = BeautifulSoup(response.text, 'html.parser')
+                        
+                        page_content = {
+                            'title': soup.title.string if soup.title else result.get('title', ''),
+                            'description': result.get('snippet', ''),
+                            'link': result.get('link', ''),
+                            'type': result_type,
+                            'position': result.get('position', 0),
+                            'details': self._extract_general_info(soup),
+                            'metadata': {
+                                'source': self._extract_domain(result.get('link', '')),
+                                'last_updated': self._extract_date(soup),
+                                'keywords': self._extract_meta_keywords(soup)
+                            }
+                        }
                     
                     processed_results.append(page_content)
                     print(f"成功处理页面: {result.get('link', '')}")
@@ -1714,6 +1685,46 @@ class AgentChatService:
                     })
                     
         return processed_results
+
+    # 添加辅助方法来从搜索结果中提取信息
+    def _extract_rating_from_snippet(self, snippet: str) -> str:
+        """从搜索结果描述中提取评分"""
+        rating_match = re.search(r'评分[：:]\s*([\d.]+)', snippet)
+        if rating_match:
+            return rating_match.group(1)
+        return ''
+
+    def _extract_price_from_snippet(self, snippet: str) -> str:
+        """从搜索结果描述中提取价格"""
+        price_match = re.search(r'人均[：:]\s*¥?(\d+)', snippet)
+        if price_match:
+            return f"¥{price_match.group(1)}"
+        return ''
+
+    def _extract_address_from_snippet(self, snippet: str) -> str:
+        """从搜索结果描述中提取地址"""
+        address_match = re.search(r'地址[：:]\s*([^。]+)', snippet)
+        if address_match:
+            return address_match.group(1).strip()
+        return ''
+
+    def _extract_categories_from_title(self, title: str) -> list:
+        """从标题中提取分类"""
+        # 移除"- 大众点评网"等后缀
+        title = re.sub(r'\s*-\s*大众点评网.*$', '', title)
+        # 提取括号中的分类信息
+        categories = re.findall(r'\[(.*?)\]|\((.*?)\)', title)
+        # 展平结果并移除空值
+        return [cat for group in categories for cat in group if cat]
+
+    def _extract_keywords_from_title(self, title: str) -> list:
+        """从标题中提取关键词"""
+        # 移除特殊字符和标点
+        title = re.sub(r'[【】\[\]()（）]', ' ', title)
+        # 分词
+        words = title.split()
+        # 移除停用词和空字符串
+        return [w for w in words if w and len(w) > 1]
 
     def _extract_domain(self, url: str) -> str:
         """从URL中提取域名"""
@@ -1746,7 +1757,7 @@ class AgentChatService:
             return []
 
     def _extract_contact_info(self, soup: BeautifulSoup) -> dict:
-        """提取联系信息"""
+        """提取联���信息"""
         contact_info = {
             'phone': '',
             'email': '',
@@ -1903,10 +1914,10 @@ class AgentChatService:
 {json.dumps(recommendations, ensure_ascii=False, indent=2)}
 
 请提供：
-1. 具体场所推荐（包含地址和特色）：-
-2. 其他注意事项：-
+1. 具体场所推荐（包含地址和特色）：- 内容
+2. 其他注意事项：- 内容
 
-请确保每个部分都以数字编号开头，突出重点信息。每个推荐地点要包含具体的地址和特色。"""
+每个推荐地点要包含具体的地址和特色。"""
 
             # 调用大模型整合结果
             request_id = str(uuid.uuid4())
@@ -2375,6 +2386,39 @@ class AgentChatService:
                 "details": str(e),
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
+
+    async def analyze_intent(self, agent: Agent):
+        """异步分析用户意图"""
+        try:
+            chat_history = agent.memory
+            current_count = len(chat_history)
+            
+            # 检查是否需要更新意图分析（每5条消息更新一次）
+            if current_count >= agent.last_analysis_count + 5 or agent.last_analysis_count == 0:
+                # 获取最近的对话记录
+                memory_text = "\n".join([
+                    f"用户: {msg['user_input']}\nAI: {msg['agent_output']}"
+                    for msg in chat_history[-5:]
+                ])
+                
+                # 分析意图
+                intent_analysis = agent.process_recommend_task("intent_summary", memory_text)
+                print(f"新的意图分析结果: {intent_analysis}")
+                
+                try:
+                    # 将字符串形式的列表转换为Python列表
+                    intent_list = eval(intent_analysis)
+                    if isinstance(intent_list, list):
+                        # 更新agent中的意图分析结果
+                        agent.intent_analysis = intent_list
+                        agent.last_analysis_count = current_count
+                        print(f"意图分析已更新: {intent_list}")
+                    else:
+                        print("意图分析结果格式错误")
+                except Exception as e:
+                    print(f"处理意图分析结果错误: {str(e)}")
+        except Exception as e:
+            print(f"意图分析过程错误: {str(e)}")
 
 # 创建服实例
 service = AgentChatService()

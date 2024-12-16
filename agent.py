@@ -24,6 +24,8 @@ class Agent:
         self.openid = openid
         self.memory: List[Dict[str, Any]] = []
         self.rag_tools = rag_tools
+        self.intent_analysis = ["用餐"]  # 存储最新的意图分析结果，默认为"用餐"
+        self.last_analysis_count = 0  # 记录上次分析时的对话数量
         
     def construct_prompt(self, task_name, input_text) -> str:
         meta_prompt = self.prompt_manager.get_prompt(task_name, self.openid)

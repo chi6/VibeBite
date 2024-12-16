@@ -6,7 +6,7 @@ import time
 
 class ChatGptClient:
     def __init__(self):
-        self.endpoint_id = 'ep-20241025114356-xl67j'#os.getenv('ENDPOINT_ID')  # 从环境变量获取模型 ID
+        self.endpoint_id = 'ep-20241216130717-vvktd'#os.getenv('ENDPOINT_ID')  # 从环境变量获取模型 ID
         self.responses = {}  # 存储请求的响应
         self.client = Ark()
 

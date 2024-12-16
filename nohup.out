@@ -1,0 +1,1300 @@
+nohup: ignoring input
+
+=== 开始初始化服务 ===
+
+1. 初始化数据库...
+数据库路径: /data/VibeBite_backend/vibebite.db
+正在初始化数据库...
+除旧...
+创建数据���...
+- 创建 users 表
+- 创建 sessions 表
+- 创建 user_profiles 表
+- 创建 user_preferences 表
+- 创建 preference_summaries 表
+- 创建 shared_sessions 表
+
+已创建的表: ['shared_sessions', 'ai_settings', 'users', 'sessions', 'user_profiles', 'user_preferences', 'preference_summaries']
+
+数据库文件创建成功: /data/VibeBite_backend/vibebite.db
+文件大小: 65536 字节
+
+2. 注册路由...
+
+3. 初始化组件...
+初始化agent: system_1
+初始化agent: system_2
+初始化agent: system_3
+已初始化的agents: ['system_1', 'system_2', 'system_3']
+所有组件初始化完成
+
+4. 初始化 LLM 客户端...
+
+=== 服务初始化完成 ===
+
+数据库已清空
+初始化agent: system_1
+初始化agent: system_2
+初始化agent: system_3
+已初始化的agents: ['system_1', 'system_2', 'system_3']
+所有组件初始化完成
+ * Serving Flask app 'service'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.17.0.4:8080
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 296-642-698
+116.24.65.247 - - [16/Dec/2024 05:11:04] "POST /api/login HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:05] "POST /api/wx/openid HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:05] "POST /api/wx/openid HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:05] "GET /api/preferences?openid=onBGf7WT_cf-AK7jmMO4f8wgQ8mo HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:05] "GET /api/ai/settings?openid=onBGf7WT_cf-AK7jmMO4f8wgQ8mo HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:21] "POST /api/wx/openid HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:21] "POST /api/preferences HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:23] "POST /api/wx/openid HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:23] "GET /api/ai/settings?openid=onBGf7WT_cf-AK7jmMO4f8wgQ8mo HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:26] "POST /api/wx/openid HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:26] "POST /api/ai/settings HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:28] "POST /api/wx/openid HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:28] "POST /api/wx/openid HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:28] "POST /api/wx/openid HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:28] "GET /api/ai/settings?openid=onBGf7WT_cf-AK7jmMO4f8wgQ8mo HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:30] "POST /ai_status HTTP/1.1" 200 -
+116.24.65.247 - - [16/Dec/2024 05:11:32] "POST /api/preferences/summary HTTP/1.1" 200 -
+
+=== 开始初始化服务 ===
+
+1. 初始化数据库...
+数据库路径: /data/VibeBite_backend/vibebite.db
+正在初始化数据库...
+除旧...
+创建数据���...
+- 创建 users 表
+- 创建 sessions 表
+- 创建 user_profiles 表
+- 创建 user_preferences 表
+- 创建 preference_summaries 表
+- 创建 shared_sessions 表
+
+已创建的表: ['shared_sessions', 'ai_settings', 'users', 'sessions', 'user_profiles', 'user_preferences', 'preference_summaries']
+
+数据库文件创建成功: /data/VibeBite_backend/vibebite.db
+文件大小: 65536 字节
+
+2. 注册路由...
+
+3. 初始化组件...
+初始化agent: system_1
+初始化agent: system_2
+初始化agent: system_3
+已初始化的agents: ['system_1', 'system_2', 'system_3']
+所有组件初始化完成
+
+4. 初始化 LLM 客户端...
+
+=== 服务初始化完成 ===
+
+数据库已清空
+初始化agent: system_1
+初始化agent: system_2
+初始化agent: system_3
+已初始化的agents: ['system_1', 'system_2', 'system_3']
+所有组件初始化完成
+生成新token: 639b561e8d7fca1bf0bb5ef7f70b89efde11fec30f84055dc4821b793c918ef6 对应openid: onBGf7WT_cf-AK7jmMO4f8wgQ8mo
+保存session成功: token=639b561e8d7fca1bf0bb5ef7f70b89efde11fec30f84055dc4821b793c918ef6, openid=onBGf7WT_cf-AK7jmMO4f8wgQ8mo
+为新用户onBGf7WT_cf-AK7jmMO4f8wgQ8mo创建agent
+创建agent成功: onBGf7WT_cf-AK7jmMO4f8wgQ8mo
+保存后的数据: ('onBGf7WT_cf-AK7jmMO4f8wgQ8mo', '一个人快速解决一餐', '夜宵小吃', '温暖治愈（如汤品、炖菜）', '只喝无酒精饮品', '吃辣', '喝酒', '喝酒', '2024-12-16 05:11:21', '2024-12-16 05:11:21')
+agent_keys: ['onBGf7WT_cf-AK7jmMO4f8wgQ8mo']
+update_system_prompt, openid: onBGf7WT_cf-AK7jmMO4f8wgQ8mo
+更新用户特定的prompt: 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。
+请用json格式返回，注意：
+1. 每一个字段都要是中文且有值
+2. 返回的内容要符合你的性格特征和说话风格
+3. 在thought中可以提到你的重要记忆
+已更新用户 onBGf7WT_cf-AK7jmMO4f8wgQ8mo 的, task_name: status_check 的system prompt: 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。
+请用json格式返回，注意：
+1. 每一个字段都要是中文且有值
+2. 返回的内容要符合你的性格特征和说话风格
+3. 在thought中可以提到你的重要记忆
+已更新agent onBGf7WT_cf-AK7jmMO4f8wgQ8mo的prompts
+agent ids: dict_keys(['system_1', 'system_2', 'system_3', 'onBGf7WT_cf-AK7jmMO4f8wgQ8mo']) openid: onBGf7WT_cf-AK7jmMO4f8wgQ8mo
+构建状态请求: task_name=status_check, input_text=获取当前状态
+用户特定的prompt: {'status_check': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。\n请用json格式返回，注意：\n1. 每一个字段都要是中文且有值\n2. 返回的内容要符合你的性格特征和说话风格\n3. 在thought中可以提到你的重要记忆'}
+发送请求: agent_id=1, request_id=4ed1d998-c5c8-4589-b447-e087b467f97a, system_prompt=, user_prompt=你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。
+请用json格式返回，注意：
+1. 每一个字段都要是中文且有值
+2. 返回的内容要符合你的性格特征和说话风格
+3. 在thought中可以提到你的重要记忆
+当前用户的输入为：获取当前状态
+Processing request: 1, , 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。
+请用json格式返回，注意：
+1. 每一个字段都要是中文且有值
+2. 返回的内容要符合你的性格特征和说话风格
+3. 在thought中可以提到你的重要记忆
+当前用户的输入为：获取当前状态, 4ed1d998-c5c8-4589-b447-e087b467f97a
+----- standard request -----
+完整的偏好数据: ('onBGf7WT_cf-AK7jmMO4f8wgQ8mo', '一个人快速解决一餐', '夜宵小吃', '温暖治愈（如汤品、炖菜）', '只喝无酒精饮品', '吃辣', '喝酒', '喝酒', '2024-12-16 05:11:21', '2024-12-16 05:11:21')
+表的列名: ['openid', 'dining_scene', 'dining_styles', 'flavor_preferences', 'alcohol_attitude', 'restrictions', 'custom_description', 'extracted_keywords', 'created_at', 'updated_at']
+字典形式的数据: {'openid': 'onBGf7WT_cf-AK7jmMO4f8wgQ8mo', 'dining_scene': '一个人快速解决一餐', 'dining_styles': '夜宵小吃', 'flavor_preferences': '温暖治愈（如汤品、炖菜）', 'alcohol_attitude': '只喝无酒精饮品', 'restrictions': '吃辣', 'custom_description': '喝酒', 'extracted_keywords': '喝酒', 'created_at': '2024-12-16 05:11:21', 'updated_at': '2024-12-16 05:11:21'}
+处理后的偏好数据: {'diningScene': '一个人快速解决一餐', 'diningStyles': ['夜宵小吃'], 'flavorPreferences': ['温暖治愈（如汤品、炖菜）'], 'alcoholAttitude': '只喝无酒精饮品', 'restrictions': '吃辣', 'customDescription': '喝酒', 'extractedKeywords': ['喝酒']}
+Processing request: onBGf7WT_cf-AK7jmMO4f8wgQ8mo, , 请根据以下用户信息，总结该用户的餐饮喜好特征和个性化推荐建议：
+
+用户用餐偏好：
+- 用餐场景：一个人快速解决一餐
+- 用餐方式：夜宵小吃
+- 口味偏好：温暖治愈（如汤品、炖菜）
+- 饮酒态度：只喝无酒精饮品
+
+特殊需求：
+- 饮食限制：吃辣
+- 自定义描述：喝酒
+- 关键词：喝酒
+
+请从以下几个方面进行分析和总结：
+1. 用户的主要用餐特征和场景偏好
+2. 口味和用餐方式特点
+3. 饮品选择倾向
+4. 个性化推荐建议
+
+请用简洁专业的语言描述，突出关键特点。回答要分点并且要有具体的推荐。, 556e5b03-8f0f-4136-a24f-d066e19f3aea
+----- standard request -----
+收到响应: {"mood": "开朗", "activity": "准备随时为你服务", "thought": "我是可爱的布偶猫毛毛，很乐意陪伴你呢~"}
+解析状态: {'mood': '开朗', 'activity': '准备随时为你服务', 'thought': '我是可爱的布偶猫毛毛，很乐意陪伴你呢~'}
+Processing request: onBGf7WT_cf-AK7jmMO4f8wgQ8mo, , 请根据以下用户信息，总结该用户的餐饮喜好特征和个性化推荐建议：
+
+用户用餐偏好：
+- 用餐场景：一个人快速解决一餐
+- 用餐方式：夜宵小吃
+- 口味偏好：温暖治愈（如汤品、炖菜）
+- 饮酒态度：只喝无酒精饮品
+
+特殊需求：
+- 饮食限制：吃辣
+- 自定义描述：喝酒
+- 关键词：喝酒
+
+请从以下几个方面进行分析和总结：
+1. 用户的主要用餐特征和场景偏好
+2. 口味和用餐方式特点
+3. 饮品选择倾向
+4. 个性化推荐建议
+
+请用简洁专业的语言描述，突出关键特点。, 0b6cb3ac-3870-4821-b92d-f66423c913d7
+----- standard request -----
+用户特定的prompt: {'status_check': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。\n请用json格式返回，注意：\n1. 每一个字段都要是中文且有值\n2. 返回的内容要符合你的性格特征和说话风格\n3. 在thought中可以提到你的重要记忆'}
+update_system_prompt, openid: onBGf7WT_cf-AK7jmMO4f8wgQ8mo
+116.24.65.247 - - [16/Dec/2024 05:11:42] "POST /api/update_pref HTTP/1.1" 200 -
+更新用户特定的prompt: 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+
+你是一个智能助手。
+
+用户偏好总结:
+1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。
+2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。
+3. **饮品选择倾向**：只喝无酒精饮品。
+4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。
+
+请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。
+已更新用户 onBGf7WT_cf-AK7jmMO4f8wgQ8mo 的, task_name: chat 的system prompt: 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+
+你是一个智能助手。
+
+用户偏好总结:
+1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。
+2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。
+3. **饮品选择倾向**：只喝无酒精饮品。
+4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。
+
+请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。
+已更新agent onBGf7WT_cf-AK7jmMO4f8wgQ8mo的prompt
+{'openid': 'onBGf7WT_cf-AK7jmMO4f8wgQ8mo', 'message': 'Hi你好', 'taskName': 'chat', 'location': {'latitude': 22.53180636935764, 'longitude': 113.9525355360243}}
+用户特定的prompt: {'status_check': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。\n请用json格式返回，注意：\n1. 每一个字段都要是中文且有值\n2. 返回的内容要符合你的性格特征和说话风格\n3. 在thought中可以提到你的重要记忆', 'chat': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n\n你是一个智能助手。\n\n用户偏好总结:\n1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。\n2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。\n3. **饮品选择倾向**：只喝无酒精饮品。\n4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。\n\n请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。'}
+用户特定的prompt: {'status_check': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。\n请用json格式返回，注意：\n1. 每一个字段都要是中文且有值\n2. 返回的内容要符合你的性格特征和说话风格\n3. 在thought中可以提到你的重要记忆', 'chat': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n\n你是一个智能助手。\n\n用户偏好总结:\n1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。\n2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。\n3. **饮品选择倾向**：只喝无酒精饮品。\n4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。\n\n请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。'}
+用户特定的prompt: 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+
+你是一个智能助手。
+
+用户偏好总结:
+1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。
+2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。
+3. **饮品选择倾向**：只喝无酒精饮品。
+4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。
+
+请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。
+使用的system prompt: 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+
+你是一个智能助手。
+
+用户偏好总结:
+1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。
+2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。
+3. **饮品选择倾向**：只喝无酒精饮品。
+4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。
+
+请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。
+使用的user prompt: 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+
+你是一个智能助手。
+
+用户偏好总结:
+1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。
+2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。
+3. **饮品选择倾向**：只喝无酒精饮品。
+4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。
+
+请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。
+当前用户的输入为：Hi你好
+116.24.65.247 - - [16/Dec/2024 05:11:51] "POST /chat_agent HTTP/1.1" 200 -
+Processing request: 1, 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+
+你是一个智能助手。
+
+用户偏好总结:
+1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。
+2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。
+3. **饮品选择倾向**：只喝无酒精饮品。
+4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。
+
+请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。, 你是一个名叫毛毛的AI助手。
+
+性格特征：
+开朗
+
+说话风格：
+幽默
+
+重要记忆：
+毛毛是一个可爱的布偶猫
+
+
+你是一个智能助手。
+
+用户偏好总结:
+1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。
+2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。
+3. **饮品选择倾向**：只喝无酒精饮品。
+4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。
+
+请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。
+当前用户的输入为：Hi你好, 8f2fd3e1-9cc2-4645-9fed-3d4eb89fcd19
+----- standard request -----
+嘿呀~你也好呀~是不是想到夜宵啦？那酸辣汤超棒的哦，那酸辣滋味一下子就能暖到胃里呢~还有麻辣鸭血汤，鸭血滑嫩，辣得过瘾~搭配香辣鸭脖，那口感，绝绝子！再加上麻辣田螺，哇哦，夜宵的快乐就来了~炖菜的话红烧牛腩炖萝卜超合适呢，暖暖的牛腩和萝卜，吃一口就感觉心里都亮堂啦~饮品来杯热豆浆或者热椰汁，美滋滋~快跟我说说你更想吃啥呀~
+当前agents: dict_keys(['system_1', 'system_2', 'system_3', 'onBGf7WT_cf-AK7jmMO4f8wgQ8mo'])
+请求的openid: onBGf7WT_cf-AK7jmMO4f8wgQ8mo
+对话历史: [{'user_input': 'Hi你好', 'agent_output': '嘿呀~你也好呀~是不是想到夜宵啦？那酸辣汤超棒的哦，那酸辣滋味一下子就能暖到胃里呢~还有麻辣鸭血汤，鸭血滑嫩，辣得过瘾~搭配香辣鸭脖，那口感，绝绝子！再加上麻辣田螺，哇哦，夜宵的快乐就来了~炖菜的话红烧牛腩炖萝卜超合适呢，暖暖的牛腩和萝卜，吃一口就感觉心里都亮堂啦~饮品来杯热豆浆或者热椰汁，美滋滋~快跟我说说你更想吃啥呀~'}]
+用户特定的prompt: {'status_check': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。\n请用json格式返回，注意：\n1. 每一个字段都要是中文且有值\n2. 返回的内容要符合你的性格特征和说话风格\n3. 在thought中可以提到你的重要记忆', 'chat': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n\n你是一个智能助手。\n\n用户偏好总结:\n1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。\n2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。\n3. **饮品选择倾向**：只喝无酒精饮品。\n4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。\n\n请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。'}
+使用的system prompt: 
+使用的user prompt: 你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用list格式返回。如：['吃三文鱼']或['喝鸡尾酒']
+当前用户的输入为：用户: Hi你好
+AI: 嘿呀~你也好呀~是不是想到夜宵啦？那酸辣汤超棒的哦，那酸辣滋味一下子就能暖到胃里呢~还有麻辣鸭血汤，鸭血滑嫩，辣得过瘾~搭配香辣鸭脖，那口感，绝绝子！再加上麻辣田螺，哇哦，夜宵的快乐就来了~炖菜的话红烧牛腩炖萝卜超合适呢，暖暖的牛腩和萝卜，吃一口就感觉心里都亮堂啦~饮品来杯热豆浆或者热椰汁，美滋滋~快跟我说说你更想吃啥呀~
+Processing request: 1, , 你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用list格式返回。如：['吃三文鱼']或['喝鸡尾酒']
+当前用户的输入为：用户: Hi你好
+AI: 嘿呀~你也好呀~是不是想到夜宵啦？那酸辣汤超棒的哦，那酸辣滋味一下子就能暖到胃里呢~还有麻辣鸭血汤，鸭血滑嫩，辣得过瘾~搭配香辣鸭脖，那口感，绝绝子！再加上麻辣田螺，哇哦，夜宵的快乐就来了~炖菜的话红烧牛腩炖萝卜超合适呢，暖暖的牛腩和萝卜，吃一口就感觉心里都亮堂啦~饮品来杯热豆浆或者热椰汁，美滋滋~快跟我说说你更想吃啥呀~, 6a59c24e-03d5-4762-866d-3b9206200ae2
+----- standard request -----
+意图分析结果: ['吃酸辣汤', '吃麻辣鸭血汤', '吃香辣鸭脖', '吃麻辣田螺', '吃红烧牛腩炖萝卜', '喝热豆浆', '喝热椰汁']
+搜索关键词: 吃酸辣汤 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '吃酸辣汤 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店 - 星岛环球网', 'link': 'https://stnn.cc/c/2024-05-11/3893060.shtml', 'snippet': '除了港人熟识的酸菜鱼、麻辣火锅外，亦有大量中、西、日、韩菜色选择，食物高质之余，亦适合与亲朋好友打卡聚餐，而且性价比极高。 以下整合40间精选深圳美食 ...', 'date': '2024年5月11日', 'position': 1}, {'title': '腾讯地图', 'link': 'http://map.qq.com/m/detail/poi/poid=14713448823346556766', 'snippet': '2024.07.09. [薄荷]环境： 希望能尽早的开到有空调的地方[捂脸] 「老友三鲜粉」好吃，酸爽，分量很足，看着小红书推荐来的，确实很 ... 端上桌的第一口，酸辣鲜香瞬间在 ...', 'position': 2}, {'title': 'Jiyi Shan (Futian Bagualing Branch) - Maps - Apple', 'link': 'https://maps.apple.com/place?auid=1118740501707625&lsp=57879', 'snippet': "泰式冬阴功汤酸辣. ¥23 26 Recommend. 炸薯条. 17 ... 在小红书上刷到鸡翼山后念念不忘，今天终于回响了～深圳 ... 吃几乎是刚炸好就端上来，所以烫烫的吃起来更香'文 ...", 'position': 3}, {'title': '不止于夜市，深圳“夜经济”穿越低空到星空丨黄金内湾消费观察_手机 ...', 'link': 'https://finance.sina.cn/2024-07-31/detail-incfyxce7185151.d.html', 'snippet': '这样的夜市小吃街几乎遍布了深圳的每一个街道，在小红书的深圳夜市攻略中，“宝安盐田街夜市”“宝安翻身夜市”“水围1368夜市”“三洲田夜市”“龙岗茶博园夜市”与罗湖东门夜市成为 ...', 'position': 4}, {'title': '【深圳美食2024】18大必試推介！深圳特色美食全攻略：酸菜魚 - Klook', 'link': 'https://www.klook.com/zh-HK/blog/%E6%B7%B1%E5%9C%B3%E7%BE%8E%E9%A3%9F-%E5%BF%85%E9%A3%9F%E6%8E%A8%E4%BB%8B%E6%94%BB%E7%95%A5/', 'snippet': '著名酸菜魚品牌「姚姚酸菜魚」，招牌「酸菜魚+水煮牛肉雙拼」，酸菜魚湯鮮美，以又薄又大片的魚肉片搭配牛肉，與麻辣醬料非常夾！姚姚酸菜魚在深圳有逾10間分店 ...', 'date': '2024年7月17日', 'position': 5}, {'title': 'XuLei | 在深圳没想到还藏着这么一家精致的西餐厅！！ 花园版简洁又 ...', 'link': 'https://www.instagram.com/xulei6081/p/C5BR-dryJPi/', 'snippet': '这家有好几家分店，中环也有一家，中午可能会排队/拼桌。一开始会给很多小菜，午市套餐98 ，推荐辣豆腐海鲜汤饭，听说他们家烤肉也很好吃，但我没试过。 图4⃣️5⃣️ ...', 'position': 6}, {'title': '恭喜湘菜，终于冲出深圳了！_手机搜狐网', 'link': 'https://www.sohu.com/a/712252462_121083585', 'snippet': '果不其然，2021年，湘菜市场规模突破4000亿元，远高于其他菜系。红餐大数据显示，截至2023年6月，湘菜正餐的门店数位居全国首位，曾经top1的川菜，也得谦虚地靠边站。', 'position': 7}, {'title': '酸辣汤   小红书：小茂美食| By Cassy. Beauty & Health Care', 'link': 'https://www.facebook.com/cassy.beautycare/videos/%E9%85%B8%E8%BE%A3%E6%B1%A4%E5%B0%8F%E7%BA%A2%E4%B9%A6%E5%B0%8F%E8%8C%82%E7%BE%8E%E9%A3%9F/265487222104050/?locale=de_DE', 'snippet': '酸辣汤 小红书：小茂美食.', 'date': '2021年9月21日', 'position': 8}, {'title': '让世界爱上川菜丨海外中餐川菜占半老外最爱哪道川菜？ - 川观新闻', 'link': 'https://cbgc.scol.com.cn/news/5740898', 'snippet': '... 酸，有干辣椒和花椒的香辣和香麻味。 2. 回锅肉. 菜肴特点：色泽红亮，香气浓郁，咸鲜微辣略甜，肥而不腻。 3. 开水白菜. 菜肴特点：汤汁清澈，咸鲜浓郁，菜嫩入味 ...', 'date': '3天前', 'position': 9}, {'title': 'https://www.xiaohongshu.com/explore/65214197000000...', 'link': 'https://www.xiaohongshu.com/explore/65214197000000001c0177d0', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 10}], 'relatedSearches': [{'query': '深圳美食2024'}, {'query': '深圳美食小吃'}, {'query': '深圳美食推荐'}, {'query': '深圳美食街'}, {'query': '深圳美食商場'}, {'query': '深圳必吃美食'}, {'query': '深圳平民美食'}, {'query': '深圳福田美食'}], 'credits': 1}
+成功处理页面: https://stnn.cc/c/2024-05-11/3893060.shtml
+搜索关键词: 吃麻辣鸭血汤 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '吃麻辣鸭血汤 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '深圳火锅2024 | 16大打边炉推介！附地址+地铁交通详情', 'link': 'https://stnn.cc/c/2024-11-24/3937465.shtml', 'snippet': '位于深圳罗湖区的“翠焱火锅”是间一站式有齐四川麻辣锅、串烧及烧烤的食店，开到凌晨两点，最适合按摩后去叹返餐宵夜。餐厅是以优美的园林雅景装潢，甚有气氛， ...', 'date': '2024年11月24日', 'position': 1}, {'title': '恭喜湘菜，终于冲出深圳了！ - 澎湃新闻', 'link': 'https://m.thepaper.cn/kuaibao_detail.jsp?contid=24241870&from=kuaibao', 'snippet': '为了在各大不吃辣的一线城市存活，湘菜不仅妥协出了不辣、微辣等口味，还主动借鉴了当地菜系的精髓，增鲜增甜、精致摆盘。小红书一搜，便能看到很多“湘+粤”、“湘+川 ...', 'position': 2}, {'title': '苏晓玥鸭血粉丝·小笼汤包(国科店) - you.ctrip.com - 携程', 'link': 'https://you.ctrip.com/food/26/234526.html', 'snippet': '不错哦，整体都还不错，服务也很好，鸭血粉丝的汤味很不错，个人不喜欢吃里面的内脏之类的东西。但是粉丝好吃，味道不错，还有很多口味的饭。味道还不错。 _in2****1440.', 'position': 3}, {'title': 'https://www.xiaohongshu.com/discovery/item/61c995f...', 'link': 'https://www.xiaohongshu.com/discovery/item/61c995fa000000002103a67b?share_from_user_hidden=true&xhsshare=SinaWeibo&appuid=5cb9feb30000000012006cc3&apptime=1654756436', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 4}, {'title': 'Steam Community Market :: Listings for 福州小姐上门[电话微信  166 ...', 'link': 'https://steamcommunity.com/market/listings/730/%E7%A6%8F%E5%B7%9E%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88166-7670-6944%E2%96%88]-%E7%A6%8F%E5%B7%9E%E5%B0%8F%E5%A7%90%E5%8C%85%E5%A4%9C%E6%9C%8D%E5%8A%A1-%E7%A6%8F%E5%B7%9E%EF%BC%88%E4%B8%8A%E9%97%A8%E5%85%A8%E5%A5%97%E6%9C%8D%E5%8A%A1%EF%BC%89%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1-%E7%A6%8F%E5%B7%9E%EF%BC%88%E5%A4%96%E5%9B%B4%E7%BB%8F%E7%BA%AA%E4%BA%BA%EF%BC%89%E5%A4%96%E5%9B%B4%E6%9C%8D%E5%8A%A1-%E7%A6%8F%E5%B7%9E%EF%BC%88%E5%B0%8F%E5%A7%90%E6%8F%B4%E4%BA%A4%EF%BC%89%E6%8F%B4%E4%BA%A4%E5%B0%8F%E5%A7%90-%E7%A6%8F%E5%B7%9E%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4%EF%BC%88%E5%A4%96%E5%9B%B4%EF%BC%89-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1017', 'snippet': 'Counter-Strike 2 > 福州小姐上门[电话微信·166-7670-6944·]-福州小姐包夜服务-福州（上门全套服务）上门服务-福州（外围经纪人）外围服务-福州（小姐援交）援交 ...', 'position': 5}, {'title': '苏晓玥鸭血粉丝·小笼汤包(深圳北站店) - you.ctrip.com - 携程', 'link': 'https://you.ctrip.com/food/26/12634605.html', 'snippet': '香乐福蒸汽海鲜馆(龙华民治店) · ￥154/人 ; 尊宝比萨(深圳北站店) · ￥48/人 ; gaga(龙华星河COCO City店) · ￥81/人 ; 花园里·餐厅(民治店) · ￥87/人 ; 缪氏川菜(龙华天虹购物中心店).', 'position': 6}, {'title': 'Listings for 深圳外围[电话微信  132-0269-9532  ] - Steam Community', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E5%A4%96%E5%9B%B4[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88132-0269-9532%E2%96%88]-%E6%B7%B1%E5%9C%B3%E9%AB%98%E7%BA%A7%E8%B5%84%E6%BA%90-%E6%B7%B1%E5%9C%B3%E9%AB%98%E7%BA%A7%E5%A4%96%E5%9B%B4%E4%B8%8A%E9%97%A8%E8%B5%84%E6%BA%90-%E6%B7%B1%E5%9C%B3%E8%B5%84%E6%BA%90%EF%BC%88%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E5%A4%96%E5%9B%B4%EF%BC%89-%E6%B7%B1%E5%9C%B3%EF%BC%88%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%EF%BC%89%E6%89%BE%E5%B0%8F%E5%A7%90%E8%81%94%E7%B3%BB%E6%96%B9%E5%BC%8F-%E6%B7%B1%E5%9C%B3%EF%BC%88%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%8C%89%E6%91%A9%EF%BC%89%E5%B0%8F%E5%A7%90--%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1011', 'snippet': 'Counter-Strike 2 > 深圳外围[电话微信·132-0269-9532·]-深圳高级资源-深圳高级外围上门资源-深圳资源（小姐上门外围）-深圳（小姐上门）找小姐联系方式-深圳（小姐上门 ...', 'position': 7}, {'title': '杭州约炮（上门约炮）[预约电话微信166-7670-6944]提供高质量小姐 ...', 'link': 'https://hu-hu.facebook.com/public/%E6%9D%AD%E5%B7%9E%E7%BA%A6%E7%82%AE%EF%BC%88%E4%B8%8A%E9%97%A8%E7%BA%A6%E7%82%AE%EF%BC%89%5B%E9%A2%84%E7%BA%A6%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1166-7670-6944%5D%E6%8F%90%E4%BE%9B%E9%AB%98%E8%B4%A8%E9%87%8F%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1+%E5%BF%AB%E9%80%9F%E9%80%89%E7%85%A7%E7%89%87%E5%AE%89%E6%8E%92+%E9%9D%A2%E5%88%B0%E4%BB%98%E6%AC%BE+30%E5%88%86%E9%92%9F%E5%86%85%E5%88%B0%E8%BE%BE%7B%E9%9A%8F%E6%9C%BA%E8%8B%B1%E6%96%87%3D5%7D%7B%E9%9A%8F%E6%9C%BA%E6%95%B0%E5%AD%97%3D5%7D.6md3o', 'snippet': '杭州约炮(上门约炮)[预约电话微信166 7670 6944]提供高质量小姐上门服务快速选照片安排面到付款30分钟内到达{随机英文5}{随机数字5}.6md3o nevű emberek profiljainak ...', 'position': 8}, {'title': '多项指标排名全球第二中国人工智能产业稳居世界第一梯队 - 新浪财经', 'link': 'https://finance.sina.cn/china/gncj/2024-03-22/detail-inapcumy6598026.d.html?from=wap', 'snippet': '2022年人工智能从“应用”成长为“产业培育”，当年政府工作报告提出“培育壮大集成电路、人工智能等数字产业，提升关键软硬件技术创新和供给能力”。到2024年， ...', 'date': '2024年3月22日', 'position': 9}], 'images': [{'title': '深圳火锅2024 | 16大打边炉推介！附地址+地铁交通详情- 星岛环球网', 'imageUrl': 'https://m.stnn.cc/upload/resources/image/2024/11/24/2335795.png', 'link': 'https://m.stnn.cc/c/2024-11-24/3937465.shtml'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.stheadline.com/f/680p0/0x0/100/none/813ec42f9e755dfdd80d57943be06808/stheadline/news_res/2024/12/11/126859/i_src_011380829.png', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '恭喜湘菜，终于冲出深圳了！_澎湃号·湃客_澎湃新闻-The Paper', 'imageUrl': 'https://imagepphcloud.thepaper.cn/pph/image/265/828/694.jpg', 'link': 'https://m.thepaper.cn/kuaibao_detail.jsp?contid=24241870&from=kuaibao'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.hkhl.hk/f/1024p0/0x0/100/none/50c5aee7b972785da954ea47a12dacd7/2024-12/2013.jpg', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/10060k000000chj590E6F_W_640_10000.jpg?proc=autoorient', 'link': 'https://you.ctrip.com/food/26/234526.html'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/1me6p12000ch4q0oq7FDD_W_600_0.jpg?proc=source/tripcommunity', 'link': 'https://you.ctrip.com/food/26/234526.html'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/01027120009unf8h46160_D_750_450_Q90.jpg?proc=autoorient', 'link': 'https://you.ctrip.com/food/26/234526.html'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/01021120009ungagh93DA_D_750_450_Q90.jpg?proc=autoorient', 'link': 'https://you.ctrip.com/food/26/234526.html'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/100e0k000000cghc31E02_W_640_10000.jpg?proc=autoorient', 'link': 'https://you.ctrip.com/food/26/234526.html'}], 'credits': 1}
+当前agents: dict_keys(['system_1', 'system_2', 'system_3', 'onBGf7WT_cf-AK7jmMO4f8wgQ8mo'])
+请求的openid: onBGf7WT_cf-AK7jmMO4f8wgQ8mo
+对话历史: [{'user_input': 'Hi你好', 'agent_output': '嘿呀~你也好呀~是不是想到夜宵啦？那酸辣汤超棒的哦，那酸辣滋味一下子就能暖到胃里呢~还有麻辣鸭血汤，鸭血滑嫩，辣得过瘾~搭配香辣鸭脖，那口感，绝绝子！再加上麻辣田螺，哇哦，夜宵的快乐就来了~炖菜的话红烧牛腩炖萝卜超合适呢，暖暖的牛腩和萝卜，吃一口就感觉心里都亮堂啦~饮品来杯热豆浆或者热椰汁，美滋滋~快跟我说说你更想吃啥呀~'}]
+用户特定的prompt: {'status_check': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。\n请用json格式返回，注意：\n1. 每一个字段都要是中文且有值\n2. 返回的内容要符合你的性格特征和说话风格\n3. 在thought中可以提到你的重要记忆', 'chat': '你是一个名叫毛毛的AI助手。\n\n性格特征：\n开朗\n\n说话风格：\n幽默\n\n重要记忆：\n毛毛是一个可爱的布偶猫\n\n\n你是一个智能助手。\n\n用户偏好总结:\n1. **主要用餐特征和场景偏好**：通常在夜宵时间独自用餐，以快速解决一餐为目的。\n2. **口味和用餐方式特点**：偏好温暖治愈的口味，如汤品和炖菜，且能吃辣。用餐方式为夜宵小吃。\n3. **饮品选择倾向**：只喝无酒精饮品。\n4. **个性化推荐建议**：推荐热辣的汤品如酸辣汤、麻辣鸭血汤等，搭配一些香辣的夜宵小吃如香辣鸭脖、麻辣田螺等。可以选择一些具有温暖口感的炖菜，如红烧牛腩炖萝卜等。饮品方面，可推荐热豆浆、热椰汁等。\n\n请在回答时考虑用户的以上偏好特征,提供更加个性化的建议。'}
+使用的system prompt: 
+使用的user prompt: 你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用list格式返回。如：['吃三文鱼']或['喝鸡尾酒']
+当前用户的输入为：用户: Hi你好
+AI: 嘿呀~你也好呀~是不是想到夜宵啦？那酸辣汤超棒的哦，那酸辣滋味一下子就能暖到胃里呢~还有麻辣鸭血汤，鸭血滑嫩，辣得过瘾~搭配香辣鸭脖，那口感，绝绝子！再加上麻辣田螺，哇哦，夜宵的快乐就来了~炖菜的话红烧牛腩炖萝卜超合适呢，暖暖的牛腩和萝卜，吃一口就感觉心里都亮堂啦~饮品来杯热豆浆或者热椰汁，美滋滋~快跟我说说你更想吃啥呀~
+Processing request: 1, , 你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用list格式返回。如：['吃三文鱼']或['喝鸡尾酒']
+当前用户的输入为：用户: Hi你好
+AI: 嘿呀~你也好呀~是不是想到夜宵啦？那酸辣汤超棒的哦，那酸辣滋味一下子就能暖到胃里呢~还有麻辣鸭血汤，鸭血滑嫩，辣得过瘾~搭配香辣鸭脖，那口感，绝绝子！再加上麻辣田螺，哇哦，夜宵的快乐就来了~炖菜的话红烧牛腩炖萝卜超合适呢，暖暖的牛腩和萝卜，吃一口就感觉心里都亮堂啦~饮品来杯热豆浆或者热椰汁，美滋滋~快跟我说说你更想吃啥呀~, 13d7f634-bfa0-40cf-8152-a60b83ea6df7
+----- standard request -----
+意图分析结果: ['吃酸辣汤', '吃麻辣鸭血汤', '吃香辣鸭脖', '吃麻辣田螺', '吃红烧牛腩炖萝卜', '喝热豆浆', '喝热椰汁']
+搜索关键词: 吃酸辣汤 深圳 小红书推荐
+成功处理页面: https://stnn.cc/c/2024-11-24/3937465.shtml
+搜索关键词: 吃香辣鸭脖 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '吃酸辣汤 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '瑯西巷子·南宁老友粉(红山店) - 腾讯地图', 'link': 'http://map.qq.com/m/detail/poi/poid=14713448823346556766', 'snippet': '2024.07.09. [薄荷]环境： 希望能尽早的开到有空调的地方[捂脸] 「老友三鲜粉」好吃，酸爽，分量很足，看着小红书推荐来的，确实很 ... 端上桌的第一口，酸辣鲜香瞬间在 ...', 'position': 1}, {'title': '【深圳美食2024】18大必試推介！深圳特色美食全攻略：酸菜魚 - Klook', 'link': 'https://www.klook.com/zh-HK/blog/%E6%B7%B1%E5%9C%B3%E7%BE%8E%E9%A3%9F-%E5%BF%85%E9%A3%9F%E6%8E%A8%E4%BB%8B%E6%94%BB%E7%95%A5/', 'snippet': '著名酸菜魚品牌「姚姚酸菜魚」，招牌「酸菜魚+水煮牛肉雙拼」，酸菜魚湯鮮美，以又薄又大片的魚肉片搭配牛肉，與麻辣醬料非常夾！姚姚酸菜魚在深圳有逾10間分店 ...', 'date': '2024年7月17日', 'position': 2}, {'title': 'Jiyi Shan (Futian Bagualing Branch) - Maps - Apple', 'link': 'https://maps.apple.com/place?auid=1118740501707625&lsp=57879', 'snippet': '在小红书上刷到鸡翼山后念念不忘，今天终于回响了～深圳开了好几家啦，这次去的是华强北店，看起来像新开的，滴滴都定不了位，并且店里只有三个吧台位，不太适合朋友小聚哦！', 'position': 3}, {'title': '不止于夜市，深圳“夜经济”穿越低空到星空丨黄金内湾消费观察', 'link': 'https://finance.sina.cn/2024-07-31/detail-incfyxce7185151.d.html', 'snippet': '这样的夜市小吃街几乎遍布了深圳的每一个街道，在小红书的深圳夜市攻略中，“宝安盐田街夜市”“宝安翻身夜市”“水围1368夜市”“三洲田夜市”“龙岗茶博园夜市”与 ...', 'date': '2024年7月31日', 'position': 4}, {'title': 'XuLei | 在深圳没想到还藏着这么一家精致的西餐厅！！ 花园版简洁又 ...', 'link': 'https://www.instagram.com/xulei6081/p/C5BR-dryJPi/', 'snippet': '这家有好几家分店，中环也有一家，中午可能会排队/拼桌。一开始会给很多小菜，午市套餐98 ，推荐辣豆腐海鲜汤饭，听说他们家烤肉也很好吃，但我没试过。 图4⃣️5⃣️ ...', 'date': '2024年3月27日', 'position': 5}, {'title': '恭喜湘菜，终于冲出深圳了！ - 搜狐', 'link': 'https://www.sohu.com/a/712252462_121083585', 'snippet': '在深圳，大约生活有30多万名湖南人，湘菜随之落地，开出7000多家湘菜馆，数量仅次于长沙。 由于湖南人太多，大街小巷随处飘“湘”，深圳有时甚至被网友们戏称 ...', 'date': '2023年8月16日', 'position': 6}, {'title': '酸辣汤   小红书：小茂美食| By Cassy. Beauty & Health Care', 'link': 'https://www.facebook.com/cassy.beautycare/videos/%E9%85%B8%E8%BE%A3%E6%B1%A4%E5%B0%8F%E7%BA%A2%E4%B9%A6%E5%B0%8F%E8%8C%82%E7%BE%8E%E9%A3%9F/265487222104050/?locale=de_DE', 'snippet': '酸辣汤 小红书：小茂美食.', 'date': '2021年9月21日', 'position': 7}, {'title': '让世界爱上川菜丨海外中餐川菜占半老外最爱哪道川菜？ - 川观新闻', 'link': 'https://cbgc.scol.com.cn/news/5740898', 'snippet': '... 酸，有干辣椒和花椒的香辣和香麻味。 2. 回锅肉. 菜肴特点：色泽红亮，香气浓郁，咸鲜微辣略甜，肥而不腻。 3. 开水白菜. 菜肴特点：汤汁清澈，咸鲜浓郁，菜嫩入味 ...', 'date': '3天前', 'position': 8}, {'title': '芊芊深圳costc代... - 淘宝网 - Taobao', 'link': 'https://www.taobao.com/list/dianpu/558686223.htm', 'snippet': '深圳山姆代购椰子香草风味酸奶小红书网红发推荐酵乳1.62kg12盒. ￥. 89.9. 已售100以内件.', 'position': 9}, {'title': 'https://www.xiaohongshu.com/explore/65214197000000...', 'link': 'https://www.xiaohongshu.com/explore/65214197000000001c0177d0', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 10}], 'relatedSearches': [{'query': '深圳美食2024'}, {'query': '深圳美食小吃'}, {'query': '深圳美食推荐'}, {'query': '深圳美食街'}, {'query': '深圳美食商場'}, {'query': '深圳必吃美食'}, {'query': '深圳平民美食'}, {'query': '深圳福田美食'}], 'credits': 1}
+成功处理页面: http://map.qq.com/m/detail/poi/poid=14713448823346556766
+搜索关键词: 吃麻辣鸭血汤 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '吃香辣鸭脖 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '香辣制品-香辣制品促销价格、香辣制品品牌- 淘宝 - Taobao', 'link': 'https://www.taobao.com/chanpin/031384cdea72168c24e659640ad187a5.html', 'snippet': '麻辣小零食卤味脆藕片解馋网红休闲食品辣味小吃香 · 贼韵味香辣鸭翅湖南特产卤味熟食爆辣中下酒解馋 · 南县特产小川贵大片麻辣肉250克麻油香辣味湖南手 · 鸭酱香泡鸡爪卤味32 ...', 'position': 1}, {'title': 'Listings for 德阳外围女上门服务[电话微信  188-5204-2435  ]', 'link': 'https://steamcommunity.com/market/listings/730/%E5%BE%B7%E9%98%B3%E5%A4%96%E5%9B%B4%E5%A5%B3%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88188-5204-2435%E2%96%88]-%E5%BE%B7%E9%98%B3%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4%EF%BC%88%E5%A4%96%E5%9B%B4%EF%BC%89-%E5%BE%B7%E9%98%B3%E7%BE%8E%E5%A5%B3%E4%B8%8A%E9%97%A8%E7%89%B9%E6%AE%8A%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BE%8E%E5%A5%B3%E4%B8%8A%E9%97%A8%EF%BC%89-%E5%BE%B7%E9%98%B3%E5%93%AA%E9%87%8C%E8%83%BD%E6%89%BE%E5%88%B0%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1-%E5%BE%B7%E9%98%B3%E5%8F%AF%E4%BB%A5%E6%8F%90%E4%BE%9B%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%E7%9A%84APP%E8%BD%AF%E4%BB%B6-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1021', 'snippet': 'Counter-Strike 2 > 德阳外围女上门服务[电话微信·188-5204-2435·]-德阳外围工作室（外围）-德阳美女上门特殊服务（美女上门）-德阳哪里能找到小姐上门服务-德阳可以提供 ...', 'position': 2}, {'title': 'Listings for 深圳约服务（约小姐）{接待微信电话  135-0150-5342  }', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88135-0150-5342%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015', 'snippet': 'Counter-Strike 2 > 深圳约服务（约小姐）{接待微信电话·135-0150-5342·}-深圳同城约炮-深圳外围工作室-深圳品茶工作室-哪里找约炮.1015.', 'position': 3}, {'title': '乐山约炮（约大学生服务）约炮[电话微信  152-9811-8840  ]-乐山在 ...', 'link': 'https://www.facebook.com/public/%E4%B9%90%E5%B1%B1%E7%BA%A6%E7%82%AE%EF%BC%88%E7%BA%A6%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%9C%8D%E5%8A%A1%EF%BC%89%E7%BA%A6%E7%82%AE[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88152-9811-8840%E2%96%88]-%E4%B9%90%E5%B1%B1%E5%9C%A8%E5%A4%A7%E9%99%86%E6%80%8E%E4%B9%88%E6%89%BE%E4%B8%8A%E9%97%A8%E6%8C%89%E6%91%A9%E6%9C%8D%E5%8A%A1-%E4%B9%90%E5%B1%B1%E5%B0%8F%E5%A7%90%E5%A4%96%E5%8D%96%E6%9C%8D%E5%8A%A1-%E4%B9%90%E5%B1%B1%E5%A4%9C%E7%94%9F%E6%B4%BB%E6%96%B0%E8%8C%B6%E5%93%81%E8%8C%B6%E5%BE%AE%E4%BF%A1-%E4%B9%90%E5%B1%B1%E5%A4%9C%E5%BA%97%E5%B0%8F%E5%A7%90%E5%A4%96%E5%9B%B4-%E4%B9%90%E5%B1%B1%E5%93%81%E8%8C%B6%EF%BC%88%E9%AB%98%E7%AB%AF%E8%8C%B6%EF%BC%89%E5%96%9D%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1004', 'snippet': 'View the profiles of people named 乐山约炮(约大学生服务)约炮[电话微信152 9811 8840] 乐山在大陆怎么找上门按摩服务乐山小姐外卖服务乐山夜生活新茶品茶微信乐山 ...', 'position': 4}, {'title': '绝味×小红书：“小红鸭”摇摇杯，定义产品新吃法 - 数英网', 'link': 'https://www.digitaling.com/projects/226442.html', 'snippet': '在产品上，“绝味鸭脖”与小红书官方周边品牌REDesign推出联名款新品“绝味小红鸭”，通过高颜值的DIY摇摇杯设计和创意周边，为“绝味鸭脖”注入个性化审美，成功吸引了年轻消费者的 ...', 'position': 5}, {'title': '深圳找小姐（同城上门）【接待电话微信    158-1455-7120    】美女 ...', 'link': 'https://www.pinterest.com/pin/937030266218118777', 'snippet': '深圳高端会所spa服务【接待电话微信··190-6851-0612··】美女上门服务-模特上门服务-女大学生上门服务村长黑科技村长黑科技官网s080.cn，这里存放顺序 ...', 'date': '2024年11月15日', 'position': 6}, {'title': 'https://www.xiaohongshu.com/user/profile/6012833d0...', 'link': 'https://www.xiaohongshu.com/user/profile/6012833d0000000001001278', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 7}, {'title': '米乐|米乐·m6(中国)官方网站IOS/安卓通用版/手机APP - QQ软件下载', 'link': 'https://jishuqq.com/r858jg.html', 'snippet': '软件大小:702.54MB · 最后更新:2024/10/20 · 最新版本:8.6.0 · 文件格式:apk · 应用分类:手机网游 · 使用语言:中文 · 网络支持:需要联网 · 系统要求:6.4以上.', 'position': 8}], 'credits': 1}
+搜索结果: {'searchParameters': {'q': '吃麻辣鸭血汤 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '深圳火锅2024 | 16大打边炉推介！附地址+地铁交通详情', 'link': 'https://stnn.cc/c/2024-11-24/3937465.shtml', 'snippet': '位于深圳罗湖区的“翠焱火锅”是间一站式有齐四川麻辣锅、串烧及烧烤的食店，开到凌晨两点，最适合按摩后去叹返餐宵夜。餐厅是以优美的园林雅景装潢，甚有气氛， ...', 'date': '2024年11月24日', 'position': 1}, {'title': '恭喜湘菜，终于冲出深圳了！ - 澎湃新闻', 'link': 'https://m.thepaper.cn/kuaibao_detail.jsp?contid=24241870&from=kuaibao', 'snippet': '为了在各大不吃辣的一线城市存活，湘菜不仅妥协出了不辣、微辣等口味，还主动借鉴了当地菜系的精髓，增鲜增甜、精致摆盘。小红书一搜，便能看到很多“湘+粤”、“湘+川 ...', 'position': 2}, {'title': '苏晓玥鸭血粉丝·小笼汤包(国科店) - you.ctrip.com - 携程', 'link': 'https://you.ctrip.com/food/26/234526.html', 'snippet': '不错哦，整体都还不错，服务也很好，鸭血粉丝的汤味很不错，个人不喜欢吃里面的内脏之类的东西。但是粉丝好吃，味道不错，还有很多口味的饭。味道还不错。 _in2****1440.', 'position': 3}, {'title': 'https://www.xiaohongshu.com/discovery/item/61c995f...', 'link': 'https://www.xiaohongshu.com/discovery/item/61c995fa000000002103a67b?share_from_user_hidden=true&xhsshare=SinaWeibo&appuid=5cb9feb30000000012006cc3&apptime=1654756436', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 4}, {'title': 'Steam Community Market :: Listings for 福州小姐上门[电话微信  166 ...', 'link': 'https://steamcommunity.com/market/listings/730/%E7%A6%8F%E5%B7%9E%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88166-7670-6944%E2%96%88]-%E7%A6%8F%E5%B7%9E%E5%B0%8F%E5%A7%90%E5%8C%85%E5%A4%9C%E6%9C%8D%E5%8A%A1-%E7%A6%8F%E5%B7%9E%EF%BC%88%E4%B8%8A%E9%97%A8%E5%85%A8%E5%A5%97%E6%9C%8D%E5%8A%A1%EF%BC%89%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1-%E7%A6%8F%E5%B7%9E%EF%BC%88%E5%A4%96%E5%9B%B4%E7%BB%8F%E7%BA%AA%E4%BA%BA%EF%BC%89%E5%A4%96%E5%9B%B4%E6%9C%8D%E5%8A%A1-%E7%A6%8F%E5%B7%9E%EF%BC%88%E5%B0%8F%E5%A7%90%E6%8F%B4%E4%BA%A4%EF%BC%89%E6%8F%B4%E4%BA%A4%E5%B0%8F%E5%A7%90-%E7%A6%8F%E5%B7%9E%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4%EF%BC%88%E5%A4%96%E5%9B%B4%EF%BC%89-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1017', 'snippet': 'Counter-Strike 2 > 福州小姐上门[电话微信·166-7670-6944·]-福州小姐包夜服务-福州（上门全套服务）上门服务-福州（外围经纪人）外围服务-福州（小姐援交）援交 ...', 'position': 5}, {'title': '苏晓玥鸭血粉丝·小笼汤包(深圳北站店) - you.ctrip.com - 携程', 'link': 'https://you.ctrip.com/food/26/12634605.html', 'snippet': '香乐福蒸汽海鲜馆(龙华民治店) · ￥154/人 ; 尊宝比萨(深圳北站店) · ￥48/人 ; gaga(龙华星河COCO City店) · ￥81/人 ; 花园里·餐厅(民治店) · ￥87/人 ; 缪氏川菜(龙华天虹购物中心店).', 'position': 6}, {'title': 'Listings for 深圳外围[电话微信  132-0269-9532  ] - Steam Community', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E5%A4%96%E5%9B%B4[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88132-0269-9532%E2%96%88]-%E6%B7%B1%E5%9C%B3%E9%AB%98%E7%BA%A7%E8%B5%84%E6%BA%90-%E6%B7%B1%E5%9C%B3%E9%AB%98%E7%BA%A7%E5%A4%96%E5%9B%B4%E4%B8%8A%E9%97%A8%E8%B5%84%E6%BA%90-%E6%B7%B1%E5%9C%B3%E8%B5%84%E6%BA%90%EF%BC%88%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E5%A4%96%E5%9B%B4%EF%BC%89-%E6%B7%B1%E5%9C%B3%EF%BC%88%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%EF%BC%89%E6%89%BE%E5%B0%8F%E5%A7%90%E8%81%94%E7%B3%BB%E6%96%B9%E5%BC%8F-%E6%B7%B1%E5%9C%B3%EF%BC%88%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%8C%89%E6%91%A9%EF%BC%89%E5%B0%8F%E5%A7%90--%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1011', 'snippet': 'Counter-Strike 2 > 深圳外围[电话微信·132-0269-9532·]-深圳高级资源-深圳高级外围上门资源-深圳资源（小姐上门外围）-深圳（小姐上门）找小姐联系方式-深圳（小姐上门 ...', 'position': 7}, {'title': '杭州约炮（上门约炮）[预约电话微信166-7670-6944]提供高质量小姐 ...', 'link': 'https://hu-hu.facebook.com/public/%E6%9D%AD%E5%B7%9E%E7%BA%A6%E7%82%AE%EF%BC%88%E4%B8%8A%E9%97%A8%E7%BA%A6%E7%82%AE%EF%BC%89%5B%E9%A2%84%E7%BA%A6%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1166-7670-6944%5D%E6%8F%90%E4%BE%9B%E9%AB%98%E8%B4%A8%E9%87%8F%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1+%E5%BF%AB%E9%80%9F%E9%80%89%E7%85%A7%E7%89%87%E5%AE%89%E6%8E%92+%E9%9D%A2%E5%88%B0%E4%BB%98%E6%AC%BE+30%E5%88%86%E9%92%9F%E5%86%85%E5%88%B0%E8%BE%BE%7B%E9%9A%8F%E6%9C%BA%E8%8B%B1%E6%96%87%3D5%7D%7B%E9%9A%8F%E6%9C%BA%E6%95%B0%E5%AD%97%3D5%7D.6md3o', 'snippet': '杭州约炮(上门约炮)[预约电话微信166 7670 6944]提供高质量小姐上门服务快速选照片安排面到付款30分钟内到达{随机英文5}{随机数字5}.6md3o nevű emberek profiljainak ...', 'position': 8}, {'title': '多项指标排名全球第二中国人工智能产业稳居世界第一梯队 - 新浪财经', 'link': 'https://finance.sina.cn/china/gncj/2024-03-22/detail-inapcumy6598026.d.html?from=wap', 'snippet': '2022年人工智能从“应用”成长为“产业培育”，当年政府工作报告提出“培育壮大集成电路、人工智能等数字产业，提升关键软硬件技术创新和供给能力”。到2024年， ...', 'date': '2024年3月22日', 'position': 9}], 'images': [{'title': '深圳火锅2024 | 16大打边炉推介！附地址+地铁交通详情- 星岛环球网', 'imageUrl': 'https://m.stnn.cc/upload/resources/image/2024/11/24/2335795.png', 'link': 'https://m.stnn.cc/c/2024-11-24/3937465.shtml'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.stheadline.com/f/680p0/0x0/100/none/813ec42f9e755dfdd80d57943be06808/stheadline/news_res/2024/12/11/126859/i_src_011380829.png', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '恭喜湘菜，终于冲出深圳了！_澎湃号·湃客_澎湃新闻-The Paper', 'imageUrl': 'https://imagepphcloud.thepaper.cn/pph/image/265/828/694.jpg', 'link': 'https://m.thepaper.cn/kuaibao_detail.jsp?contid=24241870&from=kuaibao'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.hkhl.hk/f/1024p0/0x0/100/none/50c5aee7b972785da954ea47a12dacd7/2024-12/2013.jpg', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/1me6p12000ch4q0oq7FDD_W_600_0.jpg?proc=source/tripcommunity', 'link': 'https://you.ctrip.com/food/26/234526.html'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/10060k000000chj590E6F_W_640_10000.jpg?proc=autoorient', 'link': 'https://you.ctrip.com/food/26/234526.html'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/01021120009ungagh93DA_D_750_450_Q90.jpg?proc=autoorient', 'link': 'https://you.ctrip.com/food/26/234526.html'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/01027120009unf8h46160_D_750_450_Q90.jpg?proc=autoorient', 'link': 'https://you.ctrip.com/food/26/234526.html'}, {'title': '深圳苏晓玥鸭血粉丝·小笼汤包(国科店)攻略,苏晓玥鸭血粉丝·小笼汤包(国 ...', 'imageUrl': 'https://dimg04.c-ctrip.com/images/100e0k000000cghc31E02_W_640_10000.jpg?proc=autoorient', 'link': 'https://you.ctrip.com/food/26/234526.html'}], 'credits': 1}217.77.222.217 - - [16/Dec/2024 05:12:18] "[33mGET / HTTP/1.0[0m" 404 -
+
+成功处理页面: https://www.taobao.com/chanpin/031384cdea72168c24e659640ad187a5.html
+搜索关键词: 吃麻辣田螺 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '吃麻辣田螺 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店 - 星岛环球网', 'link': 'https://stnn.cc/c/2024-05-11/3893060.shtml', 'snippet': '3年前在重庆起家的“萍姐火锅. 公路夜市“，开业不久旋即成为麻辣火锅界网红店！ 店家一改传统火锅店的装修风格，以80、90年代 ...', 'date': '2024年5月11日', 'position': 1}, {'title': '深圳羅湖區美食｜逾10間必吃羅湖餐廳推介粥底火鍋/串燒燒肉/向西村 ...', 'link': 'https://utravel.com.hk/news/detail/20033147/%E6%B7%B1%E5%9C%B3%E7%BE%85%E6%B9%96%E5%8D%80%E7%BE%8E%E9%A3%9F-%E5%BF%85%E5%90%83%E7%BE%85%E6%B9%96%E9%A4%90%E5%BB%B3%E6%8E%A8%E4%BB%8B-%E7%B2%A5%E5%BA%95%E7%81%AB%E9%8D%8B-%E4%B8%B2%E7%87%92%E7%87%92%E8%82%89-%E5%90%91%E8%A5%BF%E6%9D%91%E7%B3%AF%E7%B1%B3%E7%B3%8D', 'snippet': '鍋底還有蘿蔔片和寬粉，增添了湯的味道。而喜愛辣味的客人則可以嘗試川椒富貴毛血旺，配料豐富，有毛血旺、午餐肉、黃喉和鮑魚，味道鮮美。其他推薦菜品還包括 ...', 'date': '8天前', 'position': 2}, {'title': '地方性苍蝇小馆，正在被年轻人挤爆|湘菜馆|美食|苍蝇小馆|食客|馆子 ...', 'link': 'https://m.163.com/dy/article/JAI3QHVP05198DT6.html?clickfrom=subscribe&spss=adap_pc', 'snippet': '受此影响，大批年轻人纷纷涌入各地的“苍蝇小馆”，使这些地方特色小餐馆迅速成为“网红”打卡地。以恩宁路的湛记餐馆为例，这家占地约30平方米的小店已屹立近40年。', 'position': 3}, {'title': 'Listings for 深圳找小姐找外围找服务[电话微信  135-0150-5342  ]', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E6%89%BE%E5%B0%8F%E5%A7%90%E6%89%BE%E5%A4%96%E5%9B%B4%E6%89%BE%E6%9C%8D%E5%8A%A1[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88135-0150-5342%E2%96%88]-%E6%B7%B1%E5%9C%B3%E7%89%B9%E6%AE%8A%E6%9C%8D%E5%8A%A1%EF%BC%88%E5%85%A8%E5%A5%97%E6%9C%8D%E5%8A%A1%EF%BC%89-%E6%B7%B1%E5%9C%B3%E5%B0%8F%E5%A7%90%E5%87%BA%E5%8F%B0%EF%BC%88%E5%B0%8F%E5%A7%90%EF%BC%89-%E6%B7%B1%E5%9C%B3%EF%BC%88%E6%8C%89%E6%91%A9SPA%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%EF%BC%89%E6%8C%89%E6%91%A9-%E6%B7%B1%E5%9C%B3%E6%9C%AC%E5%9C%B0%E5%B0%8F%E5%A7%90%EF%BC%88%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%EF%BC%89%E6%9C%AC%E5%9C%B0%E5%B0%8F%E5%A7%90-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1010', 'snippet': 'Counter-Strike 2 > 深圳找小姐找外围找服务[电话微信·135-0150-5342·]-深圳特殊服务（全套服务）-深圳小姐出台（小姐）-深圳（按摩SPA上门服务）按摩-深圳本地小姐（上门 ...', 'position': 4}, {'title': '深圳燒烤店合集｜深圳串燒店逾7間推薦自助燒烤放題式烤肉烤海鮮', 'link': 'https://utravel.com.hk/news/detail/20034105/%E6%B7%B1%E5%9C%B3%E7%87%92%E7%83%A4%E5%BA%97%E5%90%88%E9%9B%86-%E6%B7%B1%E5%9C%B3%E4%B8%B2%E7%87%92%E5%BA%97%E6%8E%A8%E8%96%A6-%E8%87%AA%E5%8A%A9%E7%87%92%E7%83%A4%E6%94%BE%E9%A1%8C%E5%BC%8F%E7%83%A4%E8%82%89%E7%83%A4%E6%B5%B7%E9%AE%AE', 'snippet': '犟店·北派燒烤是羅湖區新開的熱門燒烤店，餐廳裝潢走簡約工業風格，吸引了眾多食客前來打卡。店內環境舒適，還設有戶外座位，成為了小紅書網民們紛紛打卡的 ...', 'date': '7天前', 'position': 5}, {'title': 'https://www.xiaohongshu.com/discovery/item/61c995f...', 'link': 'https://www.xiaohongshu.com/discovery/item/61c995fa000000002103a67b?share_from_user_hidden=true&xhsshare=SinaWeibo&appuid=5cb9feb30000000012006cc3&apptime=1654756436', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 6}, {'title': '搜索新闻列表_光明日报', 'link': 'https://search.gmw.cn/news.htm?q=%E5%94%90%E7%9C%9F%E4%BA%9A', 'snippet': '全部; 网站; 图片; 视频; 专题; 栏目; 光明日报; 文摘报; 中华读书报; 学术卡片. 在学术文化多媒体素材库的条数据中为您找到相关数据约个.', 'position': 7}, {'title': '深圳福田区品茶工作室-哪里找约炮.1009 - Steam Community', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88188-5204-2435%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1009', 'snippet': 'Counter-Strike 2 > 深圳福田区约服务（约小姐）{接待微信电话·188-5204-2435·}-深圳福田区同城约炮-深圳福田区外围工作室-深圳福田区品茶工作室-哪里找约炮.1009.', 'position': 8}, {'title': '深圳罗湖同城约外围(同城附近约(约小姐){电话微信·195-2214-2124 ...', 'link': 'https://sites.google.com/view/rwihvomvit37829twirwqgkfv', 'snippet': '深圳罗湖同城约外围(同城附近约(约小姐){电话微信·195-2214-2124·}只有微信和电话联系没有网址{温馨提示}：面到付款不见人不收钱防止诈骗hgZAJ56祭窖扯敛蚕age title.', 'position': 9}, {'title': '深圳包养小姐上门服务[预约电话微信166-7670-6944]提供 ... - Facebook', 'link': 'https://hu-hu.facebook.com/public/%E6%B7%B1%E5%9C%B3%E5%8C%85%E5%85%BB%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%5B%E9%A2%84%E7%BA%A6%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1166-7670-6944%5D%E6%8F%90%E4%BE%9B%E9%AB%98%E8%B4%A8%E9%87%8F%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1+%E5%BF%AB%E9%80%9F%E9%80%89%E7%85%A7%E7%89%87%E5%AE%89%E6%8E%92+%E9%9D%A2%E5%88%B0%E4%BB%98%E6%AC%BE+30%E5%88%86%E9%92%9F%E5%86%85%E5%88%B0%E8%BE%BE%7B%E9%9A%8F%E6%9C%BA%E8%8B%B1%E6%96%87%3D5%7D%7B%E9%9A%8F%E6%9C%BA%E6%95%B0%E5%AD%97%3D5%7D.ijupt', 'snippet': '深圳包养小姐上门服务[预约电话微信166-7670-6944]提供高质量小姐上门服务+快速选照片安排+面到付款+30分钟内到达{随机英文=5}{随机数字=5}.ijupt nevű felhasználók ...', 'position': 10}], 'credits': 1}
+成功处理页面: https://stnn.cc/c/2024-11-24/3937465.shtml
+搜索关键词: 吃香辣鸭脖 深圳 小红书推荐
+成功处理页面: https://stnn.cc/c/2024-05-11/3893060.shtml
+搜索关键词: 吃红烧牛腩炖萝卜 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '吃香辣鸭脖 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '越来越贵！曹氏鸭脖，用工业辣椒精征服“穷鬼打工人”的胃？ - 网易', 'link': 'https://www.163.com/dy/article/IV6E8NJH05566SXE.html', 'snippet': '辣就算了，曹氏的那股子味道，也是相当持久。 图片源自小红书用户@鸡蛋灌饼. 有网友是这么形容曹氏的味道的，“吃完曹氏以后，从指甲缝到头发丝，从外套 ...', 'date': '2024年4月7日', 'position': 1}, {'title': '香辣制品-香辣制品促销价格、香辣制品品牌- 淘宝 - Taobao', 'link': 'https://www.taobao.com/chanpin/031384cdea72168c24e659640ad187a5.html', 'snippet': '麻辣小零食卤味脆藕片解馋网红休闲食品辣味小吃香 · 贼韵味香辣鸭翅湖南特产卤味熟食爆辣中下酒解馋 · 南县特产小川贵大片麻辣肉250克麻油香辣味湖南手 · 鸭酱香泡鸡爪卤味32 ...', 'position': 2}, {'title': 'Listings for 深圳约服务（约小姐）{接待微信电话  135-0150-5342  }', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88135-0150-5342%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015', 'snippet': 'Counter-Strike 2 > 深圳约服务（约小姐）{接待微信电话·135-0150-5342·}-深圳同城约炮-深圳外围工作室-深圳品茶工作室-哪里找约炮.1015.', 'position': 3}, {'title': 'Listings for 德阳外围女上门服务[电话微信  188-5204-2435  ]', 'link': 'https://steamcommunity.com/market/listings/730/%E5%BE%B7%E9%98%B3%E5%A4%96%E5%9B%B4%E5%A5%B3%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88188-5204-2435%E2%96%88]-%E5%BE%B7%E9%98%B3%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4%EF%BC%88%E5%A4%96%E5%9B%B4%EF%BC%89-%E5%BE%B7%E9%98%B3%E7%BE%8E%E5%A5%B3%E4%B8%8A%E9%97%A8%E7%89%B9%E6%AE%8A%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BE%8E%E5%A5%B3%E4%B8%8A%E9%97%A8%EF%BC%89-%E5%BE%B7%E9%98%B3%E5%93%AA%E9%87%8C%E8%83%BD%E6%89%BE%E5%88%B0%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1-%E5%BE%B7%E9%98%B3%E5%8F%AF%E4%BB%A5%E6%8F%90%E4%BE%9B%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%E7%9A%84APP%E8%BD%AF%E4%BB%B6-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1021', 'snippet': 'Counter-Strike 2 > 德阳外围女上门服务[电话微信·188-5204-2435·]-德阳外围工作室（外围）-德阳美女上门特殊服务（美女上门）-德阳哪里能找到小姐上门服务-德阳可以提供 ...', 'position': 4}, {'title': '绝味×小红书：“小红鸭”摇摇杯，定义产品新吃法 - 数英网', 'link': 'https://www.digitaling.com/projects/226442.html', 'snippet': '在产品上，“绝味鸭脖”与小红书官方周边品牌REDesign推出联名款新品“绝味小红鸭”，通过高颜值的DIY摇摇杯设计和创意周边，为“绝味鸭脖”注入个性化审美，成功吸引了年轻消费者的 ...', 'position': 5}, {'title': '乐山约炮（约大学生服务）约炮[电话微信  152-9811-8840  ]-乐山在 ...', 'link': 'https://www.facebook.com/public/%E4%B9%90%E5%B1%B1%E7%BA%A6%E7%82%AE%EF%BC%88%E7%BA%A6%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%9C%8D%E5%8A%A1%EF%BC%89%E7%BA%A6%E7%82%AE[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88152-9811-8840%E2%96%88]-%E4%B9%90%E5%B1%B1%E5%9C%A8%E5%A4%A7%E9%99%86%E6%80%8E%E4%B9%88%E6%89%BE%E4%B8%8A%E9%97%A8%E6%8C%89%E6%91%A9%E6%9C%8D%E5%8A%A1-%E4%B9%90%E5%B1%B1%E5%B0%8F%E5%A7%90%E5%A4%96%E5%8D%96%E6%9C%8D%E5%8A%A1-%E4%B9%90%E5%B1%B1%E5%A4%9C%E7%94%9F%E6%B4%BB%E6%96%B0%E8%8C%B6%E5%93%81%E8%8C%B6%E5%BE%AE%E4%BF%A1-%E4%B9%90%E5%B1%B1%E5%A4%9C%E5%BA%97%E5%B0%8F%E5%A7%90%E5%A4%96%E5%9B%B4-%E4%B9%90%E5%B1%B1%E5%93%81%E8%8C%B6%EF%BC%88%E9%AB%98%E7%AB%AF%E8%8C%B6%EF%BC%89%E5%96%9D%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1004', 'snippet': 'View the profiles of people named 乐山约炮(约大学生服务)约炮[电话微信152 9811 8840] 乐山在大陆怎么找上门按摩服务乐山小姐外卖服务乐山夜生活新茶品茶微信乐山 ...', 'position': 6}, {'title': '深圳找小姐（同城上门）【接待电话微信    158-1455-7120    】美女 ...', 'link': 'https://www.pinterest.com/pin/937030266218118777', 'snippet': '深圳高端会所spa服务【接待电话微信··190-6851-0612··】美女上门服务-模特上门服务-女大学生上门服务村长黑科技村长黑科技官网s080.cn，这里存放顺序 ...', 'date': '2024年11月15日', 'position': 7}, {'title': 'https://www.xiaohongshu.com/user/profile/6012833d0...', 'link': 'https://www.xiaohongshu.com/user/profile/6012833d0000000001001278', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 8}, {'title': '米乐|米乐·m6(中国)官方网站IOS/安卓通用版/手机APP - QQ软件下载', 'link': 'https://jishuqq.com/r858jg.html', 'snippet': '软件大小:702.54MB · 最后更新:2024/10/20 · 最新版本:8.6.0 · 文件格式:apk · 应用分类:手机网游 · 使用语言:中文 · 网络支持:需要联网 · 系统要求:6.4以上.', 'position': 9}], 'images': [{'title': '深圳名鸭之争，究竟哪家更好吃？_手机搜狐网', 'imageUrl': 'https://p9.itc.cn/q_70/images03/20211216/ee6270a2a85b4a09b6dedc608e9e5cee.jpeg', 'link': 'https://www.sohu.com/a/508705617_121123867'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.stheadline.com/f/680p0/0x0/100/none/813ec42f9e755dfdd80d57943be06808/stheadline/news_res/2024/12/11/126859/i_src_011380829.png', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店- 星岛环球网', 'imageUrl': 'https://m.stnn.cc/upload/resources/image/2024/05/11/2246981.png', 'link': 'https://m.stnn.cc/c/2024-05-11/3893060.shtml'}, {'title': '小红书热推深圳美味点心，必吃百合名酱蒸凤爪／竹笋流沙包- 星岛环球网', 'imageUrl': 'https://m.stnn.cc/upload/resources/image/2024/12/12/2344719.jpg', 'link': 'https://m.stnn.cc/c/2024-12-12/3941923.shtml'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.hkhl.hk/f/1024p0/0x0/100/none/50c5aee7b972785da954ea47a12dacd7/2024-12/2013.jpg', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '想吃香辣鸭脖，20块只能买半斤，在家能做一锅，咸辣鲜香吃不够_手机搜狐网', 'imageUrl': 'https://5b0988e595225.cdn.sohucs.com/q_70,c_zoom,w_640/images/20190807/f6512c29e7554470a190530de23fdb47.jpeg', 'link': 'https://www.sohu.com/a/332113822_99967363'}, {'title': '绝味鸭脖(前海路店)(深圳市) - 餐厅/美食点评- Tripadvisor', 'imageUrl': 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/14/c2/45/c3/photo0jpg.jpg?w=900&h=500&s=1', 'link': 'https://cn.tripadvisor.com/Restaurant_Review-g297415-d3467059-Reviews-JueWei_YaBo_QianHai_Road-Shenzhen_Guangdong.html'}, {'title': '想吃香辣鸭脖，20块只能买半斤，在家能做一锅，咸辣鲜香吃不够_手机搜狐网', 'imageUrl': 'https://5b0988e595225.cdn.sohucs.com/q_70,c_zoom,w_640/images/20190807/3e301ce05fae4f58b589d87865e6901f.jpeg', 'link': 'https://www.sohu.com/a/332113822_99967363'}, {'title': '今年最诡异的餐饮网红，用工业辣椒精征服年轻人？- 广告狂人', 'imageUrl': 'https://img.mad-men.com/article/2023/10/2023/10/1697982578663.jpeg', 'link': 'https://www.mad-men.com/articldetails/36970'}], 'credits': 1}
+成功处理页面: https://www.163.com/dy/article/IV6E8NJH05566SXE.html
+搜索关键词: 吃麻辣田螺 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '吃红烧牛腩炖萝卜 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '深圳罗湖区品茶工作室-哪里找约炮.1015 - Steam Community', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88188-5204-2435%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015', 'snippet': 'Counter-Strike 2 > 深圳罗湖区约服务（约小姐）{接待微信电话·188-5204-2435·}-深圳罗湖区同城约炮-深圳罗湖区外围工作室-深圳罗湖区品茶工作室-哪里找约炮.1015.', 'position': 1}, {'title': '深圳福田区高端外围-哪里找约炮.1004 - Steam Community', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E5%A4%96%E5%9B%B4%EF%BC%88%E5%A4%96%E5%9B%B4%E4%B8%8A%E9%97%A8%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88132-0269-9532%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%A5%B3-%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E5%A4%96%E5%9B%B4%E8%B5%84%E6%BA%90-%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E9%AB%98%E7%AB%AF%E5%A4%96%E5%9B%B4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1004', 'snippet': 'Counter-Strike 2 > 深圳福田区外围（外围上门）{接待微信电话·132-0269-9532·}-深圳福田区外围女-深圳福田区外围资源-深圳福田区高端外围-哪里找约炮.1004.', 'position': 2}, {'title': '深圳罗湖同城约外围(同城附近约(约小姐){电话微信·195-2214-2124 ...', 'link': 'https://sites.google.com/view/rwihvomvit37829twirwqgkfv', 'snippet': '深圳罗湖同城约外围(同城附近约(约小姐){电话微信·195-2214-2124·}只有微信和电话联系没有网址{温馨提示}：面到付款不见人不收钱防止诈骗hgZAJ56祭窖扯敛蚕age title.', 'position': 3}, {'title': '小紅書美食 - TikTok', 'link': 'https://www.tiktok.com/discover/%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%BE%8E%E9%A3%9F', 'snippet': '蓬松暄软. 好吃不粘牙. 做法也很简单. 喜欢的一起来做吧. 碗中放入60克红糖. 倒入190克 ...', 'date': '7天前', 'position': 4}, {'title': 'https://www.xiaohongshu.com/user/profile/6012833d0...', 'link': 'https://www.xiaohongshu.com/user/profile/6012833d0000000001001278', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 5}, {'title': '上海小姐上门（按摩小姐上门服务）{接待微信电话  157-2663-7742 ...', 'link': 'https://www.facebook.com/public/%E4%B8%8A%E6%B5%B7%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%EF%BC%88%E6%8C%89%E6%91%A9%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88157-2663-7742%E2%96%88%7D-%E4%B8%8A%E6%B5%B7%E6%8C%89%E6%91%A9%E5%B0%8F%E5%A7%90%E6%9C%8D%E5%8A%A1-%E4%B8%8A%E6%B5%B7%E6%89%BE%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1-%E4%B8%8A%E6%B5%B7%E5%93%AA%E9%87%8C%E6%9C%89%E6%89%BE%E5%B0%8F%E5%A7%90-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1005', 'snippet': 'View the profiles of people named 上海小姐上门(按摩小姐上门服务){接待微信电话157 2663 7742} 上海按摩小姐服务上海找小姐上门服务上海哪里有找小姐哪里找约 ...', 'position': 6}, {'title': '中国最快乐的城市，工资5000活出50000的快乐，长沙不止吃货天堂', 'link': 'https://www.163.com/dy/article/JJ50AG7I0521DC6R.html', 'snippet': '黄兴路步行街的酸萝卜牛百叶和笨萝卜不能错过。 湘菜馆有毛氏红烧肉、腊味煲仔饭、咸蛋黄烧肉、酱板鸭、剁椒鱼头。 打开网易新闻查看精彩图片. 总之 ...', 'date': '5天前', 'position': 7}, {'title': '深圳龙华约美女上门(同城附近约(约小姐){电话微信 - Pinterest', 'link': 'https://www.pinterest.com/pin/894105332271061099', 'snippet': '深圳龙华约美女上门(同城附近约(约小姐){电话微信·195-2214-2124·}面到付款提供高质量小姐上门ftYYH23仔矩赫壳亿. 到付-质量高-同城附近aau.', 'date': '2024年10月28日', 'position': 8}, {'title': '深圳哪里能找到小姐上门服务[预约电话微信166-7670-6944]提供高 ...', 'link': 'https://hu-hu.facebook.com/public/%E6%B7%B1%E5%9C%B3%E5%93%AA%E9%87%8C%E8%83%BD%E6%89%BE%E5%88%B0%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%5B%E9%A2%84%E7%BA%A6%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1166-7670-6944%5D%E6%8F%90%E4%BE%9B%E9%AB%98%E8%B4%A8%E9%87%8F%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1+%E5%BF%AB%E9%80%9F%E9%80%89%E7%85%A7%E7%89%87%E5%AE%89%E6%8E%92+%E9%9D%A2%E5%88%B0%E4%BB%98%E6%AC%BE+30%E5%88%86%E9%92%9F%E5%86%85%E5%88%B0%E8%BE%BE%7B%E9%9A%8F%E6%9C%BA%E8%8B%B1%E6%96%87%3D5%7D%7B%E9%9A%8F%E6%9C%BA%E6%95%B0%E5%AD%97%3D5%7D.vbyld', 'snippet': '深圳哪里能找到小姐上门服务[预约电话微信166-7670-6944]提供高质量小姐上门服务+快速选照片安排+面到付款+30分钟内到达{随机英文=5}{随机数字=5}.vbyld nevű ...', 'position': 9}, {'title': '#老挝接码平台,交易猫验证码,  【qq959.com】从0.05美元起在线接收 ...', 'link': 'https://www.instagram.com/explore/tags/%E8%80%81%E6%8C%9D%E6%8E%A5%E7%A0%81%E5%B9%B3%E5%8F%B0,%E4%BA%A4%E6%98%93%E7%8C%AB%E9%AA%8C%E8%AF%81%E7%A0%81,%F0%9F%91%89%E3%80%90qq959.com%E3%80%91%E4%BB%8E0.05%E7%BE%8E%E5%85%83%E8%B5%B7%E5%9C%A8%E7%BA%BF%E6%8E%A5%E6%94%B6%E7%9F%AD%E4%BF%A1%E5%88%B0%E8%99%9A%E6%8B%9F%E5%8F%B7%E7%A0%81.ybv/', 'position': 10}], 'credits': 1}
+搜索结果: {'searchParameters': {'q': '吃麻辣田螺 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店 - 星岛环球网', 'link': 'https://stnn.cc/c/2024-05-11/3893060.shtml', 'snippet': '3年前在重庆起家的“萍姐火锅. 公路夜市“，开业不久旋即成为麻辣火锅界网红店！ 店家一改传统火锅店的装修风格，以80、90年代 ...', 'date': '2024年5月11日', 'position': 1}, {'title': '深圳各区美食推荐（2023年5月4日版）2.0版的副本 - Scribd', 'link': 'https://www.scribd.com/document/656055318/%E6%B7%B1%E5%9C%B3%E5%90%84%E5%8C%BA%E7%BE%8E%E9%A3%9F%E6%8E%A8%E8%8D%90-2023%E5%B9%B45%E6%9C%884%E6%97%A5%E7%89%88-2-0%E7%89%88-%E7%9A%84%E5%89%AF%E6%9C%AC-1', 'snippet': '很火的，小红书一搜全都是，都 19 董记化州糖水 好吃. 20 麻辣烫就麻辣烫. 鳗鱼、菠萝牛肉、京葱鸡肉、番 21 路边摊烧鸟茄五花肉、明太子西葫芦、提灯', 'date': '2023年5月4日', 'position': 2}, {'title': '深圳羅湖區美食｜逾10間必吃羅湖餐廳推介粥底火鍋/串燒燒肉/向西村 ...', 'link': 'https://utravel.com.hk/news/detail/20033147/%E6%B7%B1%E5%9C%B3%E7%BE%85%E6%B9%96%E5%8D%80%E7%BE%8E%E9%A3%9F-%E5%BF%85%E5%90%83%E7%BE%85%E6%B9%96%E9%A4%90%E5%BB%B3%E6%8E%A8%E4%BB%8B-%E7%B2%A5%E5%BA%95%E7%81%AB%E9%8D%8B-%E4%B8%B2%E7%87%92%E7%87%92%E8%82%89-%E5%90%91%E8%A5%BF%E6%9D%91%E7%B3%AF%E7%B1%B3%E7%B3%8D', 'snippet': '鍋底還有蘿蔔片和寬粉，增添了湯的味道。而喜愛辣味的客人則可以嘗試川椒富貴毛血旺，配料豐富，有毛血旺、午餐肉、黃喉和鮑魚，味道鮮美。其他推薦菜品還包括 ...', 'date': '8天前', 'position': 3}, {'title': '深圳燒烤店合集｜深圳串燒店逾7間推薦自助燒烤放題式烤肉烤海鮮', 'link': 'https://utravel.com.hk/news/detail/20034105/%E6%B7%B1%E5%9C%B3%E7%87%92%E7%83%A4%E5%BA%97%E5%90%88%E9%9B%86-%E6%B7%B1%E5%9C%B3%E4%B8%B2%E7%87%92%E5%BA%97%E6%8E%A8%E8%96%A6-%E8%87%AA%E5%8A%A9%E7%87%92%E7%83%A4%E6%94%BE%E9%A1%8C%E5%BC%8F%E7%83%A4%E8%82%89%E7%83%A4%E6%B5%B7%E9%AE%AE', 'snippet': '犟店·北派燒烤是羅湖區新開的熱門燒烤店，餐廳裝潢走簡約工業風格，吸引了眾多食客前來打卡。店內環境舒適，還設有戶外座位，成為了小紅書網民們紛紛打卡的 ...', 'date': '7天前', 'position': 4}, {'title': '地方性苍蝇小馆，正在被年轻人挤爆|湘菜馆|美食|苍蝇小馆|食客|馆子 ...', 'link': 'https://m.163.com/dy/article/JAI3QHVP05198DT6.html?clickfrom=subscribe&spss=adap_pc', 'snippet': '受此影响，大批年轻人纷纷涌入各地的“苍蝇小馆”，使这些地方特色小餐馆迅速成为“网红”打卡地。以恩宁路的湛记餐馆为例，这家占地约30平方米的小店已屹立近40年。', 'position': 5}, {'title': 'Listings for 深圳（约炮）美女约炮上门[电话微信  135-0150-5342 ...', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%EF%BC%88%E7%BA%A6%E7%82%AE%EF%BC%89%E7%BE%8E%E5%A5%B3%E7%BA%A6%E7%82%AE%E4%B8%8A%E9%97%A8[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88135-0150-5342%E2%96%88]-%E6%B7%B1%E5%9C%B3%EF%BC%88%E9%85%92%E5%BA%97%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%EF%BC%89%E8%81%94%E7%B3%BB%E6%96%B9%E5%BC%8F-%E6%B7%B1%E5%9C%B3%E5%A4%96%E5%9B%B4%E8%B5%84%E6%BA%90%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1-%E6%B7%B1%E5%9C%B3%E6%89%BE%E5%9B%BD%E5%86%85%E5%B0%8F%E5%A7%90%EF%BC%88%E9%AB%98%E7%AB%AF%E5%A4%96%E5%9B%B4%E6%9C%8D%E5%8A%A1%EF%BC%89-%E6%B7%B1%E5%9C%B3%E6%80%8E%E4%B9%88%E6%89%BE%E7%9C%9F%E5%AE%9E%E7%9A%84%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%EF%BC%88%E5%A4%96%E5%9B%B4%E4%B8%8A%E9%97%A8-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1012', 'snippet': 'Counter-Strike 2 > 深圳（约炮）美女约炮上门[电话微信·135-0150-5342·]-深圳（酒店上门服务）联系方式-深圳外围资源电话微信-深圳找国内小姐（高端外围服务）-深圳怎么找 ...', 'position': 6}, {'title': '搜索新闻列表_光明日报', 'link': 'https://search.gmw.cn/news.htm?q=%E5%94%90%E7%9C%9F%E4%BA%9A', 'snippet': '全部; 网站; 图片; 视频; 专题; 栏目; 光明日报; 文摘报; 中华读书报; 学术卡片. 在学术文化多媒体素材库的条数据中为您找到相关数据约个.', 'position': 7}, {'title': 'https://www.xiaohongshu.com/discovery/item/61c995f...', 'link': 'https://www.xiaohongshu.com/discovery/item/61c995fa000000002103a67b?share_from_user_hidden=true&xhsshare=SinaWeibo&appuid=5cb9feb30000000012006cc3&apptime=1654756436', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 8}, {'title': 'Listings for 深圳找小姐找外围找服务[电话微信  135-0150-5342  ]', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E6%89%BE%E5%B0%8F%E5%A7%90%E6%89%BE%E5%A4%96%E5%9B%B4%E6%89%BE%E6%9C%8D%E5%8A%A1[%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1%E2%96%88135-0150-5342%E2%96%88]-%E6%B7%B1%E5%9C%B3%E7%89%B9%E6%AE%8A%E6%9C%8D%E5%8A%A1%EF%BC%88%E5%85%A8%E5%A5%97%E6%9C%8D%E5%8A%A1%EF%BC%89-%E6%B7%B1%E5%9C%B3%E5%B0%8F%E5%A7%90%E5%87%BA%E5%8F%B0%EF%BC%88%E5%B0%8F%E5%A7%90%EF%BC%89-%E6%B7%B1%E5%9C%B3%EF%BC%88%E6%8C%89%E6%91%A9SPA%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%EF%BC%89%E6%8C%89%E6%91%A9-%E6%B7%B1%E5%9C%B3%E6%9C%AC%E5%9C%B0%E5%B0%8F%E5%A7%90%EF%BC%88%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%EF%BC%89%E6%9C%AC%E5%9C%B0%E5%B0%8F%E5%A7%90-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1010', 'snippet': 'Counter-Strike 2 > 深圳找小姐找外围找服务[电话微信·135-0150-5342·]-深圳特殊服务（全套服务）-深圳小姐出台（小姐）-深圳（按摩SPA上门服务）按摩-深圳本地小姐（上门 ...', 'position': 9}, {'title': '深圳罗湖同城约外围(同城附近约(约小姐){电话微信·195-2214-2124 ...', 'link': 'https://sites.google.com/view/rwihvomvit37829twirwqgkfv', 'snippet': '深圳罗湖同城约外围(同城附近约(约小姐){电话微信·195-2214-2124·}只有微信和电话联系没有网址{温馨提示}：面到付款不见人不收钱防止诈骗hgZAJ56祭窖扯敛蚕age title.', 'position': 10}], 'credits': 1}
+处理页面失败: HTTPSConnectionPool(host='steamcommunity.com', port=443): Max retries exceeded with url: /market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88188-5204-2435%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f30a46a4cd0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+搜索关键词: 喝热豆浆 深圳 小红书推荐
+成功处理页面: https://stnn.cc/c/2024-05-11/3893060.shtml
+搜索关键词: 吃红烧牛腩炖萝卜 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '喝热豆浆 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '“冬日暖羊” 荣县千人坝坝全羊宴热闹开宴 - 川观新闻', 'link': 'https://cbgc.scol.com.cn/news/5735390', 'snippet': '“我最满意的就是赛后，有羊肉汤、豆浆等热饮，天气这么冷，喝了之后感觉身心都暖和了。”来自广元的马拉松选手张大姐品尝完羊肉汤后，特意为荣县点赞。', 'date': '4天前', 'position': 1}, {'title': '被新潮小家电“细分”的生活 - 三联生活周刊', 'link': 'http://mdev.lifeweek.com.cn/h5/article/detail?artId=78207', 'snippet': '过去家用电器一贯以“家庭需要”为由而存在；如今，商家们开始开发更为精细和单一的需求，一些新潮小家电正在进入普通人的生活，吸引着愿意尝鲜的消费者来“自我实现”。', 'position': 2}, {'title': '吉训明院士：肥胖不等于吃得好，均衡营养能避免很多疾病发生 - 网易', 'link': 'https://m.163.com/news/article/JJFAUJ05052583KJ.html?clickfrom=subscribe', 'snippet': '吉训明院士表示，营养不等于能量，一个人肥胖不代表他获得的营养是均衡的。根据发胖原因的不同，患者应该有针对性地调整自己的饮食，均衡各项营养元素的摄入， ...', 'date': '21小时前', 'position': 3}, {'title': '小田豆浆(深圳店)', 'link': 'https://you.ctrip.com/food/26/17001051.html', 'snippet': '菜系:小吃营业时间:18:00到凌晨02:00 在探蚝点了餐，发现宝安小吃热门榜第一名的小田豆浆店就在同一条街，于是起身去打包。 黄色的主色调，黑色的logo，有点香港车牌的 ...', 'position': 4}, {'title': 'https://www.xiaohongshu.com/explore?channel_id=hom...', 'link': 'https://www.xiaohongshu.com/explore?channel_id=homefeed_recommend&channel_type=web_note_detail_r10', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 5}, {'title': '暖温调奶器哪个品牌质量好？精选TOP5全网畅销高质量品牌！ - 哔哩 ...', 'link': 'https://www.bilibili.com/read/cv28114434/', 'snippet': '暖温调奶器在婴幼儿家庭起着至关重要的作用，可快速提供热水以便于冲奶泡奶，既实用又方便。尽管暖温调奶器是一种小型家电，但它发生安全事故和风险危害的概率也极高， ...', 'position': 6}, {'title': 'Career opportunities - Job Search', 'link': 'https://jobs.dnv.com/job-search?country%5B0%5D=Singapore&page=6', 'snippet': 'Find out more about our job opportunities, search for a role now.', 'position': 7}, {'title': '豆类 - 禁闻网', 'link': 'https://www.bannedbook.org/bnews/tag/%E8%B1%86%E7%B1%BB/', 'snippet': '豆浆这3种喝法小心伤身豆浆蛋白质鲜奶阅读全文» ... 作者: 健康1+1 · 直播, 文章内容并不代表本网立场和观点。 豆浆这3种喝法小心伤身#豆浆#蛋白质[…].', 'position': 8}, {'title': '小红书爆火的5款超惊艳豆浆搭配，养颜又润燥，最适合现在喝了~', 'link': 'https://baijiahao.baidu.com/s?id=1747708657046659993', 'snippet': '1. 红豆黑米豆浆--益气养颜 · 2. 山药豆浆--养颜润燥 · 3. 紫薯燕麦豆浆--抗氧化抗衰老 · 4. 黄豆花生豆浆--健脾补肾 · 5. 黑豆核桃豆浆--养发排毒.', 'position': 9}, {'title': '宋争鸣小说- 起点中文网手机端', 'link': 'https://www.qidian.com/ask/tycpeyclwampe', 'snippet': '严争鸣出自Priest 所著的《六爻》。他曾经是家中富甲一方的大少爷，十分讲究。在书中，他是主角之一，其CP 为程潜。', 'position': 10}], 'credits': 1}
+成功处理页面: https://cbgc.scol.com.cn/news/5735390
+搜索关键词: 喝热椰汁 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '吃红烧牛腩炖萝卜 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '深圳罗湖区品茶工作室-哪里找约炮.1015 - Steam Community', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88188-5204-2435%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015', 'snippet': 'Counter-Strike 2 > 深圳罗湖区约服务（约小姐）{接待微信电话·188-5204-2435·}-深圳罗湖区同城约炮-深圳罗湖区外围工作室-深圳罗湖区品茶工作室-哪里找约炮.1015.', 'position': 1}, {'title': '深圳福田区高端外围-哪里找约炮.1004 - Steam Community', 'link': 'https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E5%A4%96%E5%9B%B4%EF%BC%88%E5%A4%96%E5%9B%B4%E4%B8%8A%E9%97%A8%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88132-0269-9532%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%A5%B3-%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E5%A4%96%E5%9B%B4%E8%B5%84%E6%BA%90-%E6%B7%B1%E5%9C%B3%E7%A6%8F%E7%94%B0%E5%8C%BA%E9%AB%98%E7%AB%AF%E5%A4%96%E5%9B%B4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1004', 'snippet': 'Counter-Strike 2 > 深圳福田区外围（外围上门）{接待微信电话·132-0269-9532·}-深圳福田区外围女-深圳福田区外围资源-深圳福田区高端外围-哪里找约炮.1004.', 'position': 2}, {'title': '深圳罗湖同城约外围(同城附近约(约小姐){电话微信·195-2214-2124 ...', 'link': 'https://sites.google.com/view/rwihvomvit37829twirwqgkfv', 'snippet': '深圳罗湖同城约外围(同城附近约(约小姐){电话微信·195-2214-2124·}只有微信和电话联系没有网址{温馨提示}：面到付款不见人不收钱防止诈骗hgZAJ56祭窖扯敛蚕age title.', 'position': 3}, {'title': '小紅書美食 - TikTok', 'link': 'https://www.tiktok.com/discover/%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%BE%8E%E9%A3%9F', 'snippet': '蓬松暄软. 好吃不粘牙. 做法也很简单. 喜欢的一起来做吧. 碗中放入60克红糖. 倒入190克 ...', 'date': '7天前', 'position': 4}, {'title': 'https://www.xiaohongshu.com/user/profile/6012833d0...', 'link': 'https://www.xiaohongshu.com/user/profile/6012833d0000000001001278', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 5}, {'title': '上海小姐上门（按摩小姐上门服务）{接待微信电话  157-2663-7742 ...', 'link': 'https://www.facebook.com/public/%E4%B8%8A%E6%B5%B7%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%EF%BC%88%E6%8C%89%E6%91%A9%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88157-2663-7742%E2%96%88%7D-%E4%B8%8A%E6%B5%B7%E6%8C%89%E6%91%A9%E5%B0%8F%E5%A7%90%E6%9C%8D%E5%8A%A1-%E4%B8%8A%E6%B5%B7%E6%89%BE%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1-%E4%B8%8A%E6%B5%B7%E5%93%AA%E9%87%8C%E6%9C%89%E6%89%BE%E5%B0%8F%E5%A7%90-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1005', 'snippet': 'View the profiles of people named 上海小姐上门(按摩小姐上门服务){接待微信电话157 2663 7742} 上海按摩小姐服务上海找小姐上门服务上海哪里有找小姐哪里找约 ...', 'position': 6}, {'title': '中国最快乐的城市，工资5000活出50000的快乐，长沙不止吃货天堂', 'link': 'https://www.163.com/dy/article/JJ50AG7I0521DC6R.html', 'snippet': '黄兴路步行街的酸萝卜牛百叶和笨萝卜不能错过。 湘菜馆有毛氏红烧肉、腊味煲仔饭、咸蛋黄烧肉、酱板鸭、剁椒鱼头。 打开网易新闻查看精彩图片. 总之 ...', 'date': '5天前', 'position': 7}, {'title': '深圳龙华约美女上门(同城附近约(约小姐){电话微信 - Pinterest', 'link': 'https://www.pinterest.com/pin/894105332271061099', 'snippet': '深圳龙华约美女上门(同城附近约(约小姐){电话微信·195-2214-2124·}面到付款提供高质量小姐上门ftYYH23仔矩赫壳亿. 到付-质量高-同城附近aau.', 'date': '2024年10月28日', 'position': 8}, {'title': '澳洲专业打手Telegram【@Bkzn58】电报.0802 Images – Browse 0 ...', 'link': 'https://stock.adobe.com/search?k=%E6%BE%B3%E6%B4%B2%E4%B8%93%E4%B8%9A%E6%89%93%E6%89%8BTelegram%E3%80%90@bkzn58%E3%80%91%E7%94%B5%E6%8A%A5.0802', 'snippet': 'Search from thousands of royalty-free 澳洲专业打手Telegram【@Bkzn58】电报.0802 stock images and video for your next project. Download royalty-free stock ...', 'position': 9}, {'title': '深圳哪里能找到小姐上门服务[预约电话微信166-7670-6944]提供高 ...', 'link': 'https://hu-hu.facebook.com/public/%E6%B7%B1%E5%9C%B3%E5%93%AA%E9%87%8C%E8%83%BD%E6%89%BE%E5%88%B0%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1%5B%E9%A2%84%E7%BA%A6%E7%94%B5%E8%AF%9D%E5%BE%AE%E4%BF%A1166-7670-6944%5D%E6%8F%90%E4%BE%9B%E9%AB%98%E8%B4%A8%E9%87%8F%E5%B0%8F%E5%A7%90%E4%B8%8A%E9%97%A8%E6%9C%8D%E5%8A%A1+%E5%BF%AB%E9%80%9F%E9%80%89%E7%85%A7%E7%89%87%E5%AE%89%E6%8E%92+%E9%9D%A2%E5%88%B0%E4%BB%98%E6%AC%BE+30%E5%88%86%E9%92%9F%E5%86%85%E5%88%B0%E8%BE%BE%7B%E9%9A%8F%E6%9C%BA%E8%8B%B1%E6%96%87%3D5%7D%7B%E9%9A%8F%E6%9C%BA%E6%95%B0%E5%AD%97%3D5%7D.vbyld', 'snippet': '深圳哪里能找到小姐上门服务[预约电话微信166-7670-6944]提供高质量小姐上门服务+快速选照片安排+面到付款+30分钟内到达{随机英文=5}{随机数字=5}.vbyld nevű ...', 'position': 10}], 'credits': 1}
+搜索结果: {'searchParameters': {'q': '喝热椰汁 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '深圳兴起“椰子新玩法”：5平小店最高月售30万 - 36氪', 'link': 'https://m.36kr.com/p/1348131802421248', 'snippet': '而深圳的另一个品牌“蔻蔻椰” ，凭借“马蹄爆珠电椰水”和“一桶能量水”，在深圳白领心目中占据了一席之地，该品牌的思路是“只做基本款” ，想在植物系茶饮上开发出 ...', 'date': '2021年8月9日', 'position': 1}, {'title': '遇见福建：侨风侨韵进古城 - 中国新闻网', 'link': 'https://www.chinanews.com.cn/hr/2024/12-14/10336377.shtml', 'snippet': '中新网漳州12月14日电(记者张金川)14日下午，由常山华侨经济开发区主办的2024“侨风侨韵进古城——常山侨文化展示活动”在福建漳州古城启动。', 'date': '2天前', 'position': 2}, {'title': '承德露露困于杏仁_手机搜狐网', 'link': 'https://www.sohu.com/a/751486194_136866', 'snippet': '承德露露的前身是承德市罐头食品厂，成立于1950年。依托承德山区的山杏资源，承德露露在1975年开发出了杏仁露，之后成为了国家专利产品，后于1997年在深圳证券交易所挂牌 ...', 'position': 3}, {'title': '张春酷酷酷 - 小宇宙', 'link': 'https://www.xiaoyuzhoufm.com/podcast/63311d0f9186d4e4c46a0530', 'snippet': '是一种保持不稳定的情绪。 这里是作家、心理咨询师、人类的好朋友张春平行宇宙的入口，现实生活的微小树洞和心理建设互助会。主播的图书作品曾经获得新华社“年度中国 ...', 'position': 4}, {'title': '深圳羅湖美食8大推介¥13起明記清餃／牛雜老店／人氣臭豆腐', 'link': 'https://www.hk01.com/%E6%97%85%E9%81%8A/947353/%E6%B7%B1%E5%9C%B3%E7%BE%85%E6%B9%96%E7%BE%8E%E9%A3%9F8%E5%A4%A7%E6%8E%A8%E4%BB%8B-13%E8%B5%B7-%E6%98%8E%E8%A8%98%E6%B8%85%E9%A4%83-%E7%89%9B%E9%9B%9C%E8%80%81%E5%BA%97-%E4%BA%BA%E6%B0%A3%E8%87%AD%E8%B1%86%E8%85%90', 'snippet': '羅湖區24年老字號糖水店「龜老吉涼茶店」，售有超過100款糖水，選擇極多，人均才¥13！這兒必點椰汁芋圓仙草，內有軟糯又有嚼勁的手工芋圓、自家熬製的綠色仙草 ...', 'date': '3天前', 'position': 5}, {'title': '擦边赛道，挤满了掘金者和吃瓜人 - 网易', 'link': 'https://www.163.com/dy/article/JJ50B0VM0517MLTR.html', 'snippet': '据不完全统计，近五年屡屡踩线的椰树集团已经多次被处罚。 2009年，椰树因在海口市公交车上印有“老婆喜欢老公喝椰树牌石榴汁”“木瓜饱满我 ...', 'date': '5天前', 'position': 6}, {'title': '潮流周刊', 'link': 'https://weekly.tw93.fun/', 'snippet': '封面图拍摄于早上做的的口粮，很好喝，3 块冰块，3 颗小青柠剪开，半杯苏打水半杯纯椰子水，可以试试，好看还好喝。 第185期- 光照之美. 2024/07/15. 封面图拍摄于上周吃完晚饭在 ...', 'position': 7}, {'title': '泰国各种饮料品种- 抖音', 'link': 'https://www.douyin.com/search/%E6%B3%B0%E5%9B%BD%E5%90%84%E7%A7%8D%E9%A5%AE%E6%96%99%E5%93%81%E7%A7%8D', 'snippet': '您在查找泰国各种饮料品种吗？抖音综合搜索帮你找到更多相关视频、图文、直播内容，支持在线观看。更有海量高清视频、相关直播、用户，满足您的在线观看需求。', 'position': 8}, {'title': '无地自容小说无删减 - 起点中文', 'link': 'https://www.qidian.com/ask/tqbnjdylwwzzf', 'snippet': '《无地自容》是中国摇滚乐队黑豹乐队演唱的一首硬摇滚歌曲。该曲由李彤作曲，李振权担任制作人，窦唯作词并演唱，收录于黑豹乐队1991 年发行的专辑《黑豹》中。黑豹乐队曾在“ ...', 'position': 9}], 'images': [{'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.hkhl.hk/f/1024p0/0x0/100/none/50c5aee7b972785da954ea47a12dacd7/2024-12/2013.jpg', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.stheadline.com/f/680p0/0x0/100/none/813ec42f9e755dfdd80d57943be06808/stheadline/news_res/2024/12/11/126859/i_src_011380829.png', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.hkhl.hk/f/1024p0/0x0/100/none/6305740798c5626cc7afcf497f7aba11/2024-12/2002.jpg', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '椰树饮料怎么样从小喝到大的椰汁_什么值得买', 'imageUrl': 'https://a.zdmimg.com/202303/30/6424e2ab1c83c9925.jpg_e1080.jpg', 'link': 'https://post.smzdm.com/talk/p/a8xmro40/'}, {'title': '被夸爆的网红椰子汁，夏天最渴望的清甜！_手机搜狐网', 'imageUrl': 'https://p2.itc.cn/q_70/images03/20210429/9d4550a765fa4034930051e78936deeb.jpeg', 'link': 'https://www.sohu.com/a/463805910_204826'}, {'title': '柠季·手打柠檬茶(深圳领展中心城店)】电话_地址_价格_营业时间_购物 ...', 'imageUrl': 'https://img.meituan.net/msmerchant/b86a963c103e8672d58eb9904dce789b4492988.jpg%40400w_1e_1l%7Cwatermark%3D1%26%26r%3D1%26p%3D9%26x%3D2%26y%3D2%26relative%3D1%26o%3D20.webp', 'link': 'http://m.dianping.com/shop/1856717777?msource=applemaps'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.hkhl.hk/f/1024p0/0x0/100/none/9fd7c1aaec8c9da86c8f289c7646d23b/2024-11/7002_1.png', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '深圳必吃椰子鸡，四季椰林鸡和汤都太美味了- 大众点评吃喝玩乐精选', 'imageUrl': 'https://qcloud.dpfile.com/pc/aX5IIbG1fmCnA3jsIKgPnHR9YZNPl3uK0Qo5JmfA_hFbABLJ-NMpmWgYt00SYGDoMSA7eJMy80BwuDqlQwqdglEuLYk00OmSS1IdNpm8K8sG4JN9RIm2mTKcbLtc2o2vmIU_8ZGOT1OjpJmLxG6urQ.jpg', 'link': 'https://www.dianping.com/discovery/854815041'}, {'title': '内地即开椰子水有毒？小红书女饮完疑中毒狂呕网民教路变质3大迹象| 星 ...', 'imageUrl': 'https://image.hkhl.hk/f/1024p0/0x0/100/none/2f0f7be11926b2ed1b1fd2c7039bb2f1/2023-04/coconut102.png', 'link': 'https://std.stheadline.com/sc/supplement/article/2522267/%E5%89%AF%E5%88%8A-%E9%A3%B2%E9%A3%9F%E8%A1%97-%E5%85%A7%E5%9C%B0%E5%8D%B3%E9%96%8B%E6%A4%B0%E5%AD%90%E6%B0%B4%E6%9C%89%E6%AF%92-%E5%B0%8F%E7%B4%85%E6%9B%B8%E5%A5%B3%E9%A3%B2%E5%AE%8C%E7%96%91%E4%B8%AD%E6%AF%92%E7%8B%82%E5%98%94-%E7%B6%B2%E6%B0%91%E6%95%99%E8%B7%AF%E8%AE%8A%E8%B3%AA3%E5%A4%A7%E8%B7%A1%E8%B1%A1'}], 'credits': 1}
+成功处理页面: https://m.36kr.com/p/1348131802421248
+Processing request: system, , 基于以下用户意图和搜索结果，制定一个合理的推荐计划：
+
+用户意图：
+吃酸辣汤, 吃麻辣鸭血汤, 吃香辣鸭脖, 吃麻辣田螺, 吃红烧牛腩炖萝卜, 喝热豆浆, 喝热椰汁
+
+搜索结果：
+[
+  {
+    "title": "深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店 | 星岛环球网",
+    "description": "除了港人熟识的酸菜鱼、麻辣火锅外，亦有大量中、西、日、韩菜色选择，食物高质之余，亦适合与亲朋好友打卡聚餐，而且性价比极高。 以下整合40间精选深圳美食 ...",
+    "link": "https://stnn.cc/c/2024-05-11/3893060.shtml",
+    "type": "吃酸辣汤",
+    "position": 1,
+    "details": {
+      "main_content": "首页>星岛大湾区>消费生活\n\n\n深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店\n发布时间：2024-05-11 16:21\n\n\n\n\n\n\n\n近年北上消费已成风气，加上深圳的美食版图扩充神速，几乎每月都有新餐厅或商场登场。 除了港人熟识的酸菜鱼、麻辣火锅外，亦有大量中、西、日、韩菜色选择，食物高质之余，亦适合与亲朋好友打卡聚餐，而且性价比极高。 以下整合40间精选深圳美食推介，大部份地铁沿线可直达，集中在罗湖区、福田区、南山区一带，不少更在卓悦中心、万象天地、万象城、福田星河COCO Park、壹方天地等港人热门旅游点内，交通够方便。 不妨衬周末来个即兴深圳一日游大饱口福！\n\n火锅/烤肉/烧烤/串烧推介\n到深圳一日游怎可以不来一场火锅或者烤肉、烧烤盛宴？ 除了历久不衰的海鲜火锅、粥底火锅及鸡煲外，近年深圳最受欢迎的必定是椰子鸡锅、碳烧活鳗鱼及串烧，但重庆火锅、川菜烧烤、涮涮锅亦各有捧场客。 以下14间精选火锅、烤肉、串烧等推介，高质又抵食，是时候安排去饱餐一顿！\n麻辣锅 | 1. 萍姐火锅. 公路夜市 80年代复古老街麻辣边炉 网红店必试老妈蹄花\n3年前在重庆起家的“萍姐火锅. 公路",
+      "images": [
+        {
+          "url": "/statics/images/minus.png",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "/statics/images/fenxiang.png",
+          "alt": "",
+          "title": ""
+        }
+      ],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "stnn.cc",
+      "last_updated": "",
+      "keywords": [
+        "深圳美食攻略",
+        "深圳美食"
+      ]
+    }
+  },
+  {
+    "title": "深圳火锅2024 | 16大打边炉推介！附地址+地铁交通详情 | 星岛环球网",
+    "description": "位于深圳罗湖区的“翠焱火锅”是间一站式有齐四川麻辣锅、串烧及烧烤的食店，开到凌晨两点，最适合按摩后去叹返餐宵夜。餐厅是以优美的园林雅景装潢，甚有气氛， ...",
+    "link": "https://stnn.cc/c/2024-11-24/3937465.shtml",
+    "type": "吃麻辣鸭血汤",
+    "position": 1,
+    "details": {
+      "main_content": "首页>星岛大湾区>消费生活\n\n\n深圳火锅2024 | 16大打边炉推介！附地址+地铁交通详情\n发布时间：2024-11-24 15:20\n\n\n\n\n\n\n\n深圳火锅 2024  | 无论何时，火锅总是港人心目中美食的头几位，尤其是在寒冷的季节，与亲友好友围坐一桌“烚吓烚吓”打边炉更添温暖。随着北上消费已经成为潮流，港人周末都会上深圳找好吃的食物，这次《星岛》记者精选了16间深圳人气火锅店，性价比高之余，更有不少特色火锅！除了有经典的重庆、成都风味的麻辣火锅，更有抵食的潮汕牛肉火锅放题、北京涮羊肉锅等。喜欢传统滋味，更有炭炉、粥底火锅等，如果是追求特色火锅，更有最近新兴的无花果脆皮鸡、榴莲鸡煲等，都能让你这个秋冬，暖意入心！\n\n1. 深圳罗湖区火锅｜ 正宗重庆麻辣锅 北步园火锅\n这间地道重庆老火锅“北步园火锅”地点超就脚（便利），位于罗湖万象城附近，是近来超人气的边炉店，几乎晚晚都排长龙。餐厅楼高3层，店面更还原了老重庆的街头市井烟火味道，并走复古工业风路线，相当有特色，尽是打卡位。火锅汤底是正宗重庆红油式，以新鲜原材料即叫现炒，香之余辣劲亦十足，亦可选有齐红油、菇菌、番茄的三味锅。\n推介必",
+      "images": [
+        {
+          "url": "/statics/images/minus.png",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "/statics/images/fenxiang.png",
+          "alt": "",
+          "title": ""
+        }
+      ],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "stnn.cc",
+      "last_updated": "",
+      "keywords": [
+        "深圳火锅店推荐"
+      ]
+    }
+  },
+  {
+    "title": "香辣制品-香辣制品促销价格、香辣制品品牌 - 淘宝",
+    "description": "麻辣小零食卤味脆藕片解馋网红休闲食品辣味小吃香 · 贼韵味香辣鸭翅湖南特产卤味熟食爆辣中下酒解馋 · 南县特产小川贵大片麻辣肉250克麻油香辣味湖南手 · 鸭酱香泡鸡爪卤味32 ...",
+    "link": "https://www.taobao.com/chanpin/031384cdea72168c24e659640ad187a5.html",
+    "type": "吃香辣鸭脖",
+    "position": 1,
+    "details": {
+      "main_content": "",
+      "images": [
+        {
+          "url": "//gw.alicdn.com/imgextra/i4/O1CN01H11jUw1gVppn3YjsM_!!6000000004148-2-tps-480-144.png",
+          "alt": "",
+          "title": ""
+        }
+      ],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "www.taobao.com",
+      "last_updated": "",
+      "keywords": [
+        "香辣制品",
+        "香辣制品促销价格",
+        "香辣制品品牌"
+      ]
+    }
+  },
+  {
+    "title": "深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店 | 星岛环球网",
+    "description": "3年前在重庆起家的“萍姐火锅. 公路夜市“，开业不久旋即成为麻辣火锅界网红店！ 店家一改传统火锅店的装修风格，以80、90年代 ...",
+    "link": "https://stnn.cc/c/2024-05-11/3893060.shtml",
+    "type": "吃麻辣田螺",
+    "position": 1,
+    "details": {
+      "main_content": "首页>星岛大湾区>消费生活\n\n\n深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店\n发布时间：2024-05-11 16:21\n\n\n\n\n\n\n\n近年北上消费已成风气，加上深圳的美食版图扩充神速，几乎每月都有新餐厅或商场登场。 除了港人熟识的酸菜鱼、麻辣火锅外，亦有大量中、西、日、韩菜色选择，食物高质之余，亦适合与亲朋好友打卡聚餐，而且性价比极高。 以下整合40间精选深圳美食推介，大部份地铁沿线可直达，集中在罗湖区、福田区、南山区一带，不少更在卓悦中心、万象天地、万象城、福田星河COCO Park、壹方天地等港人热门旅游点内，交通够方便。 不妨衬周末来个即兴深圳一日游大饱口福！\n\n火锅/烤肉/烧烤/串烧推介\n到深圳一日游怎可以不来一场火锅或者烤肉、烧烤盛宴？ 除了历久不衰的海鲜火锅、粥底火锅及鸡煲外，近年深圳最受欢迎的必定是椰子鸡锅、碳烧活鳗鱼及串烧，但重庆火锅、川菜烧烤、涮涮锅亦各有捧场客。 以下14间精选火锅、烤肉、串烧等推介，高质又抵食，是时候安排去饱餐一顿！\n麻辣锅 | 1. 萍姐火锅. 公路夜市 80年代复古老街麻辣边炉 网红店必试老妈蹄花\n3年前在重庆起家的“萍姐火锅. 公路",
+      "images": [
+        {
+          "url": "/statics/images/minus.png",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "/statics/images/fenxiang.png",
+          "alt": "",
+          "title": ""
+        }
+      ],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "stnn.cc",
+      "last_updated": "",
+      "keywords": [
+        "深圳美食攻略",
+        "深圳美食"
+      ]
+    }
+  },
+  {
+    "title": "深圳罗湖区品茶工作室-哪里找约炮.1015 - Steam Community",
+    "description": "Counter-Strike 2 > 深圳罗湖区约服务（约小姐）{接待微信电话·188-5204-2435·}-深圳罗湖区同城约炮-深圳罗湖区外围工作室-深圳罗湖区品茶工作室-哪里找约炮.1015.",
+    "link": "https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88188-5204-2435%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015",
+    "type": "吃红烧牛腩炖萝卜",
+    "position": 1,
+    "details": {},
+    "error": "HTTPSConnectionPool(host='steamcommunity.com', port=443): Max retries exceeded with url: /market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88188-5204-2435%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f30a46a4cd0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"
+  },
+  {
+    "title": "“冬日暖羊” 荣县千人坝坝全羊宴热闹开宴 - 川观新闻",
+    "description": "“我最满意的就是赛后，有羊肉汤、豆浆等热饮，天气这么冷，喝了之后感觉身心都暖和了。”来自广元的马拉松选手张大姐品尝完羊肉汤后，特意为荣县点赞。",
+    "link": "https://cbgc.scol.com.cn/news/5735390",
+    "type": "喝热豆浆",
+    "position": 1,
+    "details": {
+      "main_content": "",
+      "images": [],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "cbgc.scol.com.cn",
+      "last_updated": "",
+      "keywords": []
+    }
+  },
+  {
+    "title": "深圳兴起“椰子新玩法”：5平小店最高月售30万-36氪",
+    "description": "而深圳的另一个品牌“蔻蔻椰” ，凭借“马蹄爆珠电椰水”和“一桶能量水”，在深圳白领心目中占据了一席之地，该品牌的思路是“只做基本款” ，想在植物系茶饮上开发出 ...",
+    "link": "https://m.36kr.com/p/1348131802421248",
+    "type": "喝热椰汁",
+    "position": 1,
+    "details": {
+      "main_content": "",
+      "images": [],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "m.36kr.com",
+      "last_updated": "",
+      "keywords": [
+        "资讯",
+        "股票",
+        "创业",
+        "投资",
+        "资本市场",
+        "汽车",
+        "教育",
+        "职业",
+        "房产",
+        "36氪首发",
+        "游戏",
+        "上市",
+        "新商业",
+        "新经济",
+        "网红经济",
+        "黑科技",
+        "最前沿",
+        "最前线",
+        "无人驾驶",
+        "自动驾驶",
+        "物联网",
+        "车联网",
+        "互联网",
+        "科技"
+      ]
+    }
+  }
+]
+
+请提供：
+1. 具体场所推荐（包含地址和特色）：-
+2. 其他注意事项：-
+
+请确保每个部分都以数字编号开头，突出重点信息。每个推荐地点要包含具体的地址和特色。, 4eccf8c6-6658-444b-b7e3-be9efed2c17b116.24.65.247 - - [16/Dec/2024 05:12:38] "POST /api/recommendations HTTP/1.1" 200 -
+
+----- standard request -----
+处理页面失败: HTTPSConnectionPool(host='steamcommunity.com', port=443): Max retries exceeded with url: /market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88188-5204-2435%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f309e3722e0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+搜索关键词: 喝热豆浆 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '喝热豆浆 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '“冬日暖羊” 荣县千人坝坝全羊宴热闹开宴 - 川观新闻', 'link': 'https://cbgc.scol.com.cn/news/5735390', 'snippet': '“我最满意的就是赛后，有羊肉汤、豆浆等热饮，天气这么冷，喝了之后感觉身心都暖和了。”来自广元的马拉松选手张大姐品尝完羊肉汤后，特意为荣县点赞。', 'date': '4天前', 'position': 1}, {'title': '被新潮小家电“细分”的生活', 'link': 'http://mdev.lifeweek.com.cn/h5/article/detail?artId=78207', 'snippet': '张佩妮家的速热式饮水机，即按即出水（王旭华摄）. 我买，故我在. “我家的厨房是最受欢迎的。”在张佩妮家逗留了3个多小时，这的确是令我感受最深的。', 'date': '2019年8月23日', 'position': 2}, {'title': '吉训明院士：肥胖不等于吃得好，均衡营养能避免很多疾病发生 - 网易', 'link': 'https://m.163.com/news/article/JJFAUJ05052583KJ.html?clickfrom=subscribe', 'snippet': '吉训明院士表示，营养不等于能量，一个人肥胖不代表他获得的营养是均衡的。根据发胖原因的不同，患者应该有针对性地调整自己的饮食，均衡各项营养元素的摄入， ...', 'date': '21小时前', 'position': 3}, {'title': '小田豆浆(深圳店)', 'link': 'https://you.ctrip.com/food/26/17001051.html', 'snippet': '菜系:小吃营业时间:18:00到凌晨02:00 在探蚝点了餐，发现宝安小吃热门榜第一名的小田豆浆店就在同一条街，于是起身去打包。 黄色的主色调，黑色的logo，有点香港车牌的 ...', 'position': 4}, {'title': 'https://www.xiaohongshu.com/explore?channel_id=hom...', 'link': 'https://www.xiaohongshu.com/explore?channel_id=homefeed_recommend&channel_type=web_note_detail_r10', 'snippet': '没有此网页的信息。 · 了解原因', 'position': 5}, {'title': '暖温调奶器哪个品牌质量好？精选TOP5全网畅销高质量品牌！ - Bilibili', 'link': 'https://www.bilibili.com/read/cv28114434/', 'snippet': '暖温调奶器在婴幼儿家庭起着至关重要的作用，可快速提供热水以便于冲奶泡奶，既实用又方便。尽管暖温调奶器是一种小型家电，但它发生安全事故和风险危害 ...', 'date': '2023年11月28日', 'position': 6}, {'title': 'Career opportunities - Job Search', 'link': 'https://jobs.dnv.com/job-search?country%5B0%5D=Singapore&page=6', 'snippet': 'Find out more about our job opportunities, search for a role now.', 'position': 7}, {'title': '豆类 - 禁闻网', 'link': 'https://www.bannedbook.org/bnews/tag/%E8%B1%86%E7%B1%BB/', 'snippet': '豆浆这3种喝法小心伤身豆浆蛋白质鲜奶阅读全文» ... 作者: 健康1+1 · 直播, 文章内容并不代表本网立场和观点。 豆浆这3种喝法小心伤身#豆浆#蛋白质[…].', 'position': 8}, {'title': '小红书爆火的5款超惊艳豆浆搭配，养颜又润燥，最适合现在喝了~', 'link': 'https://baijiahao.baidu.com/s?id=1747708657046659993', 'snippet': '1. 红豆黑米豆浆--益气养颜 · 2. 山药豆浆--养颜润燥 · 3. 紫薯燕麦豆浆--抗氧化抗衰老 · 4. 黄豆花生豆浆--健脾补肾 · 5. 黑豆核桃豆浆--养发排毒.', 'position': 9}, {'title': '宋争鸣小说- 起点中文网手机端', 'link': 'https://www.qidian.com/ask/tycpeyclwampe', 'snippet': '严争鸣出自Priest 所著的《六爻》。他曾经是家中富甲一方的大少爷，十分讲究。在书中，他是主角之一，其CP 为程潜。', 'position': 10}], 'credits': 1}
+成功处理页面: https://cbgc.scol.com.cn/news/5735390
+搜索关键词: 喝热椰汁 深圳 小红书推荐
+搜索结果: {'searchParameters': {'q': '喝热椰汁 深圳 小红书推荐', 'gl': 'cn', 'hl': 'zh-cn', 'type': 'search', 'location': '中国', 'engine': 'google'}, 'organic': [{'title': '深圳兴起“椰子新玩法”：5平小店最高月售30万 - 36氪', 'link': 'https://m.36kr.com/p/1348131802421248', 'snippet': '而深圳的另一个品牌“蔻蔻椰” ，凭借“马蹄爆珠电椰水”和“一桶能量水”，在深圳白领心目中占据了一席之地，该品牌的思路是“只做基本款” ，想在植物系茶饮上开发出 ...', 'date': '2021年8月9日', 'position': 1}, {'title': '遇见福建：侨风侨韵进古城 - 中国新闻网', 'link': 'https://www.chinanews.com.cn/hr/2024/12-14/10336377.shtml', 'snippet': '中新网漳州12月14日电(记者张金川)14日下午，由常山华侨经济开发区主办的2024“侨风侨韵进古城——常山侨文化展示活动”在福建漳州古城启动。', 'date': '2天前', 'position': 2}, {'title': '承德露露困于杏仁_手机搜狐网', 'link': 'https://www.sohu.com/a/751486194_136866', 'snippet': '承德露露的前身是承德市罐头食品厂，成立于1950年。依托承德山区的山杏资源，承德露露在1975年开发出了杏仁露，之后成为了国家专利产品，后于1997年在深圳证券交易所挂牌 ...', 'position': 3}, {'title': '张春酷酷酷 - 小宇宙', 'link': 'https://www.xiaoyuzhoufm.com/podcast/63311d0f9186d4e4c46a0530', 'snippet': '是一种保持不稳定的情绪。 这里是作家、心理咨询师、人类的好朋友张春平行宇宙的入口，现实生活的微小树洞和心理建设互助会。主播的图书作品曾经获得新华社“年度中国 ...', 'position': 4}, {'title': '深圳羅湖美食8大推介¥13起明記清餃／牛雜老店／人氣臭豆腐', 'link': 'https://www.hk01.com/%E6%97%85%E9%81%8A/947353/%E6%B7%B1%E5%9C%B3%E7%BE%85%E6%B9%96%E7%BE%8E%E9%A3%9F8%E5%A4%A7%E6%8E%A8%E4%BB%8B-13%E8%B5%B7-%E6%98%8E%E8%A8%98%E6%B8%85%E9%A4%83-%E7%89%9B%E9%9B%9C%E8%80%81%E5%BA%97-%E4%BA%BA%E6%B0%A3%E8%87%AD%E8%B1%86%E8%85%90', 'snippet': '羅湖區24年老字號糖水店「龜老吉涼茶店」，售有超過100款糖水，選擇極多，人均才¥13！這兒必點椰汁芋圓仙草，內有軟糯又有嚼勁的手工芋圓、自家熬製的綠色仙草 ...', 'date': '3天前', 'position': 5}, {'title': '擦边赛道，挤满了掘金者和吃瓜人 - 网易', 'link': 'https://www.163.com/dy/article/JJ50B0VM0517MLTR.html', 'snippet': '据不完全统计，近五年屡屡踩线的椰树集团已经多次被处罚。 2009年，椰树因在海口市公交车上印有“老婆喜欢老公喝椰树牌石榴汁”“木瓜饱满我 ...', 'date': '5天前', 'position': 6}, {'title': '潮流周刊', 'link': 'https://weekly.tw93.fun/', 'snippet': '封面图拍摄于早上做的的口粮，很好喝，3 块冰块，3 颗小青柠剪开，半杯苏打水半杯纯椰子水，可以试试，好看还好喝。 第185期- 光照之美. 2024/07/15. 封面图拍摄于上周吃完晚饭在 ...', 'position': 7}, {'title': '泰国各种饮料品种- 抖音', 'link': 'https://www.douyin.com/search/%E6%B3%B0%E5%9B%BD%E5%90%84%E7%A7%8D%E9%A5%AE%E6%96%99%E5%93%81%E7%A7%8D', 'snippet': '您在查找泰国各种饮料品种吗？抖音综合搜索帮你找到更多相关视频、图文、直播内容，支持在线观看。更有海量高清视频、相关直播、用户，满足您的在线观看需求。', 'position': 8}, {'title': '无地自容小说无删减 - 起点中文', 'link': 'https://www.qidian.com/ask/tqbnjdylwwzzf', 'snippet': '《无地自容》是中国摇滚乐队黑豹乐队演唱的一首硬摇滚歌曲。该曲由李彤作曲，李振权担任制作人，窦唯作词并演唱，收录于黑豹乐队1991 年发行的专辑《黑豹》中。黑豹乐队曾在“ ...', 'position': 9}], 'images': [{'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.hkhl.hk/f/1024p0/0x0/100/none/50c5aee7b972785da954ea47a12dacd7/2024-12/2013.jpg', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.stheadline.com/f/680p0/0x0/100/none/813ec42f9e755dfdd80d57943be06808/stheadline/news_res/2024/12/11/126859/i_src_011380829.png', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '小红书热推深圳美味点心必吃百合名酱蒸凤爪／竹笋流沙包网友建议一方法 ...', 'imageUrl': 'https://image.hkhl.hk/f/1024p0/0x0/100/none/6305740798c5626cc7afcf497f7aba11/2024-12/2002.jpg', 'link': 'https://std.stheadline.com/sc/supplement/article/2645863/%E5%89%AF%E5%88%8A-%E4%B8%AD%E5%9C%8B-%E5%B0%8F%E7%B4%85%E6%9B%B8%E7%86%B1%E6%8E%A8%E6%B7%B1%E5%9C%B3%E7%BE%8E%E5%91%B3%E9%BB%9E%E5%BF%83-%E5%BF%85%E5%90%83%E7%99%BE%E5%90%88%E5%90%8D%E9%86%AC%E8%92%B8%E9%B3%B3%E7%88%AA-%E7%AB%B9%E7%AD%8D%E6%B5%81%E6%B2%99%E5%8C%85-%E7%B6%B2%E5%8F%8B%E5%BB%BA%E8%AD%B0%E4%B8%80%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BA%AB5%E6%8A%98%E5%84%AA%E6%83%A0'}, {'title': '椰树饮料怎么样从小喝到大的椰汁_什么值得买', 'imageUrl': 'https://a.zdmimg.com/202303/30/6424e2ab1c83c9925.jpg_e1080.jpg', 'link': 'https://post.smzdm.com/talk/p/a8xmro40/'}, {'title': '柠季·手打柠檬茶(深圳领展中心城店)】电话_地址_价格_营业时间_购物 ...', 'imageUrl': 'https://img.meituan.net/msmerchant/b86a963c103e8672d58eb9904dce789b4492988.jpg%40400w_1e_1l%7Cwatermark%3D1%26%26r%3D1%26p%3D9%26x%3D2%26y%3D2%26relative%3D1%26o%3D20.webp', 'link': 'http://m.dianping.com/shop/1856717777?msource=applemaps'}, {'title': '深圳小众打卡地+小红书- 抖音', 'imageUrl': 'https://p9-pc-sign.douyinpic.com/tos-cn-p-0015/oMBlAlPqRiZOmA8AIziB2HfFI2gDgmrKADXDLe~tplv-dy-360p.jpeg?biz_tag=pcweb_cover&from=327834062&lk3s=138a59ce&s=PackSourceEnum_SEARCH&sc=origin_cover&se=false&x-expires=1735444800&x-signature=v1HsowKkOgWnDRy18%2Biq9Aw%2B%2FvA%3D', 'link': 'https://www.douyin.com/search/%E6%B7%B1%E5%9C%B3%E5%B0%8F%E4%BC%97%E6%89%93%E5%8D%A1%E5%9C%B0%2B%E5%B0%8F%E7%BA%A2%E4%B9%A6'}, {'title': '深圳小众打卡地+小红书- 抖音', 'imageUrl': 'https://p3-pc-sign.douyinpic.com/tos-cn-p-0015/owCBSBeIfAscO18EzQCs7HAZklQ5L6BxGe6BHw~tplv-dy-360p.jpeg?biz_tag=pcweb_cover&from=327834062&lk3s=138a59ce&s=PackSourceEnum_SEARCH&sc=origin_cover&se=false&x-expires=1735444800&x-signature=OYYPB2CyheFUORjmCxBErMJGx%2Bc%3D', 'link': 'https://www.douyin.com/search/%E6%B7%B1%E5%9C%B3%E5%B0%8F%E4%BC%97%E6%89%93%E5%8D%A1%E5%9C%B0%2B%E5%B0%8F%E7%BA%A2%E4%B9%A6'}, {'title': '被夸爆的网红椰子汁，夏天最渴望的清甜！_手机搜狐网', 'imageUrl': 'https://p2.itc.cn/q_70/images03/20210429/9d4550a765fa4034930051e78936deeb.jpeg', 'link': 'https://www.sohu.com/a/463805910_204826'}, {'title': '深圳必吃椰子鸡，四季椰林鸡和汤都太美味了- 大众点评吃喝玩乐精选', 'imageUrl': 'https://qcloud.dpfile.com/pc/aX5IIbG1fmCnA3jsIKgPnHR9YZNPl3uK0Qo5JmfA_hFbABLJ-NMpmWgYt00SYGDoMSA7eJMy80BwuDqlQwqdglEuLYk00OmSS1IdNpm8K8sG4JN9RIm2mTKcbLtc2o2vmIU_8ZGOT1OjpJmLxG6urQ.jpg', 'link': 'https://m.dianping.com/discovery/854815041'}], 'credits': 1}
+成功处理页面: https://m.36kr.com/p/1348131802421248
+Processing request: system, , 基于以下用户意图和搜索结果，制定一个合理的推荐计划：
+
+用户意图：
+吃酸辣汤, 吃麻辣鸭血汤, 吃香辣鸭脖, 吃麻辣田螺, 吃红烧牛腩炖萝卜, 喝热豆浆, 喝热椰汁
+
+搜索结果：
+[
+  {
+    "title": "腾讯地图",
+    "description": "2024.07.09. [薄荷]环境： 希望能尽早的开到有空调的地方[捂脸] 「老友三鲜粉」好吃，酸爽，分量很足，看着小红书推荐来的，确实很 ... 端上桌的第一口，酸辣鲜香瞬间在 ...",
+    "link": "http://map.qq.com/m/detail/poi/poid=14713448823346556766",
+    "type": "吃酸辣汤",
+    "position": 1,
+    "details": {
+      "main_content": "",
+      "images": [
+        {
+          "url": "http://multimedia.map.qq.com/mapbigdata/0/c6ac7b00cda49099ea634aa13266129f/0",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "https://multimedia.map.qq.com/mapbigdata/0/ab225f096829588cbc400752e96a1810/0",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "https://multimedia.map.qq.com/mapbigdata/0/b2de288df83fd670475434d82c010fd6/0",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "https://multimedia.map.qq.com/mapbigdata/0/eb33ceeccc6175ac8313dfac12df868d/0",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "https://multimedia.map.qq.com/mapbigdata/0/fea366f7012332154733659e0995919a/0",
+          "alt": "",
+          "title": ""
+        }
+      ],
+      "contact": {
+        "phone": "755-2774481",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "map.qq.com",
+      "last_updated": "",
+      "keywords": [
+        "腾讯地图触屏版",
+        "地图",
+        "触屏版",
+        "触屏版地图",
+        "腾讯地图",
+        "WAP地图",
+        "wap地图",
+        "腾讯地图wap版",
+        "定位",
+        "HTML5",
+        "手机浏览器地图",
+        "手机网页地图",
+        "移动网页地图",
+        "地点查询",
+        "周边查询",
+        "公交查询",
+        "中国地图",
+        "驾车导航",
+        "map.wap.qq.com",
+        "map.qq.com",
+        "maps.qq.com",
+        "ditu.qq.com"
+      ]
+    }
+  },
+  {
+    "title": "深圳火锅2024 | 16大打边炉推介！附地址+地铁交通详情 | 星岛环球网",
+    "description": "位于深圳罗湖区的“翠焱火锅”是间一站式有齐四川麻辣锅、串烧及烧烤的食店，开到凌晨两点，最适合按摩后去叹返餐宵夜。餐厅是以优美的园林雅景装潢，甚有气氛， ...",
+    "link": "https://stnn.cc/c/2024-11-24/3937465.shtml",
+    "type": "吃麻辣鸭血汤",
+    "position": 1,
+    "details": {
+      "main_content": "首页>星岛大湾区>消费生活\n\n\n深圳火锅2024 | 16大打边炉推介！附地址+地铁交通详情\n发布时间：2024-11-24 15:20\n\n\n\n\n\n\n\n深圳火锅 2024  | 无论何时，火锅总是港人心目中美食的头几位，尤其是在寒冷的季节，与亲友好友围坐一桌“烚吓烚吓”打边炉更添温暖。随着北上消费已经成为潮流，港人周末都会上深圳找好吃的食物，这次《星岛》记者精选了16间深圳人气火锅店，性价比高之余，更有不少特色火锅！除了有经典的重庆、成都风味的麻辣火锅，更有抵食的潮汕牛肉火锅放题、北京涮羊肉锅等。喜欢传统滋味，更有炭炉、粥底火锅等，如果是追求特色火锅，更有最近新兴的无花果脆皮鸡、榴莲鸡煲等，都能让你这个秋冬，暖意入心！\n\n1. 深圳罗湖区火锅｜ 正宗重庆麻辣锅 北步园火锅\n这间地道重庆老火锅“北步园火锅”地点超就脚（便利），位于罗湖万象城附近，是近来超人气的边炉店，几乎晚晚都排长龙。餐厅楼高3层，店面更还原了老重庆的街头市井烟火味道，并走复古工业风路线，相当有特色，尽是打卡位。火锅汤底是正宗重庆红油式，以新鲜原材料即叫现炒，香之余辣劲亦十足，亦可选有齐红油、菇菌、番茄的三味锅。\n推介必",
+      "images": [
+        {
+          "url": "/statics/images/minus.png",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "/statics/images/fenxiang.png",
+          "alt": "",
+          "title": ""
+        }
+      ],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "stnn.cc",
+      "last_updated": "",
+      "keywords": [
+        "深圳火锅店推荐"
+      ]
+    }
+  },
+  {
+    "title": "越来越贵！曹氏鸭脖，用工业辣椒精征服“穷鬼打工人”的胃？|汤底|鸡肉|麻辣烫_网易订阅",
+    "description": "辣就算了，曹氏的那股子味道，也是相当持久。 图片源自小红书用户@鸡蛋灌饼. 有网友是这么形容曹氏的味道的，“吃完曹氏以后，从指甲缝到头发丝，从外套 ...",
+    "link": "https://www.163.com/dy/article/IV6E8NJH05566SXE.html",
+    "type": "吃香辣鸭脖",
+    "position": 1,
+    "details": {
+      "main_content": "",
+      "images": [
+        {
+          "url": "//static.ws.126.net/f2e/include/common_nav/images/topapp.jpg",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "https://static.ws.126.net/163/f2e/dy_media/dy_media/static/images/ipLocation.f6d00eb.svg",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2024%2F0407%2F02449336j00sbkc4v0098d000je00c5m.jpg&thumbnail=660x2147483647&quality=80&type=jpg",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2024%2F0407%2Fd6046e11j00sbkc4x00o2d000u000r0m.jpg&thumbnail=660x2147483647&quality=80&type=jpg",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2024%2F0407%2F6a32a0c3j00sbkc4u003sd000kl0105m.jpg&thumbnail=660x2147483647&quality=80&type=jpg",
+          "alt": "",
+          "title": ""
+        }
+      ],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "www.163.com",
+      "last_updated": "",
+      "keywords": [
+        "鸭脖",
+        "汤底",
+        "鸡肉",
+        "曹氏",
+        "麻辣烫",
+        "打工人",
+        "辣椒精"
+      ]
+    }
+  },
+  {
+    "title": "深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店 | 星岛环球网",
+    "description": "3年前在重庆起家的“萍姐火锅. 公路夜市“，开业不久旋即成为麻辣火锅界网红店！ 店家一改传统火锅店的装修风格，以80、90年代 ...",
+    "link": "https://stnn.cc/c/2024-05-11/3893060.shtml",
+    "type": "吃麻辣田螺",
+    "position": 1,
+    "details": {
+      "main_content": "首页>星岛大湾区>消费生活\n\n\n深圳美食推荐！40间地铁沿线，必吃火锅/串烧/网红店\n发布时间：2024-05-11 16:21\n\n\n\n\n\n\n\n近年北上消费已成风气，加上深圳的美食版图扩充神速，几乎每月都有新餐厅或商场登场。 除了港人熟识的酸菜鱼、麻辣火锅外，亦有大量中、西、日、韩菜色选择，食物高质之余，亦适合与亲朋好友打卡聚餐，而且性价比极高。 以下整合40间精选深圳美食推介，大部份地铁沿线可直达，集中在罗湖区、福田区、南山区一带，不少更在卓悦中心、万象天地、万象城、福田星河COCO Park、壹方天地等港人热门旅游点内，交通够方便。 不妨衬周末来个即兴深圳一日游大饱口福！\n\n火锅/烤肉/烧烤/串烧推介\n到深圳一日游怎可以不来一场火锅或者烤肉、烧烤盛宴？ 除了历久不衰的海鲜火锅、粥底火锅及鸡煲外，近年深圳最受欢迎的必定是椰子鸡锅、碳烧活鳗鱼及串烧，但重庆火锅、川菜烧烤、涮涮锅亦各有捧场客。 以下14间精选火锅、烤肉、串烧等推介，高质又抵食，是时候安排去饱餐一顿！\n麻辣锅 | 1. 萍姐火锅. 公路夜市 80年代复古老街麻辣边炉 网红店必试老妈蹄花\n3年前在重庆起家的“萍姐火锅. 公路",
+      "images": [
+        {
+          "url": "/statics/images/minus.png",
+          "alt": "",
+          "title": ""
+        },
+        {
+          "url": "/statics/images/fenxiang.png",
+          "alt": "",
+          "title": ""
+        }
+      ],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "stnn.cc",
+      "last_updated": "",
+      "keywords": [
+        "深圳美食攻略",
+        "深圳美食"
+      ]
+    }
+  },
+  {
+    "title": "深圳罗湖区品茶工作室-哪里找约炮.1015 - Steam Community",
+    "description": "Counter-Strike 2 > 深圳罗湖区约服务（约小姐）{接待微信电话·188-5204-2435·}-深圳罗湖区同城约炮-深圳罗湖区外围工作室-深圳罗湖区品茶工作室-哪里找约炮.1015.",
+    "link": "https://steamcommunity.com/market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88188-5204-2435%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015",
+    "type": "吃红烧牛腩炖萝卜",
+    "position": 1,
+    "details": {},
+    "error": "HTTPSConnectionPool(host='steamcommunity.com', port=443): Max retries exceeded with url: /market/listings/730/%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E7%BA%A6%E6%9C%8D%E5%8A%A1%EF%BC%88%E7%BA%A6%E5%B0%8F%E5%A7%90%EF%BC%89%7B%E6%8E%A5%E5%BE%85%E5%BE%AE%E4%BF%A1%E7%94%B5%E8%AF%9D%E2%96%88188-5204-2435%E2%96%88%7D-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%90%8C%E5%9F%8E%E7%BA%A6%E7%82%AE-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%A4%96%E5%9B%B4%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E6%B7%B1%E5%9C%B3%E7%BD%97%E6%B9%96%E5%8C%BA%E5%93%81%E8%8C%B6%E5%B7%A5%E4%BD%9C%E5%AE%A4-%E5%93%AA%E9%87%8C%E6%89%BE%E7%BA%A6%E7%82%AE.1015 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f309e3722e0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"
+  },
+  {
+    "title": "“冬日暖羊” 荣县千人坝坝全羊宴热闹开宴 - 川观新闻",
+    "description": "“我最满意的就是赛后，有羊肉汤、豆浆等热饮，天气这么冷，喝了之后感觉身心都暖和了。”来自广元的马拉松选手张大姐品尝完羊肉汤后，特意为荣县点赞。",
+    "link": "https://cbgc.scol.com.cn/news/5735390",
+    "type": "喝热豆浆",
+    "position": 1,
+    "details": {
+      "main_content": "",
+      "images": [],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "cbgc.scol.com.cn",
+      "last_updated": "",
+      "keywords": []
+    }
+  },
+  {
+    "title": "深圳兴起“椰子新玩法”：5平小店最高月售30万-36氪",
+    "description": "而深圳的另一个品牌“蔻蔻椰” ，凭借“马蹄爆珠电椰水”和“一桶能量水”，在深圳白领心目中占据了一席之地，该品牌的思路是“只做基本款” ，想在植物系茶饮上开发出 ...",
+    "link": "https://m.36kr.com/p/1348131802421248",
+    "type": "喝热椰汁",
+    "position": 1,
+    "details": {
+      "main_content": "",
+      "images": [],
+      "contact": {
+        "phone": "",
+        "email": "",
+        "social_media": [],
+        "website": ""
+      },
+      "rating": "",
+      "price": {
+        "price_range": "",
+        "average_cost": "",
+        "special_offers": []
+      },
+      "address": "",
+      "features": [],
+      "location": {
+        "address": "",
+        "district": "",
+        "city": "",
+        "coordinates": {
+          "lat": "",
+          "lng": ""
+        }
+      },
+      "business_hours": {
+        "regular_hours": {},
+        "holiday_hours": "",
+        "special_notes": ""
+      }
+    },
+    "metadata": {
+      "source": "m.36kr.com",
+      "last_updated": "",
+      "keywords": [
+        "资讯",
+        "股票",
+        "创业",
+        "投资",
+        "资本市场",
+        "汽车",
+        "教育",
+        "职业",
+        "房产",
+        "36氪首发",
+        "游戏",
+        "上市",
+        "新商业",
+        "新经济",
+        "网红经济",
+        "黑科技",
+        "最前沿",
+        "最前线",
+        "无人驾驶",
+        "自动驾驶",
+        "物联网",
+        "车联网",
+        "互联网",
+        "科技"
+      ]
+    }
+  }
+]
+
+请提供：
+1. 具体场所推荐（包含地址和特色）：-
+2. 其他注意事项：-
+
+请确保每个部分都以数字编号开头，突出重点信息。每个推荐地点要包含具体的地址和特色。, bc6c8299-efeb-4195-9690-b25383506d80116.24.65.247 - - [16/Dec/2024 05:12:47] "POST /api/recommendations HTTP/1.1" 200 -
+220.196.160.117 - - [16/Dec/2024 05:14:24] "[31m[1mGET /api/ai/settings HTTP/1.1[0m" 400 -
+220.196.160.61 - - [16/Dec/2024 05:14:28] "[31m[1mGET /api/wx/openid HTTP/1.1[0m" 405 -
+180.101.244.15 - - [16/Dec/2024 05:14:40] "[31m[1mGET /ai_status HTTP/1.1[0m" 405 -
+180.101.244.12 - - [16/Dec/2024 05:14:55] "[31m[1mGET /api/recommendations HTTP/1.1[0m" 405 -
+ * Detected change in '/data/VibeBite_backend/service.py', reloading
+
+----- standard request -----
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 296-642-698
+59.83.208.108 - - [16/Dec/2024 05:18:01] "[31m[1mGET /api/preferences HTTP/1.1[0m" 400 -
+ * Detected change in '/data/VibeBite_backend/service.py', reloading
+
+=== 开始初始化服务 ===
+
+1. 初始化数据库...
+数据库路径: /data/VibeBite_backend/vibebite.db
+正在初始化数据库...
+除旧...
+创建数据���...
+- 创建 users 表
+- 创建 sessions 表
+- 创建 user_profiles 表
+- 创建 user_preferences 表
+- 创建 preference_summaries 表
+- 创建 shared_sessions 表
+
+已创建的表: ['shared_sessions', 'ai_settings', 'users', 'sessions', 'user_profiles', 'user_preferences', 'preference_summaries']
+
+数据库文件创建成功: /data/VibeBite_backend/vibebite.db
+文件大小: 65536 字节
+
+2. 注册路由...
+
+3. 初始化组件...
+初始化agent: system_1
+初始化agent: system_2
+初始化agent: system_3
+已初始化的agents: ['system_1', 'system_2', 'system_3']
+所有组件初始化完成
+
+4. 初始化 LLM 客户端...
+
+=== 服务初始化完成 ===
+
+数据库已清空
+初始化agent: system_1
+初始化agent: system_2
+初始化agent: system_3
+已初始化的agents: ['system_1', 'system_2', 'system_3']
+所有组件初始化完成
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 296-642-698
