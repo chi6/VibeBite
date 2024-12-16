@@ -232,7 +232,7 @@ class AgentChatService:
         responses = self.agents[openid].process_task(task_name, message)
         
         # 异步触发意图分析
-        asyncio.create_task(self.analyze_intent(self.agents[openid]))
+        asyncio.create_task(self.analyze_intent(self.agents[openid], openid))
         
         print(responses)
         return jsonify({
@@ -2387,7 +2387,7 @@ class AgentChatService:
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
 
-    async def analyze_intent(self, agent: Agent):
+    async def analyze_intent(self, agent: Agent, openid: str):
         """异步分析用户意图"""
         try:
             chat_history = agent.memory
