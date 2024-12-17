@@ -554,77 +554,20 @@ class AgentChatService:
             with sqlite3.connect('vibebite.db') as conn:
                 cursor = conn.cursor()
                 
-                # 先获取用户偏好数据
+                # 获取用户偏好总结
                 cursor.execute('''
-                    SELECT dining_scene, dining_styles, flavor_preferences,
-                           alcohol_attitude, restrictions, custom_description,
-                           extracted_keywords
-                    FROM user_preferences 
-                    WHERE openid = ?
+                    SELECT summary FROM preference_summaries WHERE openid = ?
                 ''', (openid,))
                 
-                preferences_result = cursor.fetchone()
-                if not preferences_result:
+                summary_result = cursor.fetchone()
+                if not summary_result:
                     return jsonify({
                         "success": False,
                         "message": "请先设置用户偏好",
                         "response_time": f"{time.time() - start_time:.3f}s"
                     }), 404
                 
-                # 构建偏好数据
-                preferences_data = {
-                    'diningScene': preferences_result[0],
-                    'diningStyles': preferences_result[1].split(',') if preferences_result[1] else [],
-                    'flavorPreferences': preferences_result[2].split(',') if preferences_result[2] else [],
-                    'alcoholAttitude': preferences_result[3],
-                    'restrictions': preferences_result[4],
-                    'customDescription': preferences_result[5],
-                    'extractedKeywords': preferences_result[6].split(',') if preferences_result[6] else []
-                }
-                
-                # 构建提示词生成总结
-                prompt = f"""请根据以下用户信息，总结该用户的餐饮喜好特征和个性化推荐建议：
-
-用户用餐偏好：
-- 用餐场景：{preferences_data['diningScene']}
-- 用餐方式：{', '.join(preferences_data['diningStyles'])}
-- 口味偏好：{', '.join(preferences_data['flavorPreferences'])}
-- 饮酒态度：{preferences_data['alcoholAttitude']}
-
-特殊需求：
-- 饮食限制：{preferences_data['restrictions'] if preferences_data['restrictions'] else '无'}
-- 自定义描述：{preferences_data['customDescription']}
-- 关键词：{', '.join(preferences_data['extractedKeywords'])}
-
-请从以下几个方面进行分析和总结：
-1. 用户的主要用餐特征和场景偏好
-2. 口味和用餐方式特点
-3. 饮品选择倾向
-4. 个性化推荐建议
-
-请用简洁专业的语言描述，突出关键特点。"""
-
-                # 调用大模型生成总结
-                request_id = str(uuid.uuid4())
-                self.llm_client.add_request(openid, "", prompt, request_id)
-                response = ""
-                for _ in range(100):
-                    response = self.llm_client.get_chat(request_id)
-                    user_summary = response['response'].choices[0].message.content
-                    if user_summary != "没有找到响应":
-                        break
-                    time.sleep(0.1)
-                
-                # 保存总结
-                cursor.execute('''
-                    INSERT OR REPLACE INTO preference_summaries 
-                    (openid, summary, created_at, updated_at)
-                    VALUES (?, ?, 
-                        COALESCE((SELECT created_at FROM preference_summaries WHERE openid = ?), CURRENT_TIMESTAMP),
-                        CURRENT_TIMESTAMP)
-                ''', (openid, user_summary, openid))
-                
-                conn.commit()
+                user_summary = summary_result[0]
                 
                 # 构建新的system prompt
                 new_system_prompt = f"""你是一个智能助手。
@@ -1118,6 +1061,9 @@ class AgentChatService:
         try:
             data = request.get_json()
             openid = data.get('openid')
+            preferences_data = data.get('preferences', {})
+            user_input = preferences_data.get('userInput', '')
+            timestamp = data.get('timestamp')
             
             if not openid:
                 return jsonify({
@@ -1127,66 +1073,40 @@ class AgentChatService:
                 }), 400
             
             try:
-                preferences_data = data.get('preferences', {})
+                # 提取关键词
+                keywords = [word.strip() for word in user_input.split() if word.strip()]
+                keywords_str = ','.join(keywords)
                 
-                # 将数组转换为字符串
-                dining_styles_str = ','.join(preferences_data.get('diningStyles', []))
-                flavor_preferences_str = ','.join(preferences_data.get('flavorPreferences', []))
-                extracted_keywords_str = ','.join(preferences_data.get('extractedKeywords', []))
-                
+                # 更新数据库
                 with sqlite3.connect('vibebite.db') as conn:
                     cursor = conn.cursor()
                     
-                    # 更新用户偏好
+                    # 更新用户偏好,只保存用户输入和关键词
                     cursor.execute('''
                         INSERT OR REPLACE INTO user_preferences 
-                        (openid, dining_scene, dining_styles, flavor_preferences,
-                         alcohol_attitude, restrictions, custom_description,
-                         extracted_keywords, created_at, updated_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?,
+                        (openid, custom_description, extracted_keywords, created_at, updated_at)
+                        VALUES (?, ?, ?,
                             COALESCE((SELECT created_at FROM user_preferences WHERE openid = ?), CURRENT_TIMESTAMP),
                             CURRENT_TIMESTAMP)
                     ''', (
                         openid,
-                        preferences_data.get('diningScene', ''),
-                        dining_styles_str,
-                        flavor_preferences_str,
-                        preferences_data.get('alcoholAttitude', ''),
-                        preferences_data.get('restrictions', ''),
-                        preferences_data.get('customDescription', ''),
-                        extracted_keywords_str,
+                        user_input,  # 保存原始用户输入
+                        keywords_str,  # 保存提取的关键词
                         openid
                     ))
                     
                     conn.commit()
                     
-                    # 验证数据是否保存成功
-                    cursor.execute('SELECT * FROM user_preferences WHERE openid = ?', (openid,))
-                    saved_data = cursor.fetchone()
-                    print(f"保存后的数据: {saved_data}")
+                    return jsonify({
+                        "success": True,
+                        "message": "用户偏好更新成功",
+                        "data": {
+                            "originalInput": user_input,
+                            "extractedKeywords": keywords
+                        },
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    })
                     
-                    if saved_data:
-                        return jsonify({
-                            "success": True,
-                            "message": "用户偏好更新成功",
-                            "data": {
-                                "diningScene": saved_data[1],
-                                "diningStyles": saved_data[2].split(',') if saved_data[2] else [],
-                                "flavorPreferences": saved_data[3].split(',') if saved_data[3] else [],
-                                "alcoholAttitude": saved_data[4],
-                                "restrictions": saved_data[5],
-                                "customDescription": saved_data[6],
-                                "extractedKeywords": saved_data[7].split(',') if saved_data[7] else []
-                            },
-                            "response_time": f"{time.time() - start_time:.3f}s"
-                        })
-                    else:
-                        return jsonify({
-                            "success": False,
-                            "message": "保存数据后未找到记录",
-                            "response_time": f"{time.time() - start_time:.3f}s"
-                        }), 500
-                        
             except sqlite3.Error as e:
                 print(f"数据库操作错误: {str(e)}")
                 return jsonify({
@@ -1206,7 +1126,7 @@ class AgentChatService:
             }), 500
 
     def clear_database(self):
-        """清空数据库中的所有数据"""
+        """清空���据库中的所有数据"""
         try:
             with sqlite3.connect('vibebite.db') as conn:
                 cursor = conn.cursor()
@@ -1226,7 +1146,7 @@ class AgentChatService:
         
         try:
             data = request.get_json()
-            openid = data.get('openid')  # 直接使用openid
+            openid = data.get('openid')
             
             if not openid:
                 return jsonify({
@@ -1252,16 +1172,16 @@ class AgentChatService:
                             "response_time": f"{time.time() - start_time:.3f}s"
                         })
                     
-                    # 获取用户所有偏好数据
+                    # 获取用户偏好数据
                     cursor.execute('''
-                        SELECT * FROM user_preferences WHERE openid = ?
+                        SELECT custom_description, extracted_keywords
+                        FROM user_preferences 
+                        WHERE openid = ?
                     ''', (openid,))
                     
-                    preferences_result = cursor.fetchone()
-                    print(f"完整的偏好数据: {preferences_result}")  # 添加日志
+                    result = cursor.fetchone()
                     
-                    if not preferences_result or all(not x for x in preferences_result[1:]):  # 跳过 openid 字段
-                        print("偏好数据为空或全部字段为空")
+                    if not result or (not result[0] and not result[1]):
                         return jsonify({
                             "success": True,
                             "data": {
@@ -1271,65 +1191,34 @@ class AgentChatService:
                             "response_time": f"{time.time() - start_time:.3f}s"
                         })
                     
-                    # 获取列名
-                    cursor.execute('PRAGMA table_info(user_preferences)')
-                    columns = [column[1] for column in cursor.fetchall()]
-                    print(f"表的列名: {columns}")  # 添加日志
+                    user_input = result[0]
+                    keywords = result[1].split(',') if result[1] else []
                     
-                    # 构建字典形式的数据
-                    preferences_dict = dict(zip(columns, preferences_result))
-                    print(f"字典形式的数据: {preferences_dict}")  # 添加日志
-                    
-                    # 构建用户偏好数据
-                    preferences_data = {
-                        'diningScene': preferences_dict.get('dining_scene', ''),
-                        'diningStyles': preferences_dict.get('dining_styles', '').split(',') if preferences_dict.get('dining_styles') else [],
-                        'flavorPreferences': preferences_dict.get('flavor_preferences', '').split(',') if preferences_dict.get('flavor_preferences') else [],
-                        'alcoholAttitude': preferences_dict.get('alcohol_attitude', ''),
-                        'restrictions': preferences_dict.get('restrictions', ''),
-                        'customDescription': preferences_dict.get('custom_description', ''),
-                        'extractedKeywords': preferences_dict.get('extracted_keywords', '').split(',') if preferences_dict.get('extracted_keywords') else []
-                    }
-                    
-                    print(f"处理后的偏好数据: {preferences_data}")  # 添加日志
-
-                    # 如果所有值都为空，返回未设置信息
-                    if all(not v for v in preferences_data.values()):
-                        return jsonify({
-                            "success": True,
-                            "data": {
-                                "summary": "您还没有设置饮食偏好，请先完成偏好设置，以获取个性化推荐。",
-                                "hasPreferences": False
-                            },
-                            "response_time": f"{time.time() - start_time:.3f}s"
-                        })
-
                     # 构建提示词
-                    prompt = f"""请根据以下用户信息，总结该用户的餐饮喜好特征和个性化推荐建议：
+                    prompt = f"""请根据用户输入，生成深圳本地的具体推荐。格式要求：
+1. 每个大类以"- **xxx推荐**："开头
+2. 每个具体推荐以"    - **店名**："开头
+3. 每个推荐要包含特色，并加粗关键词
+4. 每个大类至少推荐2个具体场所
 
-用户用餐偏好：
-- 用餐场景：{preferences_data['diningScene']}
-- 用餐方式：{', '.join(preferences_data['diningStyles'])}
-- 口味偏好：{', '.join(preferences_data['flavorPreferences'])}
-- 饮酒态度：{preferences_data['alcoholAttitude']}
+用户输入：{user_input}
+关键词：{', '.join(keywords)}
 
-特殊需求：
-- 饮食限制：{preferences_data['restrictions'] if preferences_data['restrictions'] else '无'}
-- 自定义描述：{preferences_data['customDescription']}
-- 关键词：{', '.join(preferences_data['extractedKeywords'])}
+示例格式：
+- **吃火锅推荐**：
+    - **小龙坎火锅**：**吃火锅**是其特色，店内环境热闹，火锅味道麻辣鲜香，有多种菜品可供选择。
+    - **海底捞火锅**：以服务著称，**吃火锅**体验极佳，锅底种类丰富，菜品新鲜。
+- **去酒吧推荐**：
+    - **苏荷酒吧**：是深圳知名的酒吧之一，**去酒吧**氛围好，有各种音乐表演和饮品。
+    - **本色酒吧**：**去酒吧**环境时尚，酒水种类多样，经常有主题派对和活动。
 
-请从以下几个方面进行分析和总结：
-1. 用户的主要用餐特征和场景偏好
-2. 口味和用餐方式特点
-3. 饮品选择倾向
-4. 个性化推荐建议
-
-请用简洁专业的语言描述。回答要分点并且要有具体的推荐。"""
+请按照这个格式生成推荐。"""
 
                     # 调用大模型生成总结
                     request_id = str(uuid.uuid4())
                     self.llm_client.add_request(openid, "", prompt, request_id)
-                    response = ""
+                    
+                    summary = ""
                     for _ in range(100):
                         response = self.llm_client.get_chat(request_id)
                         summary = response['response'].choices[0].message.content
@@ -1352,7 +1241,11 @@ class AgentChatService:
                         "success": True,
                         "data": {
                             "summary": summary,
-                            "hasPreferences": True
+                            "hasPreferences": True,
+                            "preferences": {
+                                "userInput": user_input,
+                                "keywords": keywords
+                            }
                         },
                         "response_time": f"{time.time() - start_time:.3f}s"
                     })
@@ -1534,7 +1427,7 @@ class AgentChatService:
                 print(f"数据库操作错误: {str(e)}")
                 return jsonify({
                     "success": False,
-                    "message": "数据库操作失败",
+                    "message": "数据库作失败",
                     "details": str(e),
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 500
@@ -1628,19 +1521,16 @@ class AgentChatService:
                     
                     if is_dianping:
                         # 对于大众点评，直接使用搜索结果中的信息
+                        response = requests.get(result.get('link', ''), headers=headers, timeout=5)
+                        response.encoding = response.apparent_encoding
+                        soup = BeautifulSoup(response.text, 'html.parser')
+                        
                         page_content = {
                             'title': result.get('title', '').replace(' - 大众点评网', ''),
                             'description': result.get('snippet', ''),
                             'link': result.get('link', ''),
                             'type': result_type,
-                            'position': result.get('position', 0),
-                            'details': {
-                                'rating': self._extract_rating_from_snippet(result.get('snippet', '')),
-                                'price': self._extract_price_from_snippet(result.get('snippet', '')),
-                                'address': self._extract_address_from_snippet(result.get('snippet', '')),
-                                'categories': self._extract_categories_from_title(result.get('title', '')),
-                                'images': []  # 大众点评图片暂时不抓取
-                            },
+                            'details': self._extract_dianping_info(soup),
                             'metadata': {
                                 'source': '大众点评',
                                 'last_updated': datetime.now().strftime('%Y-%m-%d'),
@@ -1685,312 +1575,6 @@ class AgentChatService:
                     })
                     
         return processed_results
-
-    # 添加辅助方法来从搜索结果中提取信息
-    def _extract_rating_from_snippet(self, snippet: str) -> str:
-        """从搜索结果描述中提取评分"""
-        rating_match = re.search(r'评分[：:]\s*([\d.]+)', snippet)
-        if rating_match:
-            return rating_match.group(1)
-        return ''
-
-    def _extract_price_from_snippet(self, snippet: str) -> str:
-        """从搜索结果描述中提取价格"""
-        price_match = re.search(r'人均[：:]\s*¥?(\d+)', snippet)
-        if price_match:
-            return f"¥{price_match.group(1)}"
-        return ''
-
-    def _extract_address_from_snippet(self, snippet: str) -> str:
-        """从搜索结果描述中提取地址"""
-        address_match = re.search(r'地址[：:]\s*([^。]+)', snippet)
-        if address_match:
-            return address_match.group(1).strip()
-        return ''
-
-    def _extract_categories_from_title(self, title: str) -> list:
-        """从标题中提取分类"""
-        # 移除"- 大众点评网"等后缀
-        title = re.sub(r'\s*-\s*大众点评网.*$', '', title)
-        # 提取括号中的分类信息
-        categories = re.findall(r'\[(.*?)\]|\((.*?)\)', title)
-        # 展平结果并移除空值
-        return [cat for group in categories for cat in group if cat]
-
-    def _extract_keywords_from_title(self, title: str) -> list:
-        """从标题中提取关键词"""
-        # 移除特殊字符和标点
-        title = re.sub(r'[【】\[\]()（）]', ' ', title)
-        # 分词
-        words = title.split()
-        # 移除停用词和空字符串
-        return [w for w in words if w and len(w) > 1]
-
-    def _extract_domain(self, url: str) -> str:
-        """从URL中提取域名"""
-        try:
-            from urllib.parse import urlparse
-            return urlparse(url).netloc
-        except:
-            return url
-
-    def _extract_date(self, soup: BeautifulSoup) -> str:
-        """提取网页更新日期"""
-        try:
-            # 尝试多种可能的日期标签
-            date_tags = soup.find_all(['time', 'span', 'div'], class_=['date', 'time', 'update-time'])
-            for tag in date_tags:
-                if tag.string:
-                    return tag.string.strip()
-            return ""
-        except:
-            return ""
-
-    def _extract_meta_keywords(self, soup: BeautifulSoup) -> list:
-        """提取页面关键词"""
-        try:
-            keywords = soup.find('meta', {'name': 'keywords'})
-            if keywords and keywords.get('content'):
-                return [k.strip() for k in keywords['content'].split(',')]
-            return []
-        except:
-            return []
-
-    def _extract_contact_info(self, soup: BeautifulSoup) -> dict:
-        """提取联���信息"""
-        contact_info = {
-            'phone': '',
-            'email': '',
-            'social_media': [],
-            'website': ''
-        }
-        
-        try:
-            # 电话号码
-            phone_patterns = [
-                r'\d{3}[-.]?\d{3}[-.]?\d{4}',  # 标准电话格式
-                r'\d{2,4}[-.]?\d{7,8}'  # 座机格式
-            ]
-            for pattern in phone_patterns:
-                phones = re.findall(pattern, soup.text)
-                if phones:
-                    contact_info['phone'] = phones[0]
-                    break
-            
-            # 邮箱
-            email_pattern = r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}'
-            emails = re.findall(email_pattern, soup.text)
-            if emails:
-                contact_info['email'] = emails[0]
-            
-            # 社交媒体链接
-            social_patterns = ['weibo.com', 'weixin', 'douyin.com']
-            for link in soup.find_all('a', href=True):
-                for pattern in social_patterns:
-                    if pattern in link['href']:
-                        contact_info['social_media'].append(link['href'])
-            
-            return contact_info
-        except:
-            return contact_info
-
-    def _extract_location_info(self, soup: BeautifulSoup) -> dict:
-        """提取位置信息"""
-        location_info = {
-            'address': '',
-            'district': '',
-            'city': '',
-            'coordinates': {'lat': '', 'lng': ''}
-        }
-        
-        try:
-            # 地址
-            address_tags = soup.find_all(['div', 'span'], class_=['address', 'location', 'add'])
-            for tag in address_tags:
-                if tag.string and len(tag.string.strip()) > 5:
-                    location_info['address'] = tag.string.strip()
-                    break
-            
-            # 坐标
-            map_div = soup.find('div', class_=['map', 'amap'])
-            if map_div:
-                lat = map_div.get('data-lat')
-                lng = map_div.get('data-lng')
-                if lat and lng:
-                    location_info['coordinates'] = {'lat': lat, 'lng': lng}
-            
-            return location_info
-        except:
-            return location_info
-
-    def _extract_business_hours(self, soup: BeautifulSoup) -> dict:
-        """提取营业时间"""
-        hours_info = {
-            'regular_hours': {},
-            'holiday_hours': '',
-            'special_notes': ''
-        }
-        
-        try:
-            # 常规营业时间
-            hours_tags = soup.find_all(['div', 'span'], class_=['hours', 'time', 'business-hours'])
-            for tag in hours_tags:
-                if tag.string and ('营业' in tag.string or '时间' in tag.string):
-                    hours_info['regular_hours'] = tag.string.strip()
-                    break
-            
-            # 节假日时间
-            holiday_tags = soup.find_all(['div', 'span'], class_=['holiday', 'special-hours'])
-            for tag in holiday_tags:
-                if tag.string:
-                    hours_info['holiday_hours'] = tag.string.strip()
-                    break
-            
-            return hours_info
-        except:
-            return hours_info
-
-    def _extract_price_info(self, soup: BeautifulSoup) -> dict:
-        """提取价格信息"""
-        price_info = {
-            'price_range': '',
-            'average_cost': '',
-            'special_offers': []
-        }
-        
-        try:
-            # 价格区间
-            price_tags = soup.find_all(['div', 'span'], class_=['price', 'cost', 'avg-price'])
-            for tag in price_tags:
-                if tag.string and ('元' in tag.string or '¥' in tag.string):
-                    price_info['price_range'] = tag.string.strip()
-                    break
-            
-            # 特别优惠
-            offer_tags = soup.find_all(['div', 'span'], class_=['offer', 'discount', 'promotion'])
-            for tag in offer_tags:
-                if tag.string:
-                    price_info['special_offers'].append(tag.string.strip())
-            
-            return price_info
-        except:
-            return price_info
-
-    def _extract_images(self, soup: BeautifulSoup) -> list:
-        """提取图片信息"""
-        images = []
-        try:
-            # 查找所有图片标签
-            img_tags = soup.find_all('img')
-            for img in img_tags:
-                # 过滤掉小图标和广告
-                if img.get('src') and not any(x in img.get('src', '') for x in ['icon', 'logo', 'ad']):
-                    image_info = {
-                        'url': img.get('src', ''),
-                        'alt': img.get('alt', ''),
-                        'title': img.get('title', '')
-                    }
-                    # 检查图片尺寸
-                    if img.get('width') and img.get('height'):
-                        if int(img.get('width', 0)) > 100 and int(img.get('height', 0)) > 100:
-                            images.append(image_info)
-                    else:
-                        images.append(image_info)
-            
-            return images[:5]  # 只返回前5张图片
-        except:
-            return images
-
-    def _organize_recommendations(self, recommendations: list, intent_list: list) -> dict:
-        """整合并组织推荐结果"""
-        try:
-            # 构建提示词
-            organize_prompt = f"""基于以下用户意图和搜索结果，制定一个合理的推荐计划：
-
-用户意图：
-{', '.join(intent_list)}
-
-搜索结果：
-{json.dumps(recommendations, ensure_ascii=False, indent=2)}
-
-请提供：
-1. 具体场所推荐（包含地址和特色）：- 内容
-2. 其他注意事项：- 内容
-
-每个推荐地点要包含具体的地址和特色。"""
-
-            # 调用大模型整合结果
-            request_id = str(uuid.uuid4())
-            self.llm_client.add_request("system", "", organize_prompt, request_id)
-            
-            organized_result = ""
-            for _ in range(100):
-                response = self.llm_client.get_chat(request_id)
-                organized_result = response['response'].choices[0].message.content
-                if organized_result != "没有找到响应":
-                    break
-                time.sleep(0.1)
-            
-            return {
-                "original_recommendations": recommendations,
-                "organized_plan": organized_result,
-                "intents": intent_list
-            }
-            
-        except Exception as e:
-            print(f"整合推荐结果错误: {str(e)}")
-            return {
-                "error": "整合推荐结果失败",
-                "details": str(e),
-                "original_recommendations": recommendations,
-                "intents": intent_list
-            }
-
-    def _extract_general_info(self, soup: BeautifulSoup) -> dict:
-        """提取通用网页信息"""
-        details = {
-            'main_content': '',
-            'images': [],
-            'contact': '',
-            'rating': '',
-            'price': '',
-            'address': '',
-            'features': []
-        }
-        
-        try:
-            # 提取主要内容
-            main_content = soup.find('main') or soup.find('article') or soup.find('div', class_='content')
-            if main_content:
-                details['main_content'] = main_content.text.strip()[:500]  # 限制长度
-                
-            # 提取图片
-            img_elems = soup.find_all('img')
-            details['images'] = [img.get('src') for img in img_elems if img.get('src')][:5]  # 只取前5张图
-            
-            # 提取评分
-            rating_elem = soup.find(['div', 'span'], class_=['rating', 'score', 'star'])
-            if rating_elem:
-                details['rating'] = rating_elem.text.strip()
-                
-            # 提取价格
-            price_elem = soup.find(['div', 'span'], class_=['price', 'cost'])
-            if price_elem:
-                details['price'] = price_elem.text.strip()
-                
-            # 提取地址
-            address_elem = soup.find(['div', 'span'], class_=['address', 'location'])
-            if address_elem:
-                details['address'] = address_elem.text.strip()
-                
-            # 提取特色标签
-            feature_elems = soup.find_all(['div', 'span'], class_=['tag', 'feature', 'label'])
-            details['features'] = [elem.text.strip() for elem in feature_elems if elem.text.strip()][:5]
-                
-        except Exception as e:
-            print(f"提取通用信息失败: {str(e)}")
-            
-        return details
 
     def _extract_dianping_info(self, soup: BeautifulSoup) -> dict:
         """提取大众点评页面信息"""
@@ -2042,6 +1626,52 @@ class AgentChatService:
                     
         except Exception as e:
             print(f"提取大众点评信息失败: {str(e)}")
+            
+        return details
+
+    def _extract_general_info(self, soup: BeautifulSoup) -> dict:
+        """提取通用网页信息"""
+        details = {
+            'main_content': '',
+            'images': [],
+            'contact': '',
+            'rating': '',
+            'price': '',
+            'address': '',
+            'features': []
+        }
+        
+        try:
+            # 提取主要内容
+            main_content = soup.find('main') or soup.find('article') or soup.find('div', class_='content')
+            if main_content:
+                details['main_content'] = main_content.text.strip()[:500]  # 限制长度
+                
+            # 提取图片
+            img_elems = soup.find_all('img')
+            details['images'] = [img.get('src') for img in img_elems if img.get('src')][:5]  # 只取前5张图
+            
+            # 提取评分
+            rating_elem = soup.find(['div', 'span'], class_=['rating', 'score', 'star'])
+            if rating_elem:
+                details['rating'] = rating_elem.text.strip()
+                
+            # 提取价格
+            price_elem = soup.find(['div', 'span'], class_=['price', 'cost'])
+            if price_elem:
+                details['price'] = price_elem.text.strip()
+                
+            # 提取地址
+            address_elem = soup.find(['div', 'span'], class_=['address', 'location'])
+            if address_elem:
+                details['address'] = address_elem.text.strip()
+                
+            # 提取特色标签
+            feature_elems = soup.find_all(['div', 'span'], class_=['tag', 'feature', 'label'])
+            details['features'] = [elem.text.strip() for elem in feature_elems if elem.text.strip()][:5]
+                
+        except Exception as e:
+            print(f"提取通用信息失败: {str(e)}")
             
         return details
 
@@ -2166,7 +1796,7 @@ class AgentChatService:
             APP_ID = os.getenv('WX_APP_ID')
             APP_SECRET = os.getenv('WX_APP_SECRET')
             
-            # 调用微信接口获取openid
+            # 调用微信��口获取openid
             url = "https://api.weixin.qq.com/sns/jscode2session"
             params = {
                 'appid': APP_ID,
@@ -2419,6 +2049,60 @@ class AgentChatService:
                     print(f"处理意图分析结果错误: {str(e)}")
         except Exception as e:
             print(f"意图分析过程错误: {str(e)}")
+
+    def _extract_keywords_from_title(self, title: str) -> list:
+        """从标题中提取关键词"""
+        # 移除特殊字符和标点
+        title = re.sub(r'[【】\[\]()（）]', ' ', title)
+        # 分词
+        words = title.split()
+        # 移除停用词和空字符串
+        return [w for w in words if w and len(w) > 1]
+
+    def _organize_recommendations(self, recommendations: list, intent_list: list) -> dict:
+        """整合并组织推荐结果"""
+        try:
+            # 构建提示词
+            organize_prompt = f"""基于以下用户意图和搜索结果，制定一个合理的推荐计划：
+
+用户意图：
+{', '.join(intent_list)}
+
+搜索结果：
+{json.dumps(recommendations, ensure_ascii=False, indent=2)}
+
+请提供：
+1. 具体场所推荐（特色）：- 内容
+2. 可替换推荐类别：- 内容
+
+每个推荐地点要包含具体的地址和特色。"""
+
+            # 调用大模型整合结果
+            request_id = str(uuid.uuid4())
+            self.llm_client.add_request("system", "", organize_prompt, request_id)
+            
+            organized_result = ""
+            for _ in range(100):
+                response = self.llm_client.get_chat(request_id)
+                organized_result = response['response'].choices[0].message.content
+                if organized_result != "没有找到响应":
+                    break
+                time.sleep(0.1)
+            
+            return {
+                "original_recommendations": recommendations,
+                "organized_plan": organized_result,
+                "intents": intent_list
+            }
+            
+        except Exception as e:
+            print(f"整合推荐结果错误: {str(e)}")
+            return {
+                "error": "整合推荐结果失败",
+                "details": str(e),
+                "original_recommendations": recommendations,
+                "intents": intent_list
+            }
 
 # 创建服实例
 service = AgentChatService()
