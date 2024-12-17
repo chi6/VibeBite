@@ -21,40 +21,40 @@
     <!-- 餐饮喜好卡片 -->
     <view class="card preferences-card">
       <view class="card-header">
-        <text class="card-title">猜你喜欢</text>
-        <text class="card-subtitle">基于你的饮食偏好分析</text>
+        <text class="card-title">个性化推荐</text>
+        <text class="card-subtitle">基于你的饮食偏好</text>
       </view>
+      
       <view class="preferences-content">
-        <view class="pref-item">
-          <view class="pref-icon">🍽️</view>
-          <view class="pref-text">
-            <text class="pref-label">用餐场景</text>
-            <text class="pref-value">{{preferences.diningFeatures}}</text>
+        <view class="recommendations-list">
+          <view class="recommendation-category" 
+                wx:for="{{preferences.recommendations}}" 
+                wx:key="type">
+            <view class="category-header">
+              <view class="category-icon">{{item.icon}}</view>
+              <text class="category-title">{{item.type}}</text>
+            </view>
+            
+            <view class="recommendation-items">
+              <view class="recommendation-item" 
+                    wx:for="{{item.items}}" 
+                    wx:key="title" 
+                    wx:for-item="subItem">
+                <view class="item-header">
+                  <text class="item-title">{{subItem.title}}</text>
+                </view>
+                <view class="item-content">
+                  <rich-text nodes="{{subItem.description}}" class="rich-content"></rich-text>
+                  <view class="highlight-tags" wx:if="{{subItem.highlights.length > 0}}">
+                    <text class="highlight-tag" 
+                          wx:for="{{subItem.highlights}}" 
+                          wx:key="*this" 
+                          wx:for-item="tag">{{tag}}</text>
+                  </view>
+                </view>
+              </view>
+            </view>
           </view>
-        </view>
-        
-        <view class="pref-item">
-          <view class="pref-icon">👅</view>
-          <view class="pref-text">
-            <text class="pref-label">口味偏好</text>
-            <text class="pref-value">{{preferences.tastePreferences}}</text>
-          </view>
-        </view>
-        
-        <view class="pref-item">
-          <view class="pref-icon">🥤</view>
-          <view class="pref-text">
-            <text class="pref-label">饮品选择</text>
-            <text class="pref-value">{{preferences.drinkPreferences}}</text>
-          </view>
-        </view>
-        
-        <view class="pref-recommend">
-          <view class="recommend-header">
-            <view class="recommend-icon">💡</view>
-            <text class="recommend-title">个性化推荐</text>
-          </view>
-          <text class="recommend-content">{{preferences.recommendations}}</text>
         </view>
       </view>
     </view>

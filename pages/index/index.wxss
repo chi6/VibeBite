@@ -276,3 +276,266 @@ page {
     background: rgba(255, 255, 255, 0.15);
   }
 }
+
+/* 在现有样式基础上添加或更新以下样式 */
+.features-section, .recommendations-section {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.section-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+  background: rgba(255, 255, 255, 0.9);
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-title {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.features-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.recommendation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+}
+
+.recommendation-number {
+  background: #7F7FD5;
+  color: #fff;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  flex-shrink: 0;
+}
+
+.recommendation-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  flex: 1;
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .features-section, .recommendations-section {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .section-title {
+    color: #fff;
+  }
+
+  .features-text, .recommendation-text {
+    color: #ccc;
+  }
+
+  .section-icon {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* 更新推荐卡片相关样式 */
+.recommendation-category {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.category-icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+  background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.9));
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.category-title {
+  font-size: 34rpx;
+  color: #333;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.recommendation-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.recommendation-item {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: transform 0.2s ease;
+}
+
+.recommendation-item:active {
+  transform: scale(0.98);
+}
+
+.item-header {
+  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.item-title {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  flex: 1;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.rich-content {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.highlight {
+  color: #2575fc;
+  font-weight: 500;
+  padding: 0 4rpx;
+}
+
+.highlight-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+
+.highlight-tag {
+  font-size: 24rpx;
+  color: #2575fc;
+  background: rgba(37, 117, 252, 0.08);
+  padding: 6rpx 16rpx;
+  border-radius: 24rpx;
+  border: 1px solid rgba(37, 117, 252, 0.2);
+  box-shadow: 0 2rpx 4rpx rgba(37, 117, 252, 0.1);
+}
+
+/* 暗黑模式适配优化 */
+@media (prefers-color-scheme: dark) {
+  .recommendation-category {
+    background: linear-gradient(145deg, rgba(40, 40, 40, 0.9), rgba(30, 30, 30, 0.7));
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .recommendation-item {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .category-icon {
+    background: linear-gradient(135deg, rgba(60, 60, 60, 0.9), rgba(50, 50, 50, 0.9));
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .category-title, .item-title {
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .rich-content {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .highlight {
+    color: #86a8e7;
+  }
+  
+  .highlight-tag {
+    color: #86a8e7;
+    background: rgba(134, 168, 231, 0.15);
+    border-color: rgba(134, 168, 231, 0.3);
+  }
+
+  .category-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* 添加滚动阴影效果 */
+.preferences-content {
+  position: relative;
+  overflow: hidden;
+}
+
+.preferences-content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40rpx;
+  background: linear-gradient(to top, rgba(245, 247, 250, 1), rgba(245, 247, 250, 0));
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .preferences-content::after {
+    background: linear-gradient(to top, rgba(26, 26, 26, 1), rgba(26, 26, 26, 0));
+  }
+}

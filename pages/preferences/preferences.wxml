@@ -1,86 +1,19 @@
 <view class="container">
   <view class="header">
-    <text class="title">告诉我们你的饮食偏好</text>
-    <text class="subtitle">快速填写或个性化描述，获得最贴合你的推荐。</text>
+    <text class="title">今天想吃什么？</text>
+    <text class="subtitle">用简单的话告诉我，为您推荐合适的美食</text>
   </view>
 
   <view class="form-section">
-    <!-- 饮食场景 -->
-    <view class="form-item">
-      <text class="item-title">最近的饮食场景</text>
-      <radio-group bindchange="handleSceneChange">
-        <block wx:for="{{diningScenes}}" wx:key="*this">
-          <label class="radio-item">
-            <radio value="{{item}}" />{{item}}
-          </label>
-        </block>
-      </radio-group>
-    </view>
-
-    <!-- 饮食形式 -->
-    <view class="form-item">
-      <text class="item-title">平时更倾向的饮食形式</text>
-      <checkbox-group bindchange="handleStylesChange">
-        <block wx:for="{{diningStyleOptions}}" wx:key="*this">
-          <label class="checkbox-item">
-            <checkbox value="{{item}}" />{{item}}
-          </label>
-        </block>
-      </checkbox-group>
-    </view>
-
-    <!-- 口味偏好 -->
-    <view class="form-item">
-      <text class="item-title">最近喜欢的口味</text>
-      <checkbox-group bindchange="handleFlavorChange">
-        <block wx:for="{{flavorOptions}}" wx:key="*this">
-          <label class="checkbox-item">
-            <checkbox value="{{item}}" />{{item}}
-          </label>
-        </block>
-      </checkbox-group>
-    </view>
-
-    <!-- 酒精态度 -->
-    <view class="form-item">
-      <text class="item-title">对酒精饮品的态度</text>
-      <radio-group bindchange="handleAlcoholChange">
-        <block wx:for="{{alcoholOptions}}" wx:key="*this">
-          <label class="radio-item">
-            <radio value="{{item}}" />{{item}}
-          </label>
-        </block>
-      </radio-group>
-    </view>
-
-    <!-- 特别禁忌 -->
-    <view class="form-item">
-      <text class="item-title">特别的禁忌或需求（可选）</text>
-      <input 
-        class="input-box"
-        placeholder="如'不吃辣''不吃甜''不喝酒'等"
-        bindinput="handleRestrictionsInput"
-      />
-    </view>
-
-    <!-- 自定义描述 -->
-    <view class="form-item custom-description">
-      <text class="item-title">自定义描述你的饮食偏好</text>
+    <view class="input-card">
       <textarea 
-        class="description-input"
-        placeholder="用几句话描述你的偏好，比如：'喜欢有特色的地方小吃，不爱太辣的菜'。"
-        bindinput="handleCustomDescriptionInput"
+        class="main-input"
+        placeholder="{{inputPlaceholder}}"
+        bindinput="handleInputChange"
+        maxlength="200"
       />
-      <view class="keywords-container" wx:if="{{preferences.extractedKeywords.length > 0}}">
-        <text class="keywords-title">已提取关键词：</text>
-        <view class="keywords-list">
-          <text class="keyword-tag" wx:for="{{preferences.extractedKeywords}}" wx:key="*this">
-            {{item}}
-          </text>
-        </view>
-      </view>
     </view>
   </view>
 
-  <button class="submit-btn" bindtap="handleSubmit">生成个性化推荐</button>
+  <button class="submit-btn" bindtap="handleSubmit">开始智能规划</button>
 </view> 

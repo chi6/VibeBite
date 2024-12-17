@@ -66,32 +66,73 @@ Page({
         try {
           const summaryText = res.data.summary;
           
-          // 解析返回的文本内容
-          const sections = summaryText.split(/\d+\.\s+/).filter(Boolean);
-          const preferences = {
-            diningFeatures: sections[0]?.trim() || '暂无场景偏好',
-            tastePreferences: sections[1]?.trim() || '暂无口味偏好',
-            drinkPreferences: sections[2]?.trim() || '暂无饮品偏好',
-            recommendations: sections[3]?.trim() || '暂无个性化推荐'
-          };
+          // 提取所有推荐项目
+          const recommendationItems = [];
+          
+          // 先按主要分类分割，处理带缩进的格式
+          const categories = summaryText.split(/-\s+\*\*([^*]+推荐)\*\*：/).filter(Boolean);
+          
+          for (let i = 0; i < categories.length - 1; i += 2) {
+            const type = categories[i];
+            const content = categories[i + 1];
+            
+            // 处理子项目，考虑缩进
+            const subItems = [];
+            const subItemRegex = /-\s+\*\*([^*]+)\*\*：([^-\n]+)/g;
+            let subMatch;
+            
+            while ((subMatch = subItemRegex.exec(content)) !== null) {
+              const title = subMatch[1].trim();
+              const desc = subMatch[2].trim();
+              
+              // 提取描述中的加粗文本
+              const highlights = [];
+              let boldMatch;
+              const boldRegex = /\*\*([^*]+)\*\*/g;
+              
+              while ((boldMatch = boldRegex.exec(desc)) !== null) {
+                highlights.push(boldMatch[1]);
+              }
+              
+              // 将加粗文本转换为带样式的文本
+              const formattedDesc = desc.replace(/\*\*([^*]+)\*\*/g, 
+                '<text class="highlight">$1</text>');
 
-          // 移除标题部分
-          preferences.diningFeatures = preferences.diningFeatures.replace('用户主要用餐特征和场景偏好：', '');
-          preferences.tastePreferences = preferences.tastePreferences.replace('口味和用餐方式特点：', '');
-          preferences.drinkPreferences = preferences.drinkPreferences.replace('饮品选择倾向：', '');
-          preferences.recommendations = preferences.recommendations.replace('个性化推荐建议：', '')
-            .replace(/\s+- /g, '\n• '); // 将破折号替换为圆点，并添加换行
+              subItems.push({
+                title: title,
+                description: formattedDesc,
+                highlights: highlights
+              });
+            }
 
-          this.setData({ preferences });
-          console.log('解析后的偏好数据:', preferences);
+            if (subItems.length > 0) {
+              recommendationItems.push({
+                type: type,
+                items: subItems,
+                icon: type.includes('火锅') ? '🍲' : 
+                      type.includes('酒吧') ? '🍷' : 
+                      type.includes('饮品') ? '🥤' : 
+                      type.includes('咖啡') ? '☕' : 
+                      type.includes('甜品') ? '🍰' : 
+                      type.includes('烧烤') ? '🍖' : 
+                      type.includes('海鲜') ? '🦞' : 
+                      type.includes('音乐') ? '🎵' : '🎉'
+              });
+            }
+          }
+
+          this.setData({
+            preferences: {
+              recommendations: recommendationItems
+            }
+          });
+          
+          console.log('解析后的偏好数据:', this.data.preferences);
         } catch (e) {
           console.error('解析偏好数据失败:', e);
           this.setData({
             preferences: {
-              diningFeatures: '数据解析失败',
-              tastePreferences: '数据解析失败',
-              drinkPreferences: '数据解析失败',
-              recommendations: '数据解析失败'
+              recommendations: []
             }
           });
         }
@@ -103,10 +144,7 @@ Page({
       console.error('获取餐饮喜好总结失败:', error);
       this.setData({
         preferences: {
-          diningFeatures: '获取信息失败',
-          tastePreferences: '获取信息失败',
-          drinkPreferences: '获取信息失败',
-          recommendations: '获取信息失败'
+          recommendations: []
         }
       });
     });
