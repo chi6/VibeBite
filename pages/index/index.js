@@ -65,58 +65,46 @@ Page({
       if (res.success && res.data) {
         try {
           const summaryText = res.data.summary;
-          
-          // 提取所有推荐项目
           const recommendationItems = [];
           
-          // 先按主要分类分割，处理带缩进的格式
-          const categories = summaryText.split(/-\s+\*\*([^*]+推荐)\*\*：/).filter(Boolean);
+          // 使用正则表达式匹配每个部分
+          const sections = summaryText.split(/\n*-\s*\*\*([^*]+)\*\*：/).filter(Boolean);
           
-          for (let i = 0; i < categories.length - 1; i += 2) {
-            const type = categories[i];
-            const content = categories[i + 1];
+          for (let i = 0; i < sections.length - 1; i += 2) {
+            const type = sections[i];
+            const content = sections[i + 1].trim();
             
-            // 处理子项目，考虑缩进
-            const subItems = [];
-            const subItemRegex = /-\s+\*\*([^*]+)\*\*：([^-\n]+)/g;
-            let subMatch;
-            
-            while ((subMatch = subItemRegex.exec(content)) !== null) {
-              const title = subMatch[1].trim();
-              const desc = subMatch[2].trim();
+            // 将内容按分号分割成多个建议
+            const suggestions = content.split('；').filter(Boolean);
+            const items = suggestions.map(suggestion => {
+              const text = suggestion.trim();
               
-              // 提取描述中的加粗文本
+              // 提取加粗文本作为高亮标签
               const highlights = [];
               let boldMatch;
               const boldRegex = /\*\*([^*]+)\*\*/g;
               
-              while ((boldMatch = boldRegex.exec(desc)) !== null) {
+              while ((boldMatch = boldRegex.exec(text)) !== null) {
                 highlights.push(boldMatch[1]);
               }
               
               // 将加粗文本转换为带样式的文本
-              const formattedDesc = desc.replace(/\*\*([^*]+)\*\*/g, 
-                '<text class="highlight">$1</text>');
-
-              subItems.push({
-                title: title,
-                description: formattedDesc,
+              const formattedText = text.replace(/\*\*([^*]+)\*\*/g, '$1');
+              
+              // 如果是最后一个建议且没有分号结尾，添加句号
+              const finalText = formattedText.endsWith('。') ? formattedText : formattedText + '。';
+              
+              return {
+                description: finalText,
                 highlights: highlights
-              });
-            }
+              };
+            });
 
-            if (subItems.length > 0) {
+            if (items.length > 0) {
               recommendationItems.push({
                 type: type,
-                items: subItems,
-                icon: type.includes('火锅') ? '🍲' : 
-                      type.includes('酒吧') ? '🍷' : 
-                      type.includes('饮品') ? '🥤' : 
-                      type.includes('咖啡') ? '☕' : 
-                      type.includes('甜品') ? '🍰' : 
-                      type.includes('烧烤') ? '🍖' : 
-                      type.includes('海鲜') ? '🦞' : 
-                      type.includes('音乐') ? '🎵' : '🎉'
+                items: items,
+                icon: this.getIconForType(type)
               });
             }
           }
@@ -207,5 +195,30 @@ Page({
         });
       }
     });
+  },
+
+  // 根据类型返回对应的图标
+  getIconForType(type) {
+    const iconMap = {
+      '猜你喜欢': '🤔',
+      '奇思妙想': '💡',
+      '火锅': '🍲',
+      '酒吧': '🍷',
+      '饮品': '🥤',
+      '咖啡': '☕',
+      '甜品': '🍰',
+      '烧烤': '🍖',
+      '海鲜': '🦞',
+      '音乐': '🎵'
+    };
+
+    // 遍历 iconMap 找到类型中包含的关键词
+    for (const [key, value] of Object.entries(iconMap)) {
+      if (type.includes(key)) {
+        return value;
+      }
+    }
+    
+    return '🎉'; // 默认图标
   }
 });

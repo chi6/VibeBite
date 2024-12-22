@@ -196,7 +196,7 @@ Page({
           formattedDate: new Date().toLocaleDateString('zh-CN'),
           timestamp: Date.now(),
           distance: this.calculateDistance(item.location),
-          snapshot: item.webSnapshot || item.snapshot || item.image || null,
+          snapshot: this.validateImageUrl(item.webSnapshot || item.snapshot || item.image),
           domain: this.extractDomain(item.link),
           description: item.description || item.summary || '',
           title: item.title || this.extractTitle(item.link) || '推荐内容'
@@ -338,12 +338,12 @@ Page({
     }
   },
 
-  addMessage: function(type, content, sender = '') {
+  addMessage(type, content, sender = '') {
     const { messages } = this.data;
     const newMessage = {
       id: messages.length + 1,
       type,
-      content,
+      content: typeof content === 'string' ? content : JSON.stringify(content),
       sender,
       time: new Date().toLocaleTimeString()
     };
@@ -532,7 +532,6 @@ Page({
           .filter(Boolean)
           .map(line => {
             let content = line.replace(/^-\s*/, '');
-            
             content = content.replace(/\*\*/g, '');
             
             let detail = {
@@ -541,27 +540,11 @@ Page({
               highlights: [],
             };
 
-            const boldMatches = line.match(/\*\*(.*?)\*\*/g);
-            if (boldMatches) {
-              detail.highlights = boldMatches.map(match => 
-                match.replace(/\*\*/g, '')
-              );
-            }
-
-            const addressMatch = content.match(/地址[：:](.*?)。/);
-            if (addressMatch) {
-              detail.address = addressMatch[1].trim();
-            }
-
-            const featureMatch = content.match(/特色[为是](.*?)。/);
-            if (featureMatch) {
-              detail.feature = featureMatch[1].trim();
-            }
-
             if (content.includes('照片') || content.includes('实拍')) {
               const imageMatch = content.match(/(\d+)\s*张.*?照片/);
               if (imageMatch) {
-                detail.imageCount = parseInt(imageMatch[1]);
+                detail.imageCount = parseInt(imageMatch[1], 10);
+                detail.images = [];
               }
             }
 
@@ -582,7 +565,8 @@ Page({
         title: '推荐建议',
         details: [{
           type: 'text',
-          content: rawPlan
+          content: rawPlan,
+          images: []
         }]
       }];
     }
@@ -710,17 +694,35 @@ Page({
   handleSnapshotTap(e) {
     const { url, images } = e.currentTarget.dataset;
     
-    // 如果有多张图片，使用预览图片功能
-    if (images && images.length > 0) {
-      const imageUrls = images.map(item => item.image);
-      const current = e.currentTarget.dataset.images.find(item => item.url === url)?.image;
+    if (Array.isArray(images) && images.length > 0) {
+      const imageUrls = images
+        .filter(item => item && item.image && typeof item.image === 'string')
+        .map(item => item.image);
       
-      wx.previewImage({
-        current: current || imageUrls[0],
-        urls: imageUrls
-      });
-    } else if (url) {
-      // 如果只有链接，打开网页
+      if (imageUrls.length > 0) {
+        const current = images.find(item => item.url === url)?.image || imageUrls[0];
+        
+        wx.previewImage({
+          current,
+          urls: imageUrls,
+          fail: (err) => {
+            console.error('预览图片失败:', err);
+            wx.showToast({
+              title: '图片预览失败',
+              icon: 'none'
+            });
+          }
+        });
+      } else {
+        this.handleUrlNavigation(url);
+      }
+    } else {
+      this.handleUrlNavigation(url);
+    }
+  },
+
+  handleUrlNavigation(url) {
+    if (url && typeof url === 'string') {
       wx.navigateTo({
         url: `/pages/webview/webview?url=${encodeURIComponent(url)}`,
         fail: (err) => {
@@ -732,5 +734,39 @@ Page({
         }
       });
     }
+  },
+
+  // 添加图片错误处理函数
+  handleImageError(e) {
+    console.error('图片加载失败:', e);
+    const defaultImage = '/images/default-image.png';
+    
+    // 如果是列表中的图片
+    if (e.target.dataset.index !== undefined) {
+      const index = e.target.dataset.index;
+      const newMessages = [...this.data.messages];
+      if (newMessages[index] && newMessages[index].type === 'image') {
+        newMessages[index].content = defaultImage;
+        this.setData({ messages: newMessages });
+      }
+    }
+    
+    // 如果是推荐列表中的图片
+    if (e.target.dataset.recommendIndex !== undefined) {
+      const index = e.target.dataset.recommendIndex;
+      const newRecommendations = [...this.data.recommendations];
+      if (newRecommendations[index]) {
+        newRecommendations[index].snapshot = defaultImage;
+        this.setData({ recommendations: newRecommendations });
+      }
+    }
+  },
+
+  // 添加验证图片URL的辅助方法
+  validateImageUrl(url) {
+    if (!url) return '';
+    if (typeof url !== 'string') return '';
+    if (!url.startsWith('http') && !url.startsWith('/')) return '';
+    return url;
   }
 });

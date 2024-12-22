@@ -38,13 +38,10 @@
             <view class="recommendation-items">
               <view class="recommendation-item" 
                     wx:for="{{item.items}}" 
-                    wx:key="title" 
+                    wx:key="description" 
                     wx:for-item="subItem">
-                <view class="item-header">
-                  <text class="item-title">{{subItem.title}}</text>
-                </view>
                 <view class="item-content">
-                  <rich-text nodes="{{subItem.description}}" class="rich-content"></rich-text>
+                  <text class="rich-content">{{subItem.description}}</text>
                   <view class="highlight-tags" wx:if="{{subItem.highlights.length > 0}}">
                     <text class="highlight-tag" 
                           wx:for="{{subItem.highlights}}" 

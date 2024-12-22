@@ -80,7 +80,7 @@ Page({
       });
       setTimeout(() => {
         wx.reLaunch({
-          url: '/pages/index/index',
+          url: '/pages/preferences/preferences',
           fail: (err) => {
             console.error('跳转失败:', err);
             wx.showToast({

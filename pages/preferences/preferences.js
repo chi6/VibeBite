@@ -31,7 +31,7 @@ Page({
       .then(() => {
         wx.hideLoading();
         wx.navigateTo({
-          url: '/pages/ai-customization/ai-customization',
+          url: '/pages/index/index',
           success: () => {
             wx.showToast({
               title: '正在为您规划',
