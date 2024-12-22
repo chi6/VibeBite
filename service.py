@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 import json
 import re
 import random
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 
 class AgentChatService:
     def __init__(self):
@@ -108,7 +108,7 @@ class AgentChatService:
 1. 每一个字段都要是中文且有值
 2. 返回的内容要符合你的性格特征和说话风格
 3. 在thought中可以提到你的重要记忆""",
-            "intent_summary": "你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用一句话返回，要求容易被输入到谷歌搜索。"
+            "intent_summary": "你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用list格式返回。如：['吃三文鱼']或['喝鸡尾酒']，要求容易被输入到谷歌搜索。"
         }
         for task_name, prompt in base_prompts.items():
             self.prompt_manager.add_prompt(task_name, prompt)
@@ -230,6 +230,7 @@ class AgentChatService:
             }), 404
         
         # 获取响应
+        print(f"开始处理任务: {task_name}, 消息: {message}")
         responses = self.agents[openid].process_task(task_name, message)
         
         # 异步触发意图分析
@@ -539,7 +540,7 @@ class AgentChatService:
     def update_user_preferences(self):
         """更新用户偏好并更新agent的prompt"""
         start_time = time.time()
-        
+        print("更新用户偏好")
         try:
             data = request.get_json()
             openid = data.get('openid')  # 直接使用openid
@@ -771,7 +772,7 @@ class AgentChatService:
                             )
                         ''')
                         
-                        # 将数组转换为字符串
+                        # 将数组转换为字符���
                         allergies_str = ','.join(profile_data.get('allergies', []))
                         
                         # 更新用户档案
@@ -1198,22 +1199,17 @@ class AgentChatService:
                     keywords = result[1].split(',') if result[1] else []
                     
                     # 构建提示词
-                    prompt = f"""请根据用户输入，生成深圳本地的具体推荐。格式要求：
-1. 每个大类以"- **xxx推荐**："开头
-2. 每个具体推荐以"    - **店名**："开头
-3. 每个推荐要包含特色，并加粗关键词
-4. 每个大类至少推荐2个具体场所
+                    prompt = f"""请根据用户输入，为用户的偏好生成深圳本地合适的推荐搭配。猜你喜欢部分：要求根据用户的输入进行扩充和思考，分析用户饮食偏好（口味、场景、风格），喜欢什么样餐厅（环境、菜品、服务），可以有什么样子的行程（时间、地点、活动）。
+
+                    奇思妙想部分：要求根据用户的输入，推荐具体餐厅、饮品、活动等。
 
 用户输入：{user_input}
 关键词：{', '.join(keywords)}
 
 示例格式：
-- **吃火锅推荐**：
-    - **小龙坎火锅**：**吃火锅**是其特色，店内环境热闹，火锅味道麻辣鲜香，有多种菜品可供选择。
-    - **海底捞火锅**：以服务著称，**吃火锅**体验极��，锅底种类丰富，菜品新鲜。
-- **去酒吧推荐**：
-    - **苏荷酒吧**：是深圳知名的酒吧之一，**去酒吧**氛围好，有各种音乐表演和饮品。
-    - **本色酒吧**：**去酒吧**环境时尚，酒水种类多样，经常有主题派对和活动。
+- **猜你喜欢**：
+
+- **奇思妙想**：
 
 请按照这个格式生成推荐。"""
 
@@ -1302,36 +1298,37 @@ class AgentChatService:
             images = []
             location = "深圳"
             # 根据每个意图进行搜索
-            for intent in intent_list[:3]:
-                search_query = f"{intent} {location} 小红书推荐"
+            for idx, intent in enumerate(intent_list[:3]):
+                search_query = f"{intent} {location} 推荐"
                 print(f"搜索关键词: {search_query}")
+                if True:
+                    # 用Google搜索API
+                    google_api_url = "https://google.serper.dev/search"
+                    headers = {
+                        'X-API-KEY': '5e0ade74a776ca00770d7155a6ed361f25fde09a',
+                        'Content-Type': 'application/json'
+                    }
+                    search_data = {
+                        "q": search_query,
+                        "gl": "cn",
+                        "hl": "zh-cn",
+                        "location": "中国"
+                    }
                 
-                # 用Google搜索API
-                google_api_url = "https://google.serper.dev/search"
-                headers = {
-                    'X-API-KEY': '5e0ade74a776ca00770d7155a6ed361f25fde09a',
-                    'Content-Type': 'application/json'
-                }
-                search_data = {
-                    "q": search_query,
-                    "gl": "cn",
-                    "hl": "zh-cn",
-                    "location": "中国"
-                }
-                
-                try:
-                    response = requests.post(google_api_url, headers=headers, json=search_data, timeout=5)
-                    search_results = response.json()
-                    print(f"搜索结果: {search_results}")
-                    
-                    # 处理搜索结果
-                    processed_results = self._process_search_results(search_results, intent)
-                    recommendations.extend(processed_results)
+                    try:
+                        response = requests.post(google_api_url, headers=headers, json=search_data, timeout=5)
+                        search_results = response.json()
+                        print(f"搜索结果: {search_results}")
                         
-                except requests.RequestException as e:
-                    print(f"搜索API请求错误: {str(e)}")
-                    continue
-            
+                        # 处理搜索结果
+                        processed_results = self._process_search_results(search_results, intent)
+                        recommendations.extend(processed_results)
+                            
+                    except requests.RequestException as e:
+                            print(f"搜索API请求错误: {str(e)}")
+                            continue
+                else:
+                    recommendations.append(intent)
             # 使用大模型整合结果
             if recommendations:
                 organized_results = self._organize_recommendations(recommendations, intent_list)
@@ -1498,12 +1495,12 @@ class AgentChatService:
             }), 500
 
     def _process_search_results(self, results: dict, result_type: str) -> list:
-        """处理搜索结果,包括抓取网页内容"""
+        """处理搜索结果,包括抓取网页内容和快照"""
         processed_results = []
         if 'organic' in results:
             for result in results['organic'][:1]:  # 只取前1个结果
                 try:
-                    # 更新请求头
+                    # 更新请求头,模拟真实浏览器
                     headers = {
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -1511,55 +1508,113 @@ class AgentChatService:
                         'Accept-Encoding': 'gzip, deflate, br',
                         'Connection': 'keep-alive',
                         'Cache-Control': 'max-age=0',
-                        'Upgrade-Insecure-Requests': '1',
-                        'Referer': 'https://www.dianping.com',
-                        'Cookie': '_lxsdk_cuid=16b8f3c12c3c8-0f0b9c5c95c6f7-1633685d-13c680-16b8f3c12c3c8; _lxsdk=16b8f3c12c3c8-0f0b9c5c95c6f7-1633685d-13c680-16b8f3c12c3c8; _hc.v=1234567890123456789012345678901234567890'
+                        'Upgrade-Insecure-Requests': '1'
                     }
                     
-                    # 添加随机延迟
+                    # 添加随机延迟避免被封
                     time.sleep(random.uniform(1, 3))
                     
-                    # 检查是否是大众���评链接
-                    is_dianping = 'dianping.com' in result.get('link', '')
+                    # 获取网页内容
+                    response = requests.get(result.get('link', ''), headers=headers, timeout=5)
+                    response.encoding = response.apparent_encoding
+                    soup = BeautifulSoup(response.text, 'html.parser')
                     
-                    if is_dianping:
-                        # 对于大众点评，直接使用搜索结果中的信息
-                        response = requests.get(result.get('link', ''), headers=headers, timeout=5)
-                        response.encoding = response.apparent_encoding
-                        soup = BeautifulSoup(response.text, 'html.parser')
+                    # 提取页面基本信息
+                    page_content = {
+                        'title': soup.title.string if soup.title else result.get('title', ''),
+                        'description': result.get('snippet', ''),
+                        'link': result.get('link', ''),
+                        'type': result_type,
+                        'position': result.get('position', 0),
+                    }
+                    
+                    # 提取图片
+                    images = []
+                    for img in soup.find_all('img'):
+                        src = img.get('src', '')
+                        if src and not src.startswith('data:'):  # 排除base64图片
+                            if not src.startswith(('http://', 'https://')):
+                                # 处理相对路径
+                                base_url = result.get('link', '')
+                                src = urljoin(base_url, src)
+                            images.append({
+                                'url': src,
+                                'alt': img.get('alt', ''),
+                                'title': img.get('title', '')
+                            })
+                    page_content['images'] = images[:5]  # 只保留前5张图片
+                    
+                    # 提取主要内容
+                    main_content = ''
+                    content_tags = soup.find_all(['article', 'main', 'div'], class_=re.compile(r'content|article|main|text'))
+                    for tag in content_tags:
+                        # 清理内容
+                        text = tag.get_text(separator='\n', strip=True)
+                        text = re.sub(r'\n+', '\n', text)  # 合并多个换行
+                        text = re.sub(r'\s+', ' ', text)   # 合并多个空格
+                        if len(text) > len(main_content):
+                            main_content = text
+                    page_content['main_content'] = main_content[:1000]  # 限制长度
+                    
+                    # 提取结构化数据
+                    structured_data = []
+                    for script in soup.find_all('script', type='application/ld+json'):
+                        try:
+                            data = json.loads(script.string)
+                            structured_data.append(data)
+                        except:
+                            continue
+                    page_content['structured_data'] = structured_data
+                    
+                    # 提取联系方式
+                    contact_info = {
+                        'phone': None,
+                        'email': None,
+                        'address': None
+                    }
+                    # 电话号码匹配
+                    phone_pattern = re.compile(r'1[3-9]\d{9}|0\d{2,3}-\d{7,8}')
+                    phones = phone_pattern.findall(str(soup))
+                    if phones:
+                        contact_info['phone'] = phones[0]
                         
-                        page_content = {
-                            'title': result.get('title', '').replace(' - 大众点评网', ''),
-                            'description': result.get('snippet', ''),
-                            'link': result.get('link', ''),
-                            'type': result_type,
-                            'details': self._extract_dianping_info(soup),
-                            'metadata': {
-                                'source': '大众点评',
-                                'last_updated': datetime.now().strftime('%Y-%m-%d'),
-                                'keywords': self._extract_keywords_from_title(result.get('title', ''))
-                            }
-                        }
-                    else:
-                        # 非大众点评网站正常抓取
-                        response = requests.get(result.get('link', ''), headers=headers, timeout=5)
-                        response.encoding = response.apparent_encoding
+                    # 邮箱匹配    
+                    email_pattern = re.compile(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}')
+                    emails = email_pattern.findall(str(soup))
+                    if emails:
+                        contact_info['email'] = emails[0]
                         
-                        soup = BeautifulSoup(response.text, 'html.parser')
+                    # 地址匹配
+                    address_tags = soup.find_all(['div', 'span', 'p'], class_=re.compile(r'address|location'))
+                    if address_tags:
+                        contact_info['address'] = address_tags[0].get_text(strip=True)
                         
-                        page_content = {
-                            'title': soup.title.string if soup.title else result.get('title', ''),
-                            'description': result.get('snippet', ''),
-                            'link': result.get('link', ''),
-                            'type': result_type,
-                            'position': result.get('position', 0),
-                            'details': self._extract_general_info(soup),
-                            'metadata': {
-                                'source': self._extract_domain(result.get('link', '')),
-                                'last_updated': self._extract_date(soup),
-                                'keywords': self._extract_meta_keywords(soup)
-                            }
-                        }
+                    page_content['contact_info'] = contact_info
+                    
+                    # 提取营业时间
+                    hours_tags = soup.find_all(['div', 'span', 'p'], class_=re.compile(r'hours|time|营业时间'))
+                    if hours_tags:
+                        page_content['business_hours'] = hours_tags[0].get_text(strip=True)
+                    
+                    # 提取价格信息
+                    price_tags = soup.find_all(['div', 'span', 'p'], class_=re.compile(r'price|cost|价格'))
+                    if price_tags:
+                        page_content['price_info'] = price_tags[0].get_text(strip=True)
+                    
+                    # 提取评分和评论
+                    reviews = []
+                    review_tags = soup.find_all(['div', 'article'], class_=re.compile(r'review|comment|评论'))
+                    for review in review_tags[:5]:  # 只取前5条评论
+                        review_text = review.get_text(strip=True)
+                        if len(review_text) > 10:  # 过滤太短的评论
+                            reviews.append(review_text)
+                    page_content['reviews'] = reviews
+                    
+                    # 保存网页快照
+                    page_content['snapshot'] = {
+                        'html': str(soup)[:10000],  # 限制快照大小
+                        'timestamp': datetime.now().isoformat()
+                    }
                     
                     processed_results.append(page_content)
                     print(f"成功处理页面: {result.get('link', '')}")
@@ -1573,7 +1628,6 @@ class AgentChatService:
                         'link': result.get('link', ''),
                         'type': result_type,
                         'position': result.get('position', 0),
-                        'details': {},
                         'error': str(e)
                     })
                     
@@ -1834,6 +1888,50 @@ class AgentChatService:
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
 
+    def update_ai_settings_prompt(self, openid: str, name: str, personality: str, speaking_style: str, memories: str):
+        """更新AI设置"""
+        system_prompt = f"""你是一个名叫{name}的AI助手。
+
+性格特征：
+{personality}
+
+说话风格：
+{speaking_style}
+
+重要记忆：
+{memories}
+
+请在对话中始终保持这些特征，提供友好且个性化的回答。"""
+
+        # 构建status_check的特定prompt
+        status_check_prompt = f"""你是一个名叫{name}的AI助手。
+
+性格特征：
+{personality}
+
+说话风格：
+{speaking_style}
+
+重要记忆：
+{memories}
+
+请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。
+请用json格式返回，注意：
+1. 每一个字段都要是中文且有值
+2. 返回的内容要符合你的性格特征和说话风格
+3. 在thought中可以提到你的重要记忆"""
+
+        # 更新所有与该用户关联的agent的prompts
+        agent_keys = [key for key in self.agents.keys() if str(key).startswith(openid)]
+        print(f"agent_keys: {agent_keys}")
+        for agent_key in agent_keys:
+            agent = self.agents[agent_key]
+            # 更新通用prompt
+            agent.update_system_prompt("status_check", status_check_prompt)
+            print(f"已更新agent {agent_key}的prompts")
+                
+        return system_prompt, status_check_prompt
+
     def update_ai_settings(self):
         """更新AI设置"""
         start_time = time.time()
@@ -1841,10 +1939,6 @@ class AgentChatService:
         try:
             data = request.get_json()
             openid = data.get('openid')
-            name = data.get('name')
-            personality = data.get('personality')
-            speaking_style = data.get('speakingStyle')
-            memories = data.get('memories')
             timestamp = data.get('timestamp')
             
             if not openid:
@@ -1853,6 +1947,29 @@ class AgentChatService:
                     "message": "缺少openid参数",
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 400
+                        # 从数据库获取AI设置
+            with sqlite3.connect('vibebite.db') as conn:
+                cursor = conn.cursor()
+                
+                cursor.execute('''
+                    SELECT name, personality, speaking_style, memories
+                    FROM ai_settings 
+                    WHERE openid = ?
+                ''', (openid,))
+                
+                result = cursor.fetchone()
+                
+                if result:
+                    name = result[0]
+                    personality = result[1]
+                    speaking_style = result[2]
+                    memories = result[3]
+                else:
+                    # 如果没有设置，返回默认值
+                    name = '默认助手'
+                    personality = '友好、耐心、专业'
+                    speaking_style = '正式但亲切'
+                    memories = '我是一个AI助手，我的目标是帮助用户解决问题。'
             
             # 构建新的system prompt
             system_prompt = f"""你是一个名叫{name}的AI助手。
@@ -2005,7 +2122,7 @@ class AgentChatService:
                         'speakingStyle': '正式但亲切',
                         'memories': '我是一个AI助手，我的目标是帮助用户解决问题。'
                     }
-                
+                self.update_ai_settings_prompt(openid, settings['name'], settings['personality'], settings['speakingStyle'], settings['memories'])
                 return jsonify({
                     "success": True,
                     "data": settings,
@@ -2041,7 +2158,7 @@ class AgentChatService:
                 
                 try:
                     # 将字符串形式的列表转换为Python列表
-                    intent_list = [intent_analysis]
+                    intent_list = eval(intent_analysis)
                     if isinstance(intent_list, list):
                         # 更新agent中的意图分析结果
                         agent.intent_analysis = intent_list
@@ -2065,6 +2182,15 @@ class AgentChatService:
 
     def _organize_recommendations(self, recommendations: list, intent_list: list) -> dict:
         """整合并组织推荐结果"""
+        recommendations_str = ""    
+        for recommendation in recommendations:
+            if "main_content" in recommendation and recommendation["main_content"]:
+                print(f"recommendation['main_content']: {recommendation['main_content']}")
+                recommendations_str += recommendation["main_content"]
+            elif "description" in recommendation and recommendation["description"]:
+                print(f"recommendation['description']: {recommendation['description']}")
+                recommendations_str += recommendation["description"]
+        
         try:
             # 构建提示词
             organize_prompt = f"""基于以下用户意图和搜索结果，制定一个合理的推荐计划：
@@ -2073,13 +2199,13 @@ class AgentChatService:
 {', '.join(intent_list)}
 
 搜索结果：
-{json.dumps(recommendations, ensure_ascii=False, indent=2)}
+{recommendations_str}
 
 请提供：
 1. 具体场所推荐（特色）：- 内容
-2. 可替换推荐类别：- 内容
+2. 推荐搭配规划：- 内容
 
-每个推荐地点要包含具体的地址和特色。"""
+每个推荐要包含具体的店名和特色。"""
 
             # 调用大模型整合结果
             request_id = str(uuid.uuid4())
