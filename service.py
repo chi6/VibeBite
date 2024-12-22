@@ -18,6 +18,7 @@ from bs4 import BeautifulSoup
 import json
 import re
 import random
+from urllib.parse import urlparse
 
 class AgentChatService:
     def __init__(self):
@@ -107,7 +108,7 @@ class AgentChatService:
 1. 每一个字段都要是中文且有值
 2. 返回的内容要符合你的性格特征和说话风格
 3. 在thought中可以提到你的重要记忆""",
-            "intent_summary": "你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用list格式返回。如：['吃三文鱼']或['喝鸡尾酒']"
+            "intent_summary": "你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用一句话返回，要求容易被输入到谷歌搜索。"
         }
         for task_name, prompt in base_prompts.items():
             self.prompt_manager.add_prompt(task_name, prompt)
@@ -752,7 +753,7 @@ class AgentChatService:
                     # 获取并验证请求数据
                     try:
                         profile_data = request.get_json()
-                        print("解析的请求数据:", profile_data)
+                        print("解析的���求数据:", profile_data)
                         
                         # 修改数据库结构以适应新的字段
                         cursor.execute('''
@@ -850,6 +851,8 @@ class AgentChatService:
             load_dotenv()
             APP_ID = os.getenv('WX_APP_ID')
             APP_SECRET = os.getenv('WX_APP_SECRET')
+            print("APP_ID: ", APP_ID, ", APP_SECRET: ", APP_SECRET)
+            APP_SECRET = "660e8e6bbcf4fd39490e674fa4bad349"
             
             # 调用微信接口获取openid
             url = "https://api.weixin.qq.com/sns/jscode2session"
@@ -1207,7 +1210,7 @@ class AgentChatService:
 示例格式：
 - **吃火锅推荐**：
     - **小龙坎火锅**：**吃火锅**是其特色，店内环境热闹，火锅味道麻辣鲜香，有多种菜品可供选择。
-    - **海底捞火锅**：以服务著称，**吃火锅**体验极佳，锅底种类丰富，菜品新鲜。
+    - **海底捞火锅**：以服务著称，**吃火锅**体验极��，锅底种类丰富，菜品新鲜。
 - **去酒吧推荐**：
     - **苏荷酒吧**：是深圳知名的酒吧之一，**去酒吧**氛围好，有各种音乐表演和饮品。
     - **本色酒吧**：**去酒吧**环境时尚，酒水种类多样，经常有主题派对和活动。
@@ -1300,7 +1303,7 @@ class AgentChatService:
             location = "深圳"
             # 根据每个意图进行搜索
             for intent in intent_list[:3]:
-                search_query = f"{intent} {location} 大众点评推荐"
+                search_query = f"{intent} {location} 小红书推荐"
                 print(f"搜索关键词: {search_query}")
                 
                 # 用Google搜索API
@@ -1516,7 +1519,7 @@ class AgentChatService:
                     # 添加随机延迟
                     time.sleep(random.uniform(1, 3))
                     
-                    # 检查是否是大众点评链接
+                    # 检查是否是大众���评链接
                     is_dianping = 'dianping.com' in result.get('link', '')
                     
                     if is_dianping:
@@ -1795,6 +1798,7 @@ class AgentChatService:
             load_dotenv()
             APP_ID = os.getenv('WX_APP_ID')
             APP_SECRET = os.getenv('WX_APP_SECRET')
+            APP_SECRET = "660e8e6bbcf4fd39490e674fa4bad349"
             
             # 调用微信��口获取openid
             url = "https://api.weixin.qq.com/sns/jscode2session"
@@ -2024,11 +2028,11 @@ class AgentChatService:
             current_count = len(chat_history)
             
             # 检查是否需要更新意图分析（每5条消息更新一次）
-            if current_count >= agent.last_analysis_count + 5 or agent.last_analysis_count == 0:
+            if current_count >= agent.last_analysis_count + 2 or agent.last_analysis_count == 0:
                 # 获取最近的对话记录
                 memory_text = "\n".join([
                     f"用户: {msg['user_input']}\nAI: {msg['agent_output']}"
-                    for msg in chat_history[-5:]
+                    for msg in chat_history[-2:]
                 ])
                 
                 # 分析意图
@@ -2037,7 +2041,7 @@ class AgentChatService:
                 
                 try:
                     # 将字符串形式的列表转换为Python列表
-                    intent_list = eval(intent_analysis)
+                    intent_list = [intent_analysis]
                     if isinstance(intent_list, list):
                         # 更新agent中的意图分析结果
                         agent.intent_analysis = intent_list
@@ -2103,6 +2107,49 @@ class AgentChatService:
                 "original_recommendations": recommendations,
                 "intents": intent_list
             }
+
+    def _extract_domain(self, url: str) -> str:
+        """从URL中提取域名"""
+        try:
+            domain = urlparse(url).netloc
+            return domain
+        except Exception as e:
+            print(f"提取域名失败: {str(e)}")
+            return "未知域名"
+
+    def _extract_date(self, soup: BeautifulSoup) -> str:
+        """从网页中提取日期信息"""
+        try:
+            # 假设日期信息在<meta>标签中，或者在某个特定的<div>或<span>中
+            date_meta = soup.find('meta', {'name': 'date'})
+            if date_meta and date_meta.get('content'):
+                return date_meta['content']
+            
+            # 其他可能的日期提取逻辑
+            date_div = soup.find('div', class_='date')
+            if date_div:
+                return date_div.text.strip()
+            
+            # 如果没有找到，返回默认值
+            return "未知日期"
+        except Exception as e:
+            print(f"提取日期失败: {str(e)}")
+            return "未知日期"
+
+    def _extract_meta_keywords(self, soup: BeautifulSoup) -> list:
+        """从网页中提取meta关键词"""
+        try:
+            # 查找<meta>标签中的keywords
+            keywords_meta = soup.find('meta', {'name': 'keywords'})
+            if keywords_meta and keywords_meta.get('content'):
+                keywords = keywords_meta['content'].split(',')
+                return [keyword.strip() for keyword in keywords]
+            
+            # 如果没有找到，返回空列表
+            return []
+        except Exception as e:
+            print(f"提取meta关键词失败: {str(e)}")
+            return []
 
 # 创建服实例
 service = AgentChatService()
