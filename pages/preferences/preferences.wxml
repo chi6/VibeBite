@@ -15,5 +15,7 @@
     </view>
   </view>
 
-  <button class="submit-btn" bindtap="handleSubmit">开始智能规划</button>
+  <view class="button-container">
+    <button class="submit-btn" bindtap="handleSubmit">开始智能规划</button>
+  </view>
 </view> 

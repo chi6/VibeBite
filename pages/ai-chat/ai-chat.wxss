@@ -1171,8 +1171,37 @@
 .recommendations-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20rpx;
+  padding: 30rpx;
   -webkit-overflow-scrolling: touch;
+  background: #fff;
+}
+
+/* 移除上下渐变遮罩 */
+.recommendations-content::before,
+.recommendations-content::after {
+  display: none;
+}
+
+/* 修改推荐列表容器样式 */
+.recommendation-group {
+  margin-bottom: 30rpx;
+  height: 620rpx;
+  overflow-y: auto;
+  position: relative;
+  padding-right: 20rpx;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 移除推荐列表的渐变遮罩 */
+.recommendation-group::after {
+  display: none;
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .recommendations-content {
+    background: rgba(30, 30, 30, 0.98);
+  }
 }
 
 /* 区块标题样式 */
@@ -1413,402 +1442,34 @@
   padding: 30rpx;
   position: relative;
   -webkit-overflow-scrolling: touch;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(249, 250, 255, 0.95));
-}
-
-/* 优化推荐卡片样式 */
-.link-card {
   background: #fff;
-  border-radius: 24rpx;
-  padding: 24rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 20rpx rgba(110, 142, 251, 0.08);
-  border: 2rpx solid rgba(110, 142, 251, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  gap: 20rpx;
 }
 
-.link-card:active {
-  transform: translateX(10rpx);
-  background: #f8f9fd;
-  border-color: rgba(110, 142, 251, 0.2);
-}
-
-/* 优化快照预览样式 */
-.snapshot-preview {
-  width: 180rpx;
-  height: 180rpx;
-  border-radius: 16rpx;
-  overflow: hidden;
-  flex-shrink: 0;
-  position: relative;
-  background: #f5f6fa;
-}
-
-.snapshot-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.snapshot-preview:active .snapshot-image {
-  transform: scale(1.05);
-}
-
-/* 优化链接内容样式 */
-.link-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-width: 0; /* 防止文本溢出 */
-}
-
-.link-title {
-  font-size: 30rpx;
-  color: #333;
-  font-weight: 600;
-  margin-bottom: 12rpx;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.4;
-}
-
-.link-description {
-  font-size: 26rpx;
-  color: #666;
-  margin-bottom: 16rpx;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.4;
-}
-
-/* 优化元信息样式 */
-.link-meta {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  margin-top: auto;
-}
-
-.link-type {
-  font-size: 22rpx;
-  color: #6e8efb;
-  background: rgba(110, 142, 251, 0.1);
-  padding: 4rpx 16rpx;
-  border-radius: 100rpx;
-}
-
-.link-domain {
-  font-size: 22rpx;
-  color: #999;
-}
-
-/* 优化日期分组样式 */
-.recommendation-date {
-  margin: 40rpx 0 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16rpx 24rpx;
-  background: linear-gradient(135deg, rgba(110, 142, 251, 0.1), rgba(123, 127, 236, 0.1));
-  border-radius: 16rpx;
-  backdrop-filter: blur(10px);
-}
-
-.date-text {
-  font-size: 26rpx;
-  color: #333;
-  font-weight: 600;
-}
-
-.recommendation-count {
-  font-size: 24rpx;
-  color: #666;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 4rpx 16rpx;
-  border-radius: 100rpx;
-}
-
-/* 优化箭头样式 */
-.link-arrow {
-  color: #6e8efb;
-  font-size: 32rpx;
-  opacity: 0.7;
-  transition: all 0.3s ease;
-  align-self: center;
-}
-
-.link-card:active .link-arrow {
-  transform: translateX(6rpx);
-  opacity: 1;
-}
-
-/* 添加滚动渐变效果 */
+/* 移除上下渐变遮罩 */
 .recommendations-content::before,
 .recommendations-content::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 100rpx;
-  pointer-events: none;
-  z-index: 1;
+  display: none;
 }
 
-.recommendations-content::before {
-  top: 0;
-  background: linear-gradient(to bottom, 
-    rgba(255, 255, 255, 0.95), 
-    rgba(255, 255, 255, 0)
-  );
-}
-
-.recommendations-content::after {
-  bottom: 0;
-  background: linear-gradient(to top, 
-    rgba(255, 255, 255, 0.95), 
-    rgba(255, 255, 255, 0)
-  );
-}
-
-/* 优化分组标题样式 */
-.section-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
-  margin: 30rpx 0 20rpx;
-  position: relative;
-  padding-left: 24rpx;
-}
-
-.section-title::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6rpx;
-  height: 32rpx;
-  background: linear-gradient(to bottom, #6e8efb, #7b7fec);
-  border-radius: 3rpx;
-}
-
-/* 暗黑模式适配 */
-@media (prefers-color-scheme: dark) {
-  .recommendations-content {
-    background: linear-gradient(to bottom, rgba(30, 30, 30, 0.95), rgba(35, 35, 35, 0.95));
-  }
-  
-  .link-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .link-title {
-    color: #fff;
-  }
-  
-  .link-description {
-    color: #aaa;
-  }
-  
-  .date-text {
-    color: #fff;
-  }
-  
-  .recommendation-count {
-    background: rgba(255, 255, 255, 0.1);
-    color: #aaa;
-  }
-  
-  .link-type {
-    background: rgba(110, 142, 251, 0.2);
-  }
-  
-  .link-domain {
-    color: #777;
-  }
-  
-  .section-title {
-    color: #fff;
-  }
-  
-  .recommendations-content::before {
-    background: linear-gradient(to bottom, 
-      rgba(30, 30, 30, 0.95), 
-      rgba(30, 30, 30, 0)
-    );
-  }
-  
-  .recommendations-content::after {
-    background: linear-gradient(to top, 
-      rgba(30, 30, 30, 0.95), 
-      rgba(30, 30, 30, 0)
-    );
-  }
-}
-
-/* 推荐内容区域基础样式 */
-.recommendations-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 30rpx;
-  position: relative;
-  -webkit-overflow-scrolling: touch;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(249, 250, 255, 0.95));
-}
-
-/* 内容模块通用样式 */
-.content-module {
-  background: #fff;
-  border-radius: 24rpx;
-  padding: 24rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 20rpx rgba(110, 142, 251, 0.08);
-  border: 2rpx solid rgba(110, 142, 251, 0.1);
-}
-
-/* 模块标题通用样式 */
-.module-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 20rpx;
-  padding-left: 24rpx;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.module-title::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6rpx;
-  height: 32rpx;
-  background: linear-gradient(to bottom, #6e8efb, #7b7fec);
-  border-radius: 3rpx;
-}
-
-/* 推荐列表模块样式 */
-.recommendations-list {
-  margin-bottom: 30rpx;
-}
-
-/* 日期分组样式 */
+/* 修改推荐列表容器样式 */
 .recommendation-group {
   margin-bottom: 30rpx;
+  height: 620rpx;
+  overflow-y: auto;
+  position: relative;
+  padding-right: 20rpx;
+  -webkit-overflow-scrolling: touch;
 }
 
-.recommendation-date {
-  margin: 20rpx 0;
-  padding: 16rpx 24rpx;
-  background: linear-gradient(135deg, rgba(110, 142, 251, 0.1), rgba(123, 127, 236, 0.1));
-  border-radius: 16rpx;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  backdrop-filter: blur(10px);
-}
-
-/* 推荐卡片样式 */
-.link-card {
-  composes: content-module;
-  display: flex;
-  gap: 20rpx;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.link-card:active {
-  transform: translateX(10rpx);
-  background: #f8f9fd;
-  border-color: rgba(110, 142, 251, 0.2);
-}
-
-/* 计划区块样式 */
-.plan-section {
-  margin-top: 30rpx;
-}
-
-.plan-block {
-  composes: content-module;
-  margin-bottom: 20rpx;
-}
-
-/* 内容元素通用样式 */
-.content-text {
-  font-size: 28rpx;
-  line-height: 1.6;
-  color: #333;
-  letter-spacing: 0.5rpx;
-}
-
-.content-meta {
-  font-size: 24rpx;
-  color: #666;
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  margin-top: 12rpx;
-}
-
-.content-tag {
-  font-size: 22rpx;
-  color: #6e8efb;
-  background: rgba(110, 142, 251, 0.1);
-  padding: 4rpx 16rpx;
-  border-radius: 100rpx;
-}
-
-/* 分割线样式 */
-.section-divider {
-  height: 2rpx;
-  background: linear-gradient(to right, transparent, rgba(110, 142, 251, 0.2), transparent);
-  margin: 30rpx 0;
+/* 移除推荐列表的渐变遮罩 */
+.recommendation-group::after {
+  display: none;
 }
 
 /* 暗黑模式适配 */
 @media (prefers-color-scheme: dark) {
   .recommendations-content {
-    background: linear-gradient(to bottom, rgba(30, 30, 30, 0.95), rgba(35, 35, 35, 0.95));
-  }
-  
-  .content-module {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .module-title {
-    color: #fff;
-  }
-  
-  .content-text {
-    color: #e0e0e0;
-  }
-  
-  .content-meta {
-    color: #999;
-  }
-  
-  .content-tag {
-    background: rgba(110, 142, 251, 0.2);
-  }
-  
-  .recommendation-date {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.08));
-  }
-  
-  .link-card:active {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(30, 30, 30, 0.98);
   }
 }
 
@@ -1906,57 +1567,21 @@
 /* 修改推荐列表容器样式 */
 .recommendation-group {
   margin-bottom: 30rpx;
-  height: 620rpx; /* 约等于3个卡片的高度 */
+  height: 620rpx;
   overflow-y: auto;
   position: relative;
-  padding-right: 20rpx; /* 为滚动条预留空间 */
+  padding-right: 20rpx;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 自定义滚动条样式 */
-.recommendation-group::-webkit-scrollbar {
-  width: 6rpx;
-}
-
-.recommendation-group::-webkit-scrollbar-track {
-  background: rgba(110, 142, 251, 0.1);
-  border-radius: 3rpx;
-}
-
-.recommendation-group::-webkit-scrollbar-thumb {
-  background: rgba(110, 142, 251, 0.2);
-  border-radius: 3rpx;
-}
-
-/* 添加渐变遮罩效果 */
+/* 移除推荐列表的渐变遮罩 */
 .recommendation-group::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 20rpx; /* 与padding-right相同 */
-  bottom: 0;
-  height: 100rpx;
-  background: linear-gradient(to top, 
-    var(--gradient-start-color, rgba(255, 255, 255, 0.95)), 
-    var(--gradient-end-color, rgba(255, 255, 255, 0))
-  );
-  pointer-events: none;
-  z-index: 1;
-  border-radius: 0 0 24rpx 24rpx;
+  display: none;
 }
 
 /* 暗黑模式适配 */
 @media (prefers-color-scheme: dark) {
-  .recommendation-group::after {
-    --gradient-start-color: rgba(30, 30, 30, 0.95);
-    --gradient-end-color: rgba(30, 30, 30, 0);
-  }
-  
-  .recommendation-group::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-  }
-  
-  .recommendation-group::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+  .recommendations-content {
+    background: rgba(30, 30, 30, 0.98);
   }
 }

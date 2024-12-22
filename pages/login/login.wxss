@@ -1,131 +1,216 @@
 .container {
   min-height: 100vh;
-  background: #f8f9fd;
+  background: linear-gradient(135deg, #f8f9fd 0%, #ffffff 50%, #f5f7ff 100%);
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 顶部区域 */
+/* 调整顶部区域比例 */
 .login-header {
-  padding: 120rpx 40rpx 80rpx;
-  background: linear-gradient(135deg, #6e8efb, #a777e3);
-  border-radius: 0 0 40rpx 40rpx;
+  padding: 0 0 40rpx;
+  padding-top: max(100rpx, env(safe-area-inset-top));
+  background: linear-gradient(135deg, #4a90e2 0%, #7c4dff 70%, #9d4dff 100%);
+  position: relative;
+  width: 100vw;
+  margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  min-height: 35vh;
 }
 
+/* 添加顶部装饰效果 */
+.login-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.login-header::after {
+  display: none;
+}
+
+/* 调整 logo 尺寸和间距 */
 .logo {
-  width: 180rpx;
-  height: 180rpx;
-  margin-bottom: 40rpx;
-  border-radius: 50%;
-  border: 4rpx solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.15);
+  width: 160rpx; /* 稍微缩小 logo */
+  height: 160rpx;
+  margin: 0 auto 24rpx; /* 减少底部间距 */
+  border-radius: 45rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fd 100%);
+  padding: 16rpx;
+  position: relative;
+  z-index: 1;
+  box-shadow: 
+    0 8rpx 24rpx rgba(0, 0, 0, 0.15),
+    inset 0 -4rpx 8rpx rgba(0, 0, 0, 0.05);
+  display: block;
 }
 
+.header-text {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* 调整文字间距 */
 .welcome {
-  font-size: 44rpx;
+  font-size: 44rpx; /* 稍微减小字号 */
   color: #fff;
   font-weight: 600;
-  margin-bottom: 16rpx;
+  margin-bottom: 12rpx; /* 减少间距 */
+  display: block;
+  letter-spacing: 2rpx;
 }
 
 .subtitle {
   font-size: 28rpx;
   color: rgba(255, 255, 255, 0.9);
+  display: block;
 }
 
-/* 登录内容区域 */
+/* 优化内容区域布局 */
 .login-content {
-  margin: -60rpx 40rpx 0;
-  padding: 60rpx 40rpx;
-  background: #fff;
-  border-radius: 30rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  margin: 220rpx 108rpx 230rpx;
+  padding: 2rpx 108rpx 0; /* 减少内边距 */
+  background: linear-gradient(135deg, #ffffff 0%, #fcfcff 100%);
+  border-radius: 28rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0, 0, 0, 0.08),
+    0 2rpx 6rpx rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 2;
+  backdrop-filter: blur(10px);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 36vh; /* 降低最小高度 */
+  gap: 36rpx; /* 减少间距 */
 }
 
 .login-tips {
   text-align: center;
-  margin-bottom: 60rpx;
+  margin: 0;
+  flex: 0 0 auto;
+  padding-top: 0;
+  margin-top: -20rpx; /* 减少负边距 */
 }
 
-.tips-text {
-  font-size: 32rpx;
-  color: #333;
-  font-weight: 500;
+.tips-title {
+  font-size: 36rpx;
+  background: linear-gradient(135deg, #333 0%, #666 100%);
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: 600;
   display: block;
-  margin-bottom: 16rpx;
+  margin-bottom: 8rpx;
 }
 
 .tips-desc {
   font-size: 26rpx;
-  color: #999;
+  color: #666;
 }
 
-/* 登录按钮 */
-.login-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
+/* 登录按钮渐变优化 */
 .wechat-login-btn {
-  width: 100%;
-  height: 88rpx;
-  min-height: 88rpx;
-  padding: 0 30rpx;
-  box-sizing: border-box;
-  white-space: nowrap;
-  line-height: 88rpx;
-  background: linear-gradient(135deg, #07c160, #0ab956);
+  background: linear-gradient(135deg, #07c160 0%, #0ab956 50%, #0cc261 100%);
   color: #fff;
-  font-size: 32rpx;
-  font-weight: 500;
-  border-radius: 44rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4rpx 12rpx rgba(7, 193, 96, 0.2);
-  margin-bottom: 40rpx;
   border: none;
+  box-shadow: 
+    0 8rpx 16rpx rgba(7, 193, 96, 0.2),
+    inset 0 -2rpx 4rpx rgba(0, 0, 0, 0.1);
+  margin-bottom: 16rpx; /* 减少底部间距 */
+  position: relative;
+  overflow: hidden;
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite linear;
+  height: 88rpx; /* 稍微降低按钮高度 */
+  line-height: 88rpx;
+}
+
+/* 按钮悬停效果 */
+.wechat-login-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  border-radius: 48rpx 48rpx 0 0;
 }
 
 .wechat-login-btn:active {
   transform: scale(0.98);
+  background: linear-gradient(135deg, #06b054 0%, #09a74e 50%, #0bb459 100%);
+  box-shadow: 0 4rpx 8rpx rgba(7, 193, 96, 0.2);
 }
 
 .wechat-icon {
-  width: 44rpx;
-  height: 44rpx;
-  min-width: 44rpx;
+  width: 48rpx;
+  height: 48rpx;
   margin-right: 16rpx;
-  flex-shrink: 0;
 }
 
-/* 隐私政策 */
-.privacy-tips {
-  font-size: 24rpx;
-  color: #999;
+/* 调整隐私政策区域 */
+.privacy-container {
   text-align: center;
+  font-size: 26rpx;
+  color: #999;
+  padding: 6rpx 0; /* 减少内边距 */
+  margin-top: 0;
 }
 
 .privacy-link {
-  color: #6e8efb;
+  background: linear-gradient(135deg, #4a90e2 0%, #7c4dff 100%);
+  -webkit-background-clip: text;
+  color: transparent;
   display: inline;
+  margin-left: 4rpx;
 }
 
-/* 添加动画效果 */
-.login-content {
-  animation: slideUp 0.4s ease-out;
-}
-
+/* 优化动画效果 */
 @keyframes slideUp {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(40rpx);
+    transform: translateY(30rpx);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 添加微光效果 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 调整登录操作区域 */
+.login-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+  width: 100%;
+  margin-top: -16rpx; /* 减少负边距 */
 }

@@ -1,27 +1,29 @@
 <view class="container">
   <view class="login-header">
     <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
-    <text class="welcome">欢迎使用AI助手</text>
-    <text class="subtitle">让AI为您提供智能服务</text>
+    <view class="header-text">
+      <text class="welcome">欢迎使用AI助手</text>
+      <text class="subtitle">让AI为您提供智能服务</text>
+    </view>
   </view>
 
   <view class="login-content">
     <view class="login-tips">
-      <text class="tips-text">使用微信账号快速登录</text>
-      <text class="tips-desc">授权后将获得更好的服务体验</text>
+      <text class="tips-title">微信快捷登录</text>
+      <text class="tips-desc">授权后将获得完整的服务体验</text>
     </view>
 
     <view class="login-actions">
       <button 
-        class="wechat-login-btn" 
+        class="login-btn wechat-login-btn" 
         open-type="getUserInfo" 
         bindgetuserinfo="handleWechatLogin"
       >
-        <image class="wechat-icon" src="/images/wechat.png" mode="aspectFit"></image>
-        微信一键登录
+        <image class="wechat-icon" src="/images/logo.png" mode="aspectFit"></image>
+        <text>微信一键登录</text>
       </button>
       
-      <view class="privacy-tips">
+      <view class="privacy-container">
         <text class="privacy-text">登录即代表您同意</text>
         <text class="privacy-link" bindtap="showPrivacyPolicy">《用户协议和隐私政策》</text>
       </view>
