@@ -1,0 +1,26 @@
+.container {
+  padding: 20rpx;
+}
+
+.preference-list {
+  width: 100%;
+  background: #fff;
+  border-radius: 10rpx;
+}
+
+.preference-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 20rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.preference-item:last-child {
+  border-bottom: none;
+}
+
+.arrow {
+  width: 32rpx;
+  height: 32rpx;
+} 

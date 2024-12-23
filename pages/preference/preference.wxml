@@ -1,0 +1,20 @@
+<view class="container">
+  <view class="preference-list">
+    <view class="preference-item">
+      <text>口味偏好</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="preference-item">
+      <text>价格范围</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="preference-item">
+      <text>餐厅类型</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="preference-item">
+      <text>特殊需求</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+  </view>
+</view> 

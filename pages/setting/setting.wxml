@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="setting-list">
+    <!-- 设置列表项 -->
+    <view class="setting-item">
+      <text>账号设置</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="setting-item">
+      <text>通知设置</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="setting-item">
+      <text>隐私设置</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+    <view class="setting-item">
+      <text>关于我们</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+  </view>
+</view> 

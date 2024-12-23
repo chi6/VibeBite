@@ -69,45 +69,6 @@
     <!-- 在浮动窗口中合并 plan-section 和 recommendations-content -->
     <scroll-view scroll-y="true" class="recommendations-content">
 
-      <!-- 推荐列表 -->
-      <view class="recommendations-list">
-        <view class="section-title" wx:if="{{groupedRecommendations.length > 0}}">推荐列表</view>
-        <block wx:for="{{groupedRecommendations}}" wx:key="date" wx:for-item="group">
-          <view class="recommendation-date">
-            <text class="date-text">{{group.date}}</text>
-            <text class="recommendation-count">({{group.items.length}}条推荐)</text>
-          </view>
-          
-          <view class="recommendation-group">
-            <view class="link-card" 
-                  wx:for="{{group.items}}" 
-                  wx:key="uniqueId"
-                  bindtap="handleLinkTap"
-                  data-url="{{item.link}}"
-                  data-snapshot="{{item.snapshot}}">
-              <view class="snapshot-preview" wx:if="{{item.snapshot}}">
-                <image 
-                  class="snapshot-image" 
-                  src="{{item.snapshot}}" 
-                  mode="aspectFill"
-                  lazy-load="true"
-                  binderror="handleImageError"
-                  data-recommend-index="{{index}}"
-                ></image>
-              </view>
-              <view class="link-content">
-                <text class="link-title">{{item.title || '推荐内容'}}</text>
-                <text class="link-description" wx:if="{{item.description}}">{{item.description}}</text>
-                <text class="link-type" wx:if="{{item.type}}">{{item.type}}</text>
-                <text class="link-domain" wx:if="{{item.domain}}">{{item.domain}}</text>
-              </view>
-              <text class="link-arrow">→</text>
-            </view>
-          </view>
-        </block>
-      </view>
-      <!-- 分割线 -->
-      <view class="section-divider" wx:if="{{organizedPlan && groupedRecommendations.length > 0}}"></view>
       <!-- 计划内容显示 -->
       <view class="plan-section" wx:if="{{organizedPlan}}">
         <view class="section-title">AI规划建议</view>
@@ -156,6 +117,46 @@
             </view>
           </view>
         </view>
+      </view>
+      <!-- 分割线 -->
+      <view class="section-divider" wx:if="{{organizedPlan && groupedRecommendations.length > 0}}"></view>
+ 
+      <!-- 推荐列表 -->
+      <view class="recommendations-list">
+        <view class="section-title" wx:if="{{groupedRecommendations.length > 0}}">推荐列表</view>
+        <block wx:for="{{groupedRecommendations}}" wx:key="date" wx:for-item="group">
+          <view class="recommendation-date">
+            <text class="date-text">{{group.date}}</text>
+            <text class="recommendation-count">({{group.items.length}}条推荐)</text>
+          </view>
+          
+          <view class="recommendation-group">
+            <view class="link-card" 
+                  wx:for="{{group.items}}" 
+                  wx:key="uniqueId"
+                  bindtap="handleLinkTap"
+                  data-url="{{item.link}}"
+                  data-snapshot="{{item.snapshot}}">
+              <view class="snapshot-preview" wx:if="{{item.snapshot}}">
+                <image 
+                  class="snapshot-image" 
+                  src="{{item.snapshot}}" 
+                  mode="aspectFill"
+                  lazy-load="true"
+                  binderror="handleImageError"
+                  data-recommend-index="{{index}}"
+                ></image>
+              </view>
+              <view class="link-content">
+                <text class="link-title">{{item.title || '推荐内容'}}</text>
+                <text class="link-description" wx:if="{{item.description}}">{{item.description}}</text>
+                <text class="link-type" wx:if="{{item.type}}">{{item.type}}</text>
+                <text class="link-domain" wx:if="{{item.domain}}">{{item.domain}}</text>
+              </view>
+              <text class="link-arrow">→</text>
+            </view>
+          </view>
+        </block>
       </view>
 
     </scroll-view>

@@ -27,7 +27,7 @@ Page({
                 }
               })
               .then(([aiSettings]) => {
-                if (aiSettings.success && aiSettings.data && aiSettings.data.name) {
+                if (aiSettings.success && aiSettings.data && aiSettings.data.name !== "默认助手") {
                     wx.navigateTo({
                       url: '/pages/preferences/preferences'
                     }); 
