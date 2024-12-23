@@ -361,6 +361,11 @@ class AgentChatService:
         print(f"数据库路径: {db_path}")
         
         try:
+            # 如果数据库文件已存在，先删除
+            if os.path.exists(db_path):
+                os.remove(db_path)
+                print("已删除旧的数据库文件")
+            
             # 确保目录存在
             db_dir = os.path.dirname(db_path)
             if not os.path.exists(db_dir):
@@ -369,18 +374,11 @@ class AgentChatService:
             
             print(f"正在初始化数据库...")
             
-            # 尝试创建数据库连接
+            # 创建数据库连接
             with sqlite3.connect(db_path) as conn:
                 cursor = conn.cursor()
                 
-                print("除旧...")
-                cursor.execute("DROP TABLE IF EXISTS preference_summaries")
-                cursor.execute("DROP TABLE IF EXISTS user_preferences")
-                cursor.execute("DROP TABLE IF EXISTS user_profiles")
-                cursor.execute("DROP TABLE IF EXISTS sessions")
-                cursor.execute("DROP TABLE IF EXISTS users")
-                
-                print("创建数据���...")
+                print("创建数据表...")
                 
                 # 创建用户表
                 print("- 创建 users 表")
@@ -394,7 +392,7 @@ class AgentChatService:
                     )
                 ''')
                 
-                # ���建会话表
+                # 创建会话表
                 print("- 创建 sessions 表")
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS sessions (
@@ -428,7 +426,7 @@ class AgentChatService:
                     )
                 ''')
                 
-                # 创建用户偏好表 - 更新表结构
+                # 创建用户偏好表
                 print("- 创建 user_preferences 表")
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS user_preferences (
@@ -458,7 +456,7 @@ class AgentChatService:
                     )
                 ''')
                 
-                # 添加分享会话表
+                # 创建分享会话表
                 print("- 创建 shared_sessions 表")
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS shared_sessions (
@@ -468,6 +466,21 @@ class AgentChatService:
                         recommendations TEXT,
                         timestamp TEXT,
                         created_at TEXT,
+                        FOREIGN KEY (openid) REFERENCES users (openid)
+                    )
+                ''')
+                
+                # 创建AI设置表
+                print("- 创建 ai_settings 表")
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS ai_settings (
+                        openid TEXT PRIMARY KEY,
+                        name TEXT,
+                        personality TEXT,
+                        speaking_style TEXT,
+                        memories TEXT,
+                        created_at TEXT,
+                        updated_at TEXT,
                         FOREIGN KEY (openid) REFERENCES users (openid)
                     )
                 ''')
@@ -754,7 +767,7 @@ class AgentChatService:
                     # 获取并验证请求数据
                     try:
                         profile_data = request.get_json()
-                        print("解析的���求数据:", profile_data)
+                        print("解析的求数据:", profile_data)
                         
                         # 修改数据库结构以适应新的字段
                         cursor.execute('''
@@ -772,7 +785,7 @@ class AgentChatService:
                             )
                         ''')
                         
-                        # 将数组转换为字符���
+                        # 将数组转换为字符
                         allergies_str = ','.join(profile_data.get('allergies', []))
                         
                         # 更新用户档案
@@ -1130,7 +1143,7 @@ class AgentChatService:
             }), 500
 
     def clear_database(self):
-        """清空���据库中的所有数据"""
+        """清空据库中的所有数据"""
         try:
             with sqlite3.connect('vibebite.db') as conn:
                 cursor = conn.cursor()
@@ -1854,7 +1867,7 @@ class AgentChatService:
             APP_SECRET = os.getenv('WX_APP_SECRET')
             APP_SECRET = "660e8e6bbcf4fd39490e674fa4bad349"
             
-            # 调用微信��口获取openid
+            # 调用微信口获取openid
             url = "https://api.weixin.qq.com/sns/jscode2session"
             params = {
                 'appid': APP_ID,
@@ -1940,6 +1953,10 @@ class AgentChatService:
             data = request.get_json()
             openid = data.get('openid')
             timestamp = data.get('timestamp')
+            name = data.get('name')
+            personality = data.get('personality')
+            speaking_style = data.get('speaking_style')
+            memories = data.get('memories')
             
             if not openid:
                 return jsonify({
@@ -1947,30 +1964,7 @@ class AgentChatService:
                     "message": "缺少openid参数",
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 400
-                        # 从数据库获取AI设置
-            with sqlite3.connect('vibebite.db') as conn:
-                cursor = conn.cursor()
-                
-                cursor.execute('''
-                    SELECT name, personality, speaking_style, memories
-                    FROM ai_settings 
-                    WHERE openid = ?
-                ''', (openid,))
-                
-                result = cursor.fetchone()
-                
-                if result:
-                    name = result[0]
-                    personality = result[1]
-                    speaking_style = result[2]
-                    memories = result[3]
-                else:
-                    # 如果没有设置，返回默认值
-                    name = '默认助手'
-                    personality = '友好、耐心、专业'
-                    speaking_style = '正式但亲切'
-                    memories = '我是一个AI助手，我的目标是帮助用户解决问题。'
-            
+
             # 构建新的system prompt
             system_prompt = f"""你是一个名叫{name}的AI助手。
 
@@ -2280,7 +2274,6 @@ class AgentChatService:
 # 创建服实例
 service = AgentChatService()
 service.clear_database()
-
 if __name__ == '__main__':
     asyncio.run(service.run()) 
     service.run_flask(port=8080)
