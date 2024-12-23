@@ -81,41 +81,10 @@ Page({
     } else {
       this.addMessage('ai', '你好！我是你的AI助手。我可以帮你推荐餐厅，你想吃什么类型的食物？');
     }
-    
-    this.startPeriodicRecommendations();
-  },
-
-  startPeriodicRecommendations() {
-    this.recommendationTimer = setInterval(() => {
-      this.checkAndUpdateRecommendations();
-    }, 30000);
   },
 
   onUnload() {
-    if (this.recommendationTimer) {
-      clearInterval(this.recommendationTimer);
-    }
-  },
-
-  async checkAndUpdateRecommendations() {
-    const currentTime = Date.now();
-    if (
-      currentTime - this.data.lastRecommendationTime > 120000 && 
-      (this.shouldUpdateRecommendations() || this.data.forceUpdate)
-    ) {
-      await this.fetchLatestRecommendations();
-      this.setData({ forceUpdate: false });
-    }
-  },
-
-  shouldUpdateRecommendations() {
-    const recentMessages = this.data.messages.slice(-5);
-    const triggerKeywords = ['推荐', '建议'];
-    return recentMessages.some(msg => 
-      triggerKeywords.some(keyword => 
-        msg.content.includes(keyword)
-      )
-    );
+    // 如果有其他清理代码，保留在这里
   },
 
   async fetchLatestRecommendations() {
@@ -202,13 +171,10 @@ Page({
           title: item.title || this.extractTitle(item.link) || '推荐内容'
         }));
 
-        // 将新推荐添加到历史记录中
+        // 直接将新推荐添加到历史记录末尾，保持原始顺序
         const updatedHistory = [...this.data.recommendationHistory, ...newRecommendations];
 
-        // 按时间戳排序，最新的在前面
-        updatedHistory.sort((a, b) => b.timestamp - a.timestamp);
-
-        // 按日期分组
+        // 按日期分组，保持原始顺序
         const groupedRecommendations = this.groupRecommendationsByDate(updatedHistory);
 
         this.setData({
@@ -390,19 +356,25 @@ Page({
   toggleRecommendations() {
     const { showRecommendations } = this.data;
     if (!showRecommendations) {
-      // 打开浮动窗口时，先显示历史记录
-      const groupedRecommendations = this.groupRecommendationsByDate(this.data.recommendationHistory);
-      this.setData({
-        groupedRecommendations,
-        showRecommendations: true
+      // 显示加载中提示
+      wx.showLoading({
+        title: '获取推荐中...',
+        mask: true
       });
       
-      // 同时获取新的推荐
-      this.setData({ forceUpdate: true });  // 强制更新标志
+      // 获取新的推荐
       this.fetchLatestRecommendations().then(() => {
-        console.log('获取新推荐成功');
+        this.setData({
+          showRecommendations: true
+        });
+        wx.hideLoading();
       }).catch(error => {
         console.error('获取新推荐失败:', error);
+        wx.hideLoading();
+        wx.showToast({
+          title: '获取推荐失败',
+          icon: 'none'
+        });
       });
     } else {
       this.setData({
@@ -597,32 +569,29 @@ Page({
     const groups = {};
     const today = new Date().toLocaleDateString('zh-CN');
     
-    // 按日期分组
+    // 按日期分组，保持原始顺序
     recommendations.forEach(item => {
       const date = item.formattedDate || today;
       if (!groups[date]) {
         groups[date] = [];
       }
-      groups[date].push({...item});  // 创建新对象避免引用问题
+      groups[date].push({...item});
     });
     
     // 转换为数组格式
-    const result = [];
-    for (let date in groups) {
-      result.push({
-        date,
-        items: groups[date].sort((a, b) => b.timestamp - a.timestamp)  // 确保每组内部也是按时间排序
-      });
-    }
+    const result = Object.entries(groups).map(([date, items]) => ({
+      date,
+      // 保持每组内的原始顺序
+      items: items
+    }));
     
-    // 按日期倒序排序
+    // 按日期正序排序（早的日期在前）
     result.sort((a, b) => {
       const dateA = new Date(a.date.replace(/年|月|日/g, '/'));
       const dateB = new Date(b.date.replace(/年|月|日/g, '/'));
-      return dateB - dateA;
+      return dateA - dateB;
     });
     
-    console.log('分组结果:', result);
     return result;
   },
 

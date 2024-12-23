@@ -19,7 +19,6 @@
         open-type="getUserInfo" 
         bindgetuserinfo="handleWechatLogin"
       >
-        <image class="wechat-icon" src="/images/logo.png" mode="aspectFit"></image>
         <text>微信一键登录</text>
       </button>
       
