@@ -28,6 +28,7 @@ class AgentChatService:
         self.rag_tools = None
         self.agents: Dict[str, Agent] = {}
         self.groups: Dict[str, Group] = {}
+        self.location = None
         
         print("\n=== 开始初始化服务 ===")
         
@@ -57,12 +58,11 @@ class AgentChatService:
         """注册所有路由"""
         self.app.route('/initAgent', methods=['POST'])(self.init_agent)
         self.app.route('/chat_agent', methods=['POST'])(self.chat_agent)
-        self.app.route('/do_simulation', methods = ['POST'])(self.do_simulation)
         self.app.route('/ai_status', methods=['POST'])(self.ai_status)
         self.app.route('/api/login', methods=['POST'])(self.wx_login)
         self.app.route('/api/protected_resource', methods=['GET'])(self.protected_resource)
         self.app.route('/api/user/profile', methods=['GET', 'POST'])(self.user_profile)
-        self.app.route('/api/preferences', methods=['GET', 'POST'])(self.user_preferences)
+        self.app.route('/api/preferences', methods=['POST'])(self.update_preferences)
         self.app.route('/api/preferences/summary', methods=['POST'])(self.get_preferences_summary)
         self.app.route('/api/recommendations', methods=['POST'])(self.get_recommendations)
         self.app.route('/api/share/save', methods=['POST'])(self.save_shared_session)
@@ -70,6 +70,7 @@ class AgentChatService:
         self.app.route('/api/update_pref', methods=['POST'])(self.update_user_preferences)
         self.app.route('/api/wx/openid', methods=['POST'])(self.get_wx_openid)
         self.app.route('/api/ai/settings', methods=['GET', 'POST'])(self.ai_settings)
+        self.app.route('/api/feedback', methods=['POST'])(self.save_feedback)
 
     def init_components(self):
         """初始化所有组件"""
@@ -108,7 +109,7 @@ class AgentChatService:
 1. 每一个字段都要是中文且有值
 2. 返回的内容要符合你的性格特征和说话风格
 3. 在thought中可以提到你的重要记忆""",
-            "intent_summary": "你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，结果用list格式返回。如：['吃三文鱼']或['喝鸡尾酒']，要求容易被输入到谷歌搜索。"
+            "intent_summary": "你是一个意图分析专家，请根据对话历史，分析用户的意图，提取用户今天的约会期望内容，注意不要出现具体店名，输出大方向类别，结果用list格式返回。如：['吃三文鱼']或['喝鸡尾酒']，要求容易被输入到谷歌搜索。"
         }
         for task_name, prompt in base_prompts.items():
             self.prompt_manager.add_prompt(task_name, prompt)
@@ -273,53 +274,6 @@ class AgentChatService:
             "response": responses,
             "response_time": f"{time.time() - start_time:.3f}s"
         })
-    
-
-    async def do_simulation(self):
-        data = request.get_json()
-
-        rounds = 3
-        agent_id = data.get('agent_id')
-        message = data.get('message')
-        task = data.get('task_name', 'chat')
-        group_id = data.get('group_id', 'main_group')
-        """模拟个Agent的讨论过程"""
-        print(f"\n开始讨论任务: {task}\n")
-        self.analyzer = self.agents["1"]
-        self.solver = self.agents["2"]
-        # 第一轮：分析专家分析问题
-        print("=== 第1轮：问题分析 ===")
-        analysis = await self.analyzer.process_task(task, message)
-        print(f"分析专家：{analysis}\n")
-        
-        # 第二轮：解决方案专家提出初步方案
-        print("=== 第2轮初步方案 ===")
-        initial_solution = await self.solver.process_task(task, 
-            f"基于以下分析，请提出初解决方案：\n{analysis}\n原始任务：{task}")
-        print(f"方案专家：{initial_solution}\n")
-        
-        # 后续轮次：讨论优化
-        for i in range(3, rounds + 1):
-            print(f"=== 第{i}轮：方案优化 ===")
-            
-            # 分析专家评估方案
-            analysis_feedback = await self.analyzer.process_task(task,
-                f"请评估个解决方案，指出潜在问题和改进建议：\n{initial_solution}")
-            print(f"分析专家：{analysis_feedback}\n")
-            
-            # 方案专家优化方案
-            improved_solution = await self.solver.process_task(task,
-                f"根据以下反馈优化解决方案：\n{analysis_feedback}")
-            print(f"方案专家：{improved_solution}\n")
-            
-            initial_solution = improved_solution
-        
-        print("=== 讨论结束 ===")
-        return {
-            "task": task,
-            #"final_solution": initial_solution,
-            "discussion_rounds": rounds
-        }
         
     async def run(self):
         """运行服务"""
@@ -550,13 +504,16 @@ class AgentChatService:
             print(f"获取用户信息错误: {str(e)}")
             return None
 
-    def update_user_preferences(self):
-        """更新用户偏好并更新agent的prompt"""
+    def update_preferences(self):
+        """更新用户偏好"""
         start_time = time.time()
-        print("更新用户偏好")
+        
         try:
             data = request.get_json()
-            openid = data.get('openid')  # 直接使用openid
+            openid = data.get('openid')
+            preferences_data = data.get('preferences', {})
+            user_input = preferences_data.get('userInput', '')
+            timestamp = data.get('timestamp')
             
             if not openid:
                 return jsonify({
@@ -564,6 +521,101 @@ class AgentChatService:
                     "message": "缺少openid参数",
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 400
+            
+            try:
+                # 提取关键词
+                keywords = [word.strip() for word in user_input.split() if word.strip()]
+                keywords_str = ','.join(keywords)
+                
+                # 更新数据库
+                with sqlite3.connect('vibebite.db') as conn:
+                    cursor = conn.cursor()
+                    
+                    # 更新用户偏好,只保存用户输入和关键词
+                    cursor.execute('''
+                        INSERT OR REPLACE INTO user_preferences 
+                        (openid, custom_description, extracted_keywords, created_at, updated_at)
+                        VALUES (?, ?, ?,
+                            COALESCE((SELECT created_at FROM user_preferences WHERE openid = ?), CURRENT_TIMESTAMP),
+                            CURRENT_TIMESTAMP)
+                    ''', (
+                        openid,
+                        user_input,  # 保存原始用户输入
+                        keywords_str,  # 保存提取的关键词
+                        openid
+                    ))
+                    
+                    conn.commit()
+                    
+                    return jsonify({
+                        "success": True,
+                        "message": "用户偏好更新成功",
+                        "data": {
+                            "originalInput": user_input,
+                            "extractedKeywords": keywords
+                        },
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    })
+                    
+            except sqlite3.Error as e:
+                print(f"数据库操作错误: {str(e)}")
+                return jsonify({
+                    "success": False,
+                    "message": "数据库操作失败",
+                    "details": str(e),
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 500
+                
+        except Exception as e:
+            print(f"更新用户偏好错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "更新用户偏好失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
+
+
+    def update_user_preferences(self):
+        """更新用户偏好并更新agent的prompt"""
+        start_time = time.time()
+        print("更新用户偏好")
+        try:
+            data = request.get_json()
+            openid = data.get('openid')  # 直接使用openid
+            summary = data.get('summary')
+            print("summary: ", summary)
+        
+            if not openid:
+                return jsonify({
+                    "success": False,
+                    "message": "缺少openid参数",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 400
+            
+            # 如果有新的summary传入，更新数据库
+            if summary:
+                try:
+                    with sqlite3.connect('vibebite.db') as conn:
+                        cursor = conn.cursor()
+                        # 更新或插入新的summary
+                        cursor.execute('''
+                            INSERT OR REPLACE INTO preference_summaries 
+                            (openid, summary, created_at, updated_at)
+                            VALUES (?, ?, 
+                                COALESCE((SELECT created_at FROM preference_summaries WHERE openid = ?), CURRENT_TIMESTAMP),
+                                CURRENT_TIMESTAMP)
+                        ''', (openid, summary, openid))
+                        conn.commit()
+                        print(f"已更新用户 {openid} 的偏好总结")
+                except sqlite3.Error as e:
+                    print(f"更新偏好总结数据库错误: {str(e)}")
+                    return jsonify({
+                        "success": False,
+                        "message": "更新偏好总结失败",
+                        "details": str(e),
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    }), 500
             
             # 获取用户偏好总结
             with sqlite3.connect('vibebite.db') as conn:
@@ -854,6 +906,9 @@ class AgentChatService:
         try:
             data = request.get_json()
             code = data.get('code')
+            self.location = data.get('location')
+            print("location: ", self.location)
+            print("data: ", data)
             if not code:
                 return jsonify({
                     "success": False,
@@ -988,160 +1043,6 @@ class AgentChatService:
             "response_time": f"{time.time() - start_time:.3f}s"
         })
 
-    def user_preferences(self):
-        """处理用户偏好的获取和更新"""
-        if request.method == 'GET':
-            return self.get_preferences()
-        else:  # POST
-            return self.update_preferences()
-
-    def get_preferences(self):
-        """获取用户偏好"""
-        start_time = time.time()
-        
-        try:
-            data = request.args
-            openid = data.get('openid')
-            
-            if not openid:
-                return jsonify({
-                    "success": False,
-                    "message": "缺少openid参数",
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                }), 400
-            
-            try:
-                with sqlite3.connect('vibebite.db') as conn:
-                    cursor = conn.cursor()
-                    
-                    # 获取用户偏好数据
-                    cursor.execute('''
-                        SELECT dining_scene, dining_styles, flavor_preferences,
-                               alcohol_attitude, restrictions, custom_description,
-                               extracted_keywords
-                        FROM user_preferences 
-                        WHERE openid = ?
-                    ''', (openid,))
-                    
-                    result = cursor.fetchone()
-                    
-                    if result:
-                        preferences = {
-                            'diningScene': result[0],
-                            'diningStyles': result[1].split(',') if result[1] else [],
-                            'flavorPreferences': result[2].split(',') if result[2] else [],
-                            'alcoholAttitude': result[3],
-                            'restrictions': result[4],
-                            'customDescription': result[5],
-                            'extractedKeywords': result[6].split(',') if result[6] else []
-                        }
-                    else:
-                        # 如果没有设置，返回空值
-                        preferences = {
-                            'diningScene': '',
-                            'diningStyles': [],
-                            'flavorPreferences': [],
-                            'alcoholAttitude': '',
-                            'restrictions': '',
-                            'customDescription': '',
-                            'extractedKeywords': []
-                        }
-                    
-                    return jsonify({
-                        "success": True,
-                        "data": preferences,
-                        "response_time": f"{time.time() - start_time:.3f}s"
-                    })
-                    
-            except sqlite3.Error as e:
-                print(f"数据库操作错误: {str(e)}")
-                return jsonify({
-                    "success": False,
-                    "message": "数据库操作失败",
-                    "details": str(e),
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                }), 500
-                
-        except Exception as e:
-            print(f"获取用户偏好错误: {str(e)}")
-            return jsonify({
-                "success": False,
-                "message": "获取用户偏好失败",
-                "details": str(e),
-                "response_time": f"{time.time() - start_time:.3f}s"
-            }), 500
-
-    def update_preferences(self):
-        """更新用户偏好"""
-        start_time = time.time()
-        
-        try:
-            data = request.get_json()
-            openid = data.get('openid')
-            preferences_data = data.get('preferences', {})
-            user_input = preferences_data.get('userInput', '')
-            timestamp = data.get('timestamp')
-            
-            if not openid:
-                return jsonify({
-                    "success": False,
-                    "message": "缺少openid参数",
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                }), 400
-            
-            try:
-                # 提取关键词
-                keywords = [word.strip() for word in user_input.split() if word.strip()]
-                keywords_str = ','.join(keywords)
-                
-                # 更新数据库
-                with sqlite3.connect('vibebite.db') as conn:
-                    cursor = conn.cursor()
-                    
-                    # 更新用户偏好,只保存用户输入和关键词
-                    cursor.execute('''
-                        INSERT OR REPLACE INTO user_preferences 
-                        (openid, custom_description, extracted_keywords, created_at, updated_at)
-                        VALUES (?, ?, ?,
-                            COALESCE((SELECT created_at FROM user_preferences WHERE openid = ?), CURRENT_TIMESTAMP),
-                            CURRENT_TIMESTAMP)
-                    ''', (
-                        openid,
-                        user_input,  # 保存原始用户输入
-                        keywords_str,  # 保存提取的关键词
-                        openid
-                    ))
-                    
-                    conn.commit()
-                    
-                    return jsonify({
-                        "success": True,
-                        "message": "用户偏好更新成功",
-                        "data": {
-                            "originalInput": user_input,
-                            "extractedKeywords": keywords
-                        },
-                        "response_time": f"{time.time() - start_time:.3f}s"
-                    })
-                    
-            except sqlite3.Error as e:
-                print(f"数据库操作错误: {str(e)}")
-                return jsonify({
-                    "success": False,
-                    "message": "数据库操作失败",
-                    "details": str(e),
-                    "response_time": f"{time.time() - start_time:.3f}s"
-                }), 500
-                
-        except Exception as e:
-            print(f"更新用户偏好错误: {str(e)}")
-            return jsonify({
-                "success": False,
-                "message": "更新用户偏好失败",
-                "details": str(e),
-                "response_time": f"{time.time() - start_time:.3f}s"
-            }), 500
-
     def clear_database(self):
         """清空据库中的所有数据"""
         try:
@@ -1212,7 +1113,7 @@ class AgentChatService:
                     keywords = result[1].split(',') if result[1] else []
                     
                     # 构建提示词
-                    prompt = f"""请根据用户输入，为用户的偏好生成深圳本地有特点的推荐搭配。猜你喜欢部分：要求根据用户的输入进行扩充和思考，分析用户饮食偏好（口味、场景、风格），喜欢什么样餐厅（环境、菜品、服务），可以有什么样子的行程（时间、地点、活动）。
+                    prompt = f"""请根据用户输入，为用户的偏好生成 {self.location} 本地有特点的推荐搭配。猜你喜欢部分：要求根据用户的输入进行扩充和思考，分析用户饮食偏好（口味、场景、风格），喜欢什么样餐厅（环境、菜品、服务），可以有什么样子的行程（时间、地点、活动）。
 
                     奇思妙想部分：要求根据用户的输入，推荐几个具体餐厅、饮品、活动等，内容多一些，每一段用；分隔。
 
@@ -1286,7 +1187,7 @@ class AgentChatService:
         
         try:
             data = request.get_json()
-            location = data.get('location', '深圳')
+            location = data.get('location')
             timestamp = data.get('timestamp')
             openid = data.get('openid')
             
@@ -1309,7 +1210,7 @@ class AgentChatService:
             
             recommendations = []
             images = []
-            location = "深圳"
+            location = self.location
             # 根据每个意图进行搜索
             for idx, intent in enumerate(intent_list[:3]):
                 search_query = f"{intent} {location} 推荐"
@@ -1325,7 +1226,8 @@ class AgentChatService:
                         "q": search_query,
                         "gl": "cn",
                         "hl": "zh-cn",
-                        "location": "中国"
+                        "location": "中国",
+                        "num": 1
                     }
                 
                     try:
@@ -2270,6 +2172,109 @@ class AgentChatService:
         except Exception as e:
             print(f"提取meta关键词失败: {str(e)}")
             return []
+
+    def save_feedback(self):
+        """保存用户反馈"""
+        start_time = time.time()
+        
+        try:
+            data = request.get_json()
+            openid = data.get('openid')
+            content = data.get('content')
+            contact = data.get('contactInfo')
+            timestamp = data.get('timestamp')
+            
+            # 记录详细日志
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            log_message = (
+                f"\n=== 用户反馈 ===\n"
+                f"时间: {current_time}\n"
+                f"用户ID: {openid}\n"
+                f"反馈内容: {content}\n"
+                f"联系方式: {contact}\n"
+                f"客户端时间戳: {timestamp}\n"
+                f"==================\n"
+            )
+            
+            # 确保日志目录存在
+            log_dir = "logs"
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
+                
+            # 写入日志文件
+            log_file = os.path.join(log_dir, f"feedback_{datetime.now().strftime('%Y%m')}.log")
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(log_message)
+            
+            if not openid or not content:
+                print(f"反馈参数缺失: openid={openid}, content={content}")
+                return jsonify({
+                    "success": False,
+                    "message": "缺少必要参数",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 400
+                
+            try:
+                with sqlite3.connect('vibebite.db') as conn:
+                    cursor = conn.cursor()
+                    
+                    # 创建反馈表（如果不存在）
+                    cursor.execute('''
+                        CREATE TABLE IF NOT EXISTS user_feedback (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            openid TEXT NOT NULL,
+                            content TEXT NOT NULL,
+                            contact TEXT,
+                            timestamp TEXT,
+                            created_at TEXT NOT NULL,
+                            FOREIGN KEY (openid) REFERENCES users (openid)
+                        )
+                    ''')
+                    
+                    # 保存反馈
+                    cursor.execute('''
+                        INSERT INTO user_feedback 
+                        (openid, content, contact, timestamp, created_at)
+                        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+                    ''', (openid, content, contact, str(timestamp)))
+                    
+                    conn.commit()
+                    
+                    # 记录成功保存的日志
+                    print(f"反馈保存成功: {log_message}")
+                    
+                    return jsonify({
+                        "success": True,
+                        "message": "反馈已保存",
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    })
+                    
+            except sqlite3.Error as e:
+                error_message = f"保存反馈到数据库错误: {str(e)}"
+                print(error_message)
+                # 记录错误日志
+                with open(log_file, 'a', encoding='utf-8') as f:
+                    f.write(f"错误: {error_message}\n")
+                return jsonify({
+                    "success": False,
+                    "message": "保存反馈失败",
+                    "details": str(e),
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 500
+                
+        except Exception as e:
+            error_message = f"处理反馈请求错误: {str(e)}"
+            print(error_message)
+            # 记录错误日志
+            log_file = os.path.join("logs", f"feedback_{datetime.now().strftime('%Y%m')}.log")
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(f"错误: {error_message}\n")
+            return jsonify({
+                "success": False,
+                "message": "处理反馈失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
 
 # 创建服实例
 service = AgentChatService()
