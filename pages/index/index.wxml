@@ -1,6 +1,5 @@
 <!--index.wxml-->
 <view class="container">
-  <!-- 主要内容区域 -->
   <view class="main-content">
     <!-- AI状态卡片 -->
     <view class="card ai-status-card">
@@ -27,26 +26,53 @@
       
       <view class="preferences-content">
         <view class="recommendations-list">
-          <view class="recommendation-category" 
-                wx:for="{{preferences.recommendations}}" 
-                wx:key="type">
+          <view class="recommendation-category" wx:for="{{preferences.recommendations}}" wx:key="type">
             <view class="category-header">
               <view class="category-icon">{{item.icon}}</view>
               <text class="category-title">{{item.type}}</text>
+              <view class="add-btn" wx:if="{{openid}}" catchtap="handleAdd" data-category-index="{{index}}">
+                <text class="add-icon">➕</text>
+              </view>
             </view>
             
             <view class="recommendation-items">
-              <view class="recommendation-item" 
-                    wx:for="{{item.items}}" 
-                    wx:key="description" 
-                    wx:for-item="subItem">
+              <view class="recommendation-item" wx:for="{{item.items}}" wx:key="description" wx:for-item="subItem" wx:for-index="subIndex">
                 <view class="item-content">
-                  <text class="rich-content">{{subItem.description}}</text>
+                  <view class="item-header">
+                    <view class="delete-btn" wx:if="{{openid && item.items.length > 1}}" catchtap="handleDelete" data-category-index="{{index}}" data-item-index="{{subIndex}}">
+                      <text class="delete-icon">🗑️</text>
+                    </view>
+                  </view>
+                  
+                  <view class="text-container {{openid ? 'editable' : ''}} {{editingItem && editingItem.categoryIndex === index && editingItem.itemIndex === subIndex ? 'editing' : ''}}" data-category-index="{{index}}" data-item-index="{{subIndex}}" catchtap="{{openid ? 'handleEdit' : ''}}">
+                    <view class="rich-content">{{subItem.description}}</view>
+                    <view class="edit-hint" wx:if="{{openid}}">
+                      <text class="edit-icon">✎</text>
+                    </view>
+                  </view>
+                  
+                  <block wx:if="{{editingItem && editingItem.categoryIndex === index && editingItem.itemIndex === subIndex}}">
+                    <view class="edit-mask" catchtap="handleCancel"></view>
+                    <view class="edit-wrapper">
+                      <textarea class="edit-textarea" 
+                                value="{{editingItem.originalText}}" 
+                                auto-height 
+                                focus 
+                                maxlength="-1" 
+                                show-confirm-bar="{{false}}" 
+                                adjust-position="{{true}}" 
+                                bindinput="handleInput" 
+                                placeholder="请输入内容">
+                      </textarea>
+                      <view class="edit-actions">
+                        <text class="cancel-btn" catchtap="handleCancel">取消</text>
+                        <text class="save-btn" catchtap="handleSave">保存</text>
+                      </view>
+                    </view>
+                  </block>
+                  
                   <view class="highlight-tags" wx:if="{{subItem.highlights.length > 0}}">
-                    <text class="highlight-tag" 
-                          wx:for="{{subItem.highlights}}" 
-                          wx:key="*this" 
-                          wx:for-item="tag">{{tag}}</text>
+                    <text class="highlight-tag" wx:for="{{subItem.highlights}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
                   </view>
                 </view>
               </view>

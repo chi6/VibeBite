@@ -2,11 +2,8 @@
   "pages": [
     "pages/login/login",
     "pages/index/index",
-    "pages/mood/mood",
     "pages/recommendation/recommendation",
-    "pages/history/history",
     "pages/webview/webview",
-    "pages/user-info/user-info",
     "pages/preferences/preferences",
     "pages/ai-customization/ai-customization",
     "pages/ai-chat/ai-chat"
@@ -20,7 +17,7 @@
   },
   "permission": {
     "scope.userLocation": {
-      "desc": "你的位置信息将用于获取附近的推荐内容"
+      "desc": "您的位置信息将用于提供更好的服务"
     }
   },
   "style": "v2",

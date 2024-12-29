@@ -1,6 +1,6 @@
 /**index.wxss**/
 page {
-  background: #f5f7fa;
+  background: linear-gradient(135deg, #f6f9fc, #edf1f7);
 }
 
 .container {
@@ -23,7 +23,9 @@ page {
 }
 
 .ai-status-card {
-  background: linear-gradient(145deg, #7F7FD5, #86A8E7, #91EAE4);
+  background: linear-gradient(145deg, #7F7FD5, #91EAE4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8rpx 32rpx rgba(127, 127, 213, 0.2);
 }
 
 .ai-header {
@@ -82,7 +84,9 @@ page {
 
 /* 餐饮喜好卡片 */
 .preferences-card {
-  background: linear-gradient(135deg, #fff5f5, #fff);
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.05);
 }
 
 .card-header {
@@ -179,8 +183,8 @@ page {
 
 .gradient-bg {
   background: linear-gradient(135deg, #6a11cb, #2575fc);
-  border-radius: 24rpx;
-  overflow: hidden;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(42, 117, 252, 0.2);
 }
 
 .chat-btn-content {
@@ -229,51 +233,35 @@ page {
 /* 适配暗黑模式 */
 @media (prefers-color-scheme: dark) {
   page {
-    background: #1a1a1a;
+    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
   }
   
-  .card {
-    background: #2a2a2a;
-  }
-  
-  .card-title {
-    color: #fff;
+  .ai-status-card {
+    background: linear-gradient(145deg, #4a4a8f, #4a8f8f);
+    border-color: rgba(255, 255, 255, 0.1);
   }
   
   .preferences-card {
-    background: linear-gradient(135deg, #2a2a2a, #333);
+    background: #2a2a2a;
+    border-color: rgba(255, 255, 255, 0.1);
   }
   
-  .preferences-content {
-    background: rgba(0, 0, 0, 0.2);
+  .recommendation-category {
+    background: linear-gradient(145deg, #2a2a2a, #333);
+    border-color: rgba(255, 255, 255, 0.1);
   }
   
-  .preferences-summary {
-    color: #ccc;
+  .recommendation-item {
+    background: linear-gradient(145deg, rgba(45, 45, 45, 0.9), rgba(40, 40, 40, 0.7));
+    border-color: rgba(255, 255, 255, 0.1);
   }
   
-  .ai-thought {
-    color: #999;
+  .chat-btn.gradient-bg {
+    background: linear-gradient(135deg, #4a4a8f, #4a8f8f);
   }
   
-  .pref-item, .pref-recommend {
-    background: rgba(255, 255, 255, 0.1);
-  }
-  
-  .pref-label {
-    color: #999;
-  }
-  
-  .pref-value, .recommend-title {
-    color: #fff;
-  }
-  
-  .recommend-content {
-    color: #ccc;
-  }
-  
-  .pref-icon {
-    background: rgba(255, 255, 255, 0.15);
+  .add-btn {
+    background: linear-gradient(135deg, #4a8f8f, #4a4a8f);
   }
 }
 
@@ -368,18 +356,15 @@ page {
 
 /* 更新推荐卡片相关样式 */
 .recommendation-category {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-  border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
 }
 
 .category-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 24rpx;
   padding-bottom: 20rpx;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
@@ -400,6 +385,8 @@ page {
 }
 
 .category-title {
+  flex: 1;
+  margin: 0 16rpx;
   font-size: 34rpx;
   color: #333;
   font-weight: 600;
@@ -409,16 +396,16 @@ page {
 .recommendation-items {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
+  gap: 12rpx;
 }
 
 .recommendation-item {
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 16rpx;
-  padding: 24rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.03);
   transition: transform 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .recommendation-item:active {
@@ -426,11 +413,14 @@ page {
 }
 
 .item-header {
-  margin-bottom: 16rpx;
   display: flex;
-  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 0;
   width: 100%;
-  box-sizing: border-box;
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+  z-index: 1;
 }
 
 .item-title {
@@ -444,13 +434,19 @@ page {
 .item-content {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
+  gap: 8rpx;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .rich-content {
   font-size: 28rpx;
-  color: #666;
   line-height: 1.6;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 40rpx;
 }
 
 .highlight {
@@ -462,8 +458,8 @@ page {
 .highlight-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
-  margin-top: 12rpx;
+  gap: 8rpx;
+  margin-top: 8rpx;
 }
 
 .highlight-tag {
@@ -538,4 +534,369 @@ page {
   .preferences-content::after {
     background: linear-gradient(to top, rgba(26, 26, 26, 1), rgba(26, 26, 26, 0));
   }
+}
+
+/* 添加编辑相关样式 */
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.edit-controls {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 10rpx;
+}
+
+.edit-btn, .save-btn {
+  font-size: 24rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 30rpx;
+  background: rgba(37, 117, 252, 0.1);
+  color: #2575fc;
+  border: 1px solid rgba(37, 117, 252, 0.2);
+  line-height: 1.4;
+}
+
+.save-btn {
+  background: #2575fc;
+  color: #fff;
+}
+
+.edit-textarea {
+  width: 100%;
+  min-height: 120rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  padding: 20rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #2575fc;
+  border-radius: 8rpx;
+  background: #fff;
+  margin-bottom: 16rpx;
+  color: #333;
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .edit-btn {
+    background: rgba(134, 168, 231, 0.15);
+    color: #86a8e7;
+    border-color: rgba(134, 168, 231, 0.3);
+  }
+  
+  .save-btn {
+    background: #86a8e7;
+    color: #fff;
+  }
+  
+  .edit-textarea {
+    background: #2a2a2a;
+    border-color: #86a8e7;
+    color: #fff;
+  }
+}
+
+/* 更新编辑相关样式 */
+.edit-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+/* 添加遮罩层 */
+.edit-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.edit-textarea {
+  width: 100%;
+  min-height: 200rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  padding: 20rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #2575fc;
+  border-radius: 8rpx;
+  background: #fff;
+  margin-bottom: 16rpx;
+  color: #333;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20rpx;
+  padding-top: 10rpx;
+}
+
+.cancel-btn, .save-btn {
+  font-size: 26rpx;
+  padding: 8rpx 24rpx;
+  border-radius: 30rpx;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  color: #666;
+  background: #f5f5f5;
+}
+
+.save-btn {
+  color: #fff;
+  background: #2575fc;
+}
+
+.cancel-btn:active, .save-btn:active {
+  opacity: 0.8;
+}
+
+.text-container {
+  position: relative;
+  padding: 16rpx 80rpx 16rpx 16rpx;
+  border-radius: 12rpx;
+  background: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.editable {
+  cursor: pointer;
+}
+
+.editable:active {
+  background: rgba(37, 117, 252, 0.05);
+}
+
+.edit-hint {
+  position: absolute;
+  right: 16rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.edit-icon {
+  font-size: 32rpx;
+  color: #2575fc;
+  padding: 8rpx;
+}
+
+.editable:hover .edit-hint {
+  opacity: 1;
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .edit-wrapper {
+    background: #2a2a2a;
+  }
+  
+  .edit-textarea {
+    background: #2a2a2a;
+    border-color: #86a8e7;
+    color: #fff;
+  }
+  
+  .cancel-btn {
+    background: #333;
+    color: #999;
+  }
+  
+  .save-btn {
+    background: #86a8e7;
+  }
+  
+  .text-container {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .editable:active {
+    background: rgba(134, 168, 231, 0.15);
+  }
+  
+  .edit-icon {
+    color: #86a8e7;
+  }
+}
+
+/* 移除所有旧的编辑按钮样式 */
+.edit-controls,
+.edit-btn,
+.header-right {
+  display: none !important;
+}
+
+/* 添加富文本样式 */
+.rich-content {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #333;
+}
+
+@media (prefers-color-scheme: dark) {
+  .rich-content {
+    color: #fff;
+  }
+}
+
+/* 确保文本容器在编辑时隐藏 */
+.text-container.editing {
+  visibility: hidden;
+}
+
+/* 添加删除按钮相关样式 */
+.edit-actions-container {
+  position: absolute;
+  right: 16rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 16rpx;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.delete-hint {
+  cursor: pointer;
+}
+
+.delete-icon {
+  font-size: 32rpx;
+  color: #ff4d4f;
+  padding: 8rpx;
+}
+
+.editable:hover .edit-actions-container {
+  opacity: 1;
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .delete-icon {
+    color: #ff7875;
+  }
+}
+
+/* 更新删除按钮样式 */
+.item-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0;
+  width: 100%;
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+  z-index: 1;
+}
+
+.delete-btn {
+  padding: 4rpx;
+  border-radius: 50%;
+  background: rgba(255, 77, 79, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 32rpx;
+  height: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8rpx;
+}
+
+.delete-btn:active {
+  background: rgba(255, 77, 79, 0.2);
+}
+
+.delete-icon {
+  font-size: 24rpx;
+  color: #ff4d4f;
+  line-height: 1;
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .delete-btn {
+    background: rgba(255, 77, 79, 0.2);
+  }
+  
+  .delete-icon {
+    color: #ff7875;
+  }
+}
+
+/* 移除旧的删除按钮样式 */
+.edit-actions-container,
+.delete-hint {
+  display: none !important;
+}
+
+/* 添加新增按钮样式 */
+.add-btn {
+  padding: 8rpx;
+  border-radius: 50%;
+  background: rgba(37, 117, 252, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.add-btn:active {
+  background: rgba(37, 117, 252, 0.2);
+}
+
+.add-icon {
+  font-size: 32rpx;
+  color: #2575fc;
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .add-btn {
+    background: rgba(134, 168, 231, 0.15);
+  }
+  
+  .add-icon {
+    color: #86a8e7;
+  }
+}
+
+/* 添加卡片悬停效果 */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2rpx);
+  box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 添加渐变边框效果 */
+.recommendation-category::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #7F7FD5, #91EAE4);
+  z-index: -1;
+  opacity: 0.1;
 }

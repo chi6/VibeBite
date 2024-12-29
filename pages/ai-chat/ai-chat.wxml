@@ -33,7 +33,7 @@
       <block wx:for="{{messages}}" wx:key="id">
         <view id="msg-{{item.id}}" class="message {{item.type}}">
           <view class="avatar">
-            <image src="{{item.type === 'user' ? '/images/logo.png' : '/images/headphoto.jpeg'}}" mode="aspectFit"></image>
+            <image src="{{item.type === 'user' ? '/images/logo.png' : '/images/logo.png'}}" mode="aspectFit"></image>
           </view>
           <view class="content-wrapper">
             <view class="content">{{item.content}}</view>
@@ -44,9 +44,12 @@
     </scroll-view>
   </view>
 
-  <!-- 在聊天容器下方添加一个触发按钮 -->
-  <view class="trigger-recommendations" bindtap="toggleRecommendations">
-    <image src="/images/logo.png" mode="aspectFill"></image>
+  <!-- 修改推荐触发按钮 -->
+  <view class="trigger-recommendations {{showRecommendations ? 'active' : ''}}" bindtap="toggleRecommendations">
+    <view class="trigger-inner">
+        <text class="trigger-icon">🎯</text>
+        <text class="trigger-text">智能推荐</text>
+    </view>
   </view>
 
   <!-- 添加遮罩层 -->
@@ -201,4 +204,45 @@
       </view>
     </view>
   </view>
+
+  <!-- 修改浮动窗口触发按钮 -->
+  <view class="trigger-floating" bindtap="toggleFloatingWindow">
+    <view class="trigger-inner">
+      <text class="trigger-icon">💡</text>
+      <text class="trigger-text">意见反馈</text>
+    </view>
+  </view>
+
+  <!-- 添加新的浮动窗口 -->
+  <view class="floating-mask {{showFloatingWindow ? 'show' : ''}}" bindtap="toggleFloatingWindow"></view>
+
+  <!-- 意见反馈浮动窗口 -->
+  <view class="floating-feedback {{showFloatingWindow ? 'show' : ''}}">
+    <view class="feedback-header">
+      <text class="feedback-title">意见反馈</text>
+      <view class="close-btn" bindtap="toggleFloatingWindow">×</view>
+    </view>
+    
+    <view class="feedback-content">
+      <textarea 
+        class="feedback-input" 
+        placeholder="请输入您的意见或建议..." 
+        value="{{feedbackContent}}"
+        bindinput="onFeedbackInput"
+      ></textarea>
+      
+      <view class="feedback-contact">
+        <input 
+          class="contact-input" 
+          type="text" 
+          placeholder="联系方式（选填）" 
+          value="{{contactInfo}}"
+          bindinput="onContactInput"
+        />
+      </view>
+      
+      <button class="submit-feedback" bindtap="submitFeedback">提交反馈</button>
+    </view>
+  </view>
+
 </view>

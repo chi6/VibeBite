@@ -12,7 +12,8 @@ Page({
     openid: '',
     preferences: {
       summary: '加载中...'
-    }
+    },
+    editingItem: null
   },
 
   onLoad() {
@@ -65,53 +66,54 @@ Page({
       if (res.success && res.data) {
         try {
           const summaryText = res.data.summary;
-          const recommendationItems = [];
+          const recommendations = [];
           
-          // 使用正则表达式匹配每个部分
-          const sections = summaryText.split(/\n*-\s*\*\*([^*]+)\*\*：/).filter(Boolean);
+          // 分割猜你喜欢和奇思妙想
+          const sections = summaryText.split(/- \*\*([^*]+)\*\*：/).filter(Boolean);
           
           for (let i = 0; i < sections.length - 1; i += 2) {
             const type = sections[i];
-            const content = sections[i + 1].trim();
+            const content = sections[i + 1];
             
-            // 将内容按分号分割成多个建议
-            const suggestions = content.split('；').filter(Boolean);
-            const items = suggestions.map(suggestion => {
-              const text = suggestion.trim();
-              
-              // 提取加粗文本作为高亮标签
+            // 根据类型设置不同的图标
+            const icon = type === '猜你喜欢' ? '💭' : '✨';
+            
+            // 将内容按句号或分号分割成多个项目
+            const items = content.split(/[。；]/).filter(item => item.trim());
+            
+            const formattedItems = items.map(item => {
+              // 提取描述中的加粗文本
               const highlights = [];
               let boldMatch;
-              const boldRegex = /\*\*([^*]+)\*\*/g;
+              const boldRegex = /「([^」]+)」|『([^』]+)』|\*\*([^*]+)\*\*/g;
               
-              while ((boldMatch = boldRegex.exec(text)) !== null) {
-                highlights.push(boldMatch[1]);
+              while ((boldMatch = boldRegex.exec(item)) !== null) {
+                highlights.push(boldMatch[1] || boldMatch[2] || boldMatch[3]);
               }
               
               // 将加粗文本转换为带样式的文本
-              const formattedText = text.replace(/\*\*([^*]+)\*\*/g, '$1');
-              
-              // 如果是最后一个建议且没有分号结尾，添加句号
-              const finalText = formattedText.endsWith('。') ? formattedText : formattedText + '。';
-              
+              const formattedDesc = item.trim()
+                .replace(/「([^」]+)」|『([^』]+)』|\*\*([^*]+)\*\*/g, 
+                  '<text class="highlight">$1$2$3</text>');
+
               return {
-                description: finalText,
+                description: formattedDesc,
                 highlights: highlights
               };
-            });
+            }).filter(item => item.description);
 
-            if (items.length > 0) {
-              recommendationItems.push({
+            if (formattedItems.length > 0) {
+              recommendations.push({
                 type: type,
-                items: items,
-                icon: this.getIconForType(type)
+                items: formattedItems,
+                icon: icon
               });
             }
           }
 
           this.setData({
             preferences: {
-              recommendations: recommendationItems
+              recommendations: recommendations
             }
           });
           
@@ -197,28 +199,204 @@ Page({
     });
   },
 
-  // 根据类型返回对应的图标
-  getIconForType(type) {
-    const iconMap = {
-      '猜你喜欢': '🤔',
-      '奇思妙想': '💡',
-      '火锅': '🍲',
-      '酒吧': '🍷',
-      '饮品': '🥤',
-      '咖啡': '☕',
-      '甜品': '🍰',
-      '烧烤': '🍖',
-      '海鲜': '🦞',
-      '音乐': '🎵'
-    };
-
-    // 遍历 iconMap 找到类型中包含的关键词
-    for (const [key, value] of Object.entries(iconMap)) {
-      if (type.includes(key)) {
-        return value;
+  handleEdit(e) {
+    if (!this.data.openid) return;
+    
+    const { categoryIndex, itemIndex } = e.currentTarget.dataset;
+    console.log('开始编辑:', categoryIndex, itemIndex);
+    
+    const currentItem = this.data.preferences.recommendations[categoryIndex].items[itemIndex];
+    // 移除HTML标签和多余空格
+    const plainText = currentItem.description
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .trim();
+    
+    console.log('编辑文本:', plainText); // 添加日志
+    
+    this.setData({
+      editingItem: {
+        categoryIndex,
+        itemIndex,
+        originalText: plainText
       }
+    }, () => {
+      // 确保状态更新后再次检查
+      console.log('当前编辑状态:', this.data.editingItem);
+    });
+  },
+
+  handleInput(e) {
+    const { value } = e.detail;
+    console.log('输入内容:', value); // 添加日志
+    
+    this.setData({
+      'editingItem.originalText': value
+    });
+  },
+
+  handleSave(e) {
+    if (!this.data.editingItem) return;
+    
+    const newText = this.data.editingItem.originalText;
+    const { categoryIndex, itemIndex } = this.data.editingItem;
+    
+    if (!newText || !newText.trim()) {
+      wx.showToast({
+        title: '内容不能为空',
+        icon: 'none'
+      });
+      return;
     }
     
-    return '🎉'; // 默认图标
+    // 更新本地数据
+    const recommendations = [...this.data.preferences.recommendations];
+    recommendations[categoryIndex].items[itemIndex].description = newText;
+    
+    // 将数据转换为指定格式
+    const formattedData = recommendations.map(category => {
+      const items = category.items.map(item => item.description).join('；');
+      return `- **${category.type}**：${items}`;
+    }).join('\n');
+    
+    console.log('格式化后的数据:', formattedData); // 添加日志
+    
+    // 保存更改
+    wx.showLoading({ title: '保存中...' });
+    api.updatePreferences(
+      this.data.openid,
+      location,
+      formattedData  // 发送格式化后的数据
+    ).then(() => {
+      this.setData({
+        'preferences.recommendations': recommendations,
+        editingItem: null
+      });
+      wx.showToast({ 
+        title: '保存成功',
+        icon: 'success'
+      });
+    }).catch(err => {
+      console.error('保存失败:', err);
+      this.setData({
+        editingItem: null
+      });
+      wx.showToast({ 
+        title: '保存失败',
+        icon: 'none'
+      });
+    }).finally(() => {
+      wx.hideLoading();
+    });
+  },
+
+  handleCancel() {
+    this.setData({
+      editingItem: null
+    });
+  },
+
+  handleDelete(e) {
+    const { categoryIndex, itemIndex } = e.currentTarget.dataset;
+    const recommendations = [...this.data.preferences.recommendations];
+    const category = recommendations[categoryIndex];
+    
+    // 检查是否只剩一个项目
+    if (category.items.length <= 1) {
+      wx.showToast({
+        title: '至少保留一项内容',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 显示确认对话框
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这条内容吗？',
+      success: (res) => {
+        if (res.confirm) {
+          // 删除项目
+          category.items.splice(itemIndex, 1);
+          
+          // 将数据转换为指定格式
+          const formattedData = recommendations.map(category => {
+            const items = category.items.map(item => item.description).join('；');
+            return `- **${category.type}**：${items}`;
+          }).join('\n');
+          
+          // 保存更改
+          wx.showLoading({ title: '保存中...' });
+          api.updatePreferences(
+            this.data.openid,
+            location,
+            formattedData
+          ).then(() => {
+            this.setData({
+              'preferences.recommendations': recommendations
+            });
+            wx.showToast({ 
+              title: '删除成功',
+              icon: 'success'
+            });
+          }).catch(err => {
+            console.error('删除失败:', err);
+            wx.showToast({ 
+              title: '删除失败',
+              icon: 'none'
+            });
+          }).finally(() => {
+            wx.hideLoading();
+          });
+        }
+      }
+    });
+  },
+
+  handleAdd(e) {
+    const { categoryIndex } = e.currentTarget.dataset;
+    const recommendations = [...this.data.preferences.recommendations];
+    const category = recommendations[categoryIndex];
+    
+    // 添加新项目
+    category.items.push({
+      description: '新的推荐内容',
+      highlights: []
+    });
+    
+    // 将数据转换为指定格式
+    const formattedData = recommendations.map(category => {
+      const items = category.items.map(item => item.description).join('；');
+      return `- **${category.type}**：${items}`;
+    }).join('\n');
+    
+    // 保存更改
+    wx.showLoading({ title: '保存中...' });
+    api.updatePreferences(
+      this.data.openid,
+      location,
+      formattedData
+    ).then(() => {
+      this.setData({
+        'preferences.recommendations': recommendations
+      });
+      // 自动开始编辑新添加的项目
+      this.handleEdit({
+        currentTarget: {
+          dataset: {
+            categoryIndex: categoryIndex,
+            itemIndex: category.items.length - 1
+          }
+        }
+      });
+    }).catch(err => {
+      console.error('添加失败:', err);
+      wx.showToast({ 
+        title: '添加失败',
+        icon: 'none'
+      });
+    }).finally(() => {
+      wx.hideLoading();
+    });
   }
 });

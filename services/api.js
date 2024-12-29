@@ -1,4 +1,4 @@
-const BASE_URL = 'http://106.52.168.146:80';  // 生产环境
+const BASE_URL = 'http://vibebite.online';//'http://106.52.168.146:80';  // 生产环境
 
 const api = {
   // 基础请求方法
@@ -65,20 +65,13 @@ const api = {
   },
 
   // 登录
-  login(code, userInfo) {
+  login(code, userInfo, location = '') {
     return this.request('/api/login', {
       method: 'POST',
       data: {
-        code: code,
-        userInfo: {
-          nickName: userInfo.nickName,
-          gender: userInfo.gender,
-          language: userInfo.language,
-          city: userInfo.city,
-          province: userInfo.province,
-          country: userInfo.country,
-          avatarUrl: userInfo.avatarUrl
-        }
+        code,
+        userInfo,
+        location
       }
     });
   },
@@ -270,12 +263,13 @@ const api = {
   },
 
   // 修改更新偏好的 API 方法
-  updatePreferences(openid, location) {
+  updatePreferences(openid, location, recommendations) {
     return this.request('/api/update_pref', {
       method: 'POST',
       data: {
         openid: openid,  // 将 agent_id 改为 openid
-        location: location
+        location: location,
+        summary: recommendations
       }
     });
   },
@@ -338,6 +332,18 @@ const api = {
         },
         fail: reject
       });
+    });
+  },
+
+  submitFeedback(data) {
+    return this.request('/api/feedback', {
+      method: 'POST',
+      data: {
+        openid: data.openid,
+        content: data.content,
+        contactInfo: data.contactInfo,
+        timestamp: data.timestamp
+      }
     });
   }
 };

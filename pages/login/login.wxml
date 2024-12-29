@@ -2,8 +2,8 @@
   <view class="login-header">
     <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
     <view class="header-text">
-      <text class="welcome">欢迎使用AI助手</text>
-      <text class="subtitle">让AI为您提供智能服务</text>
+      <text class="welcome gradient-text">VibeBite</text>
+      <text class="subtitle">你的 AI 搭子</text>
     </view>
   </view>
 

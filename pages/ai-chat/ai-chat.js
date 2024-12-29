@@ -20,7 +20,12 @@ Page({
     organizedPlan: '',
     intents: [],
     recommendationHistory: [],
-    groupedRecommendations: []
+    groupedRecommendations: [],
+    showFeedbackModal: false,
+    feedbackContent: '',
+    feedbackType: '', // 'positive' 或 'negative'
+    showFloatingWindow: false,
+    contactInfo: ''
   },
 
   onLoad: function(options) {
@@ -737,5 +742,97 @@ Page({
     if (typeof url !== 'string') return '';
     if (!url.startsWith('http') && !url.startsWith('/')) return '';
     return url;
+  },
+
+  // 显示反馈窗口
+  showFeedback(e) {
+    const { type } = e.currentTarget.dataset;
+    this.setData({
+      showFeedbackModal: true,
+      feedbackType: type
+    });
+  },
+
+  // 关闭反馈窗口
+  closeFeedback() {
+    this.setData({
+      showFeedbackModal: false,
+      feedbackContent: ''
+    });
+  },
+
+  // 处理反馈内容变化
+  onFeedbackInput(e) {
+    this.setData({
+      feedbackContent: e.detail.value
+    });
+  },
+
+  // 提交反馈
+  async submitFeedback() {
+    if (!this.data.feedbackContent.trim()) {
+      wx.showToast({
+        title: '请输入反馈内容',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    try {
+      wx.showLoading({
+        title: '提交中...'
+      });
+
+      const response = await api.submitFeedback({
+        openid: this.data.openid,
+        content: this.data.feedbackContent,
+        contactInfo: this.data.contactInfo,
+        timestamp: Date.now()
+      });
+
+      wx.hideLoading();
+      
+      if (response.success) {
+        wx.showToast({
+          title: '感谢您的反馈！',
+          icon: 'success'
+        });
+        
+        // 清空输入内容并关闭窗口
+        this.setData({
+          showFloatingWindow: false,
+          feedbackContent: '',
+          contactInfo: ''
+        });
+      } else {
+        throw new Error(response.message || '提交失败');
+      }
+    } catch (error) {
+      console.error('提交反馈失败:', error);
+      wx.hideLoading();
+      wx.showToast({
+        title: error.message || '提交失败，请重试',
+        icon: 'none'
+      });
+    }
+  },
+
+  toggleFloatingWindow() {
+    this.setData({
+      showFloatingWindow: !this.data.showFloatingWindow
+    });
+  },
+
+  handleFloatingItemTap(e) {
+    const { id } = e.currentTarget.dataset;
+    // 处理点击事件
+    console.log('点击了项目:', id);
+    // 这里可以添加具体的处理逻辑
+  },
+
+  onContactInput(e) {
+    this.setData({
+      contactInfo: e.detail.value
+    });
   }
 });
