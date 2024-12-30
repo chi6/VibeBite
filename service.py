@@ -71,6 +71,7 @@ class AgentChatService:
         self.app.route('/api/wx/openid', methods=['POST'])(self.get_wx_openid)
         self.app.route('/api/ai/settings', methods=['GET', 'POST'])(self.ai_settings)
         self.app.route('/api/feedback', methods=['POST'])(self.save_feedback)
+        self.app.route('/api/preferences/history', methods=['POST'])(self.get_preferences_history)
 
     def init_components(self):
         """初始化所有组件"""
@@ -2272,6 +2273,67 @@ class AgentChatService:
             return jsonify({
                 "success": False,
                 "message": "处理反馈失败",
+                "details": str(e),
+                "response_time": f"{time.time() - start_time:.3f}s"
+            }), 500
+
+    def get_preferences_history(self):
+        """获取用户偏好历史记录"""
+        start_time = time.time()
+        
+        try:
+            # 从请求参数获取openid
+            openid = request.get_json().get('openid')
+            if not openid:
+                return jsonify({
+                    "success": False,
+                    "message": "缺少openid参数",
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 400
+            
+            try:
+                with sqlite3.connect('vibebite.db') as conn:
+                    cursor = conn.cursor()
+                    
+                    # 直接使用openid查询历史记录
+                    cursor.execute('''
+                        SELECT custom_description, extracted_keywords, created_at, updated_at
+                        FROM user_preferences 
+                        WHERE openid = ?
+                        ORDER BY updated_at DESC
+                    ''', (openid,))
+                    
+                    history = []
+                    for row in cursor.fetchall():
+                        history.append({
+                            'description': row[0],
+                            'keywords': row[1].split(',') if row[1] else [],
+                            'createdAt': row[2],
+                            'updatedAt': row[3]
+                        })
+                    
+                    return jsonify({
+                        "success": True,
+                        "data": {
+                            "history": history
+                        },
+                        "response_time": f"{time.time() - start_time:.3f}s"
+                    })
+
+            except sqlite3.Error as e:
+                print(f"数据库操作错误: {str(e)}")
+                return jsonify({
+                    "success": False,
+                    "message": "数据库操作失败", 
+                    "details": str(e),
+                    "response_time": f"{time.time() - start_time:.3f}s"
+                }), 500
+
+        except Exception as e:
+            print(f"获取偏好历史记录错误: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "获取偏好历史记录失败",
                 "details": str(e),
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
