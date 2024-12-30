@@ -3,12 +3,49 @@
     <text class="title">今天想吃什么？</text>
     <text class="subtitle">用简单的话告诉我，为您推荐合适的美食</text>
   </view>
+  
+  <view class="records-section">
+    <!-- 历史记录 -->
+    <view class="column">
+      <view class="column-title">历史记录</view>
+      <view class="record-list">
+        <view class="record-item {{item.isActive ? 'zoom-in' : ''}}" 
+              wx:for="{{historyList}}" 
+              wx:key="timestamp"
+              bindtap="handleHistoryTap"
+              data-text="{{item.text}}"
+              data-index="{{index}}">
+          <view class="record-text">{{item.text}}</view>
+          <view class="record-delete" 
+                catchtap="handleDeleteHistory" 
+                data-index="{{index}}">×</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 推荐想法 -->
+    <view class="column">
+      <view class="column-title">推荐想法</view>
+      <view class="record-list">
+        <view class="record-item suggestion {{item.isActive ? 'zoom-in' : ''}}"
+              wx:for="{{suggestions}}"
+              wx:key="text"
+              bindtap="handleSuggestionTap"
+              data-text="{{item.text}}"
+              data-index="{{index}}">
+          <view class="suggestion-icon">{{item.icon}}</view>
+          <view class="record-text">{{item.text}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
 
   <view class="form-section">
     <view class="input-card">
       <textarea 
         class="main-input"
         placeholder="{{inputPlaceholder}}"
+        value="{{userInput}}"
         bindinput="handleInputChange"
         maxlength="200"
       />

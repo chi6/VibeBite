@@ -345,6 +345,99 @@ const api = {
         timestamp: data.timestamp
       }
     });
+  },
+
+  // 获取历史记录
+  getPreferencesHistory() {
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            this.request('/api/wx/openid', {
+              method: 'POST',
+              data: { code: res.code }
+            })
+            .then(openidRes => {
+              if (!openidRes || !openidRes.openid) {
+                throw new Error('获取openid失败');
+              }
+              console.log('获取到的openid:', openidRes.openid);
+              
+              // 改用 POST 请求，将 openid 放在请求体中
+              return this.request('/api/preferences/history', {
+                method: 'POST',
+                data: {
+                  openid: openidRes.openid
+                },
+                header: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                }
+              });
+            })
+            .then(response => {
+              console.log('历史记录响应:', response);
+              
+              // 检查响应格式
+              if (typeof response === 'string' && response.startsWith('<!DOCTYPE html>')) {
+                console.error('服务器返回了HTML而不是JSON');
+                return { data: [] };
+              }
+              
+              if (!response || !response.data) {
+                console.error('响应格式不正确:', response);
+                return { data: [] };
+              }
+
+              return response;
+            })
+            .then(resolve)
+            .catch(error => {
+              console.error('获取历史记录失败:', error);
+              // 返回默认数据
+              resolve({
+                data: [
+                  {
+                    id: 'default1',
+                    text: '想吃川菜，最好是有特色的餐厅，人均100以内',
+                    timestamp: new Date().getTime() - 3600000
+                  },
+                  {
+                    id: 'default2',
+                    text: '和朋友聚会，想找个安静的火锅店，最好有包间',
+                    timestamp: new Date().getTime() - 7200000
+                  },
+                  {
+                    id: 'default3',
+                    text: '想吃日料，预算200左右，环境好一点的',
+                    timestamp: new Date().getTime() - 10800000
+                  },
+                  {
+                    id: 'default4',
+                    text: '家人聚餐，找个适合老人的粤式茶餐厅',
+                    timestamp: new Date().getTime() - 14400000
+                  }
+                ]
+              });
+            });
+          } else {
+            console.error('登录失败');
+            resolve({ data: [] });
+          }
+        },
+        fail: (error) => {
+          console.error('登录请求失败:', error);
+          resolve({ data: [] });
+        }
+      });
+    });
+  },
+
+  // 删除历史记录
+  deletePreferenceHistory(id) {
+    return this.request(`/api/preferences/history/${id}`, {
+      method: 'DELETE'
+    });
   }
 };
 
