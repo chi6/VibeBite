@@ -1,96 +1,86 @@
 <!--index.wxml-->
 <view class="container">
-  <view class="main-content">
-    <!-- AI状态卡片 -->
-    <view class="card ai-status-card">
-      <view class="ai-header">
-        <image class="ai-animation" src="/images/dog.gif" mode="aspectFit"></image>
-        <view class="ai-title">
-          <text class="title">{{aiStatus.name}}</text>
-          <text class="subtitle">让美食推荐更懂你的心</text>
+  <view class="notebook-container">
+    <!-- AI对话入口 -->
+    <view class="notebook-section chat-section">
+      <view class="paper-header">
+        <image class="ai-avatar" src="/images/ai-icon.png" mode="aspectFit"></image>
+        <view class="chat-info">
+          <text class="chat-title">与AI助手对话</text>
+          <text class="chat-subtitle">让AI为您推荐美食</text>
         </view>
+        <button class="chat-btn" bindtap="goToAIChat">
+          <text class="btn-icon">💭</text>
+        </button>
       </view>
-      <view class="status-tags">
-        <text class="status-tag">心情: {{aiStatus.mood}}</text>
-        <text class="status-tag">活跃度: {{aiStatus.activity}}</text>
-      </view>
-      <text class="ai-thought">{{aiStatus.thought}}</text>
     </view>
 
-    <!-- 餐饮喜好卡片 -->
-    <view class="card preferences-card">
-      <view class="card-header">
-        <text class="card-title">个性化推荐</text>
-        <text class="card-subtitle">基于你的饮食偏好</text>
+    <!-- 个性化推荐笔记本 -->
+    <view class="notebook-section main-section">
+      <view class="paper-title">
+        <text class="title-text">个性化推荐</text>
+        <text class="date-text">基于你的饮食偏好</text>
       </view>
-      
-      <view class="preferences-content">
-        <view class="recommendations-list">
-          <view class="recommendation-category" wx:for="{{preferences.recommendations}}" wx:key="type">
-            <view class="category-header">
-              <view class="category-icon">{{item.icon}}</view>
-              <text class="category-title">{{item.type}}</text>
-              <view class="add-btn" wx:if="{{openid}}" catchtap="handleAdd" data-category-index="{{index}}">
-                <text class="add-icon">➕</text>
-              </view>
-            </view>
-            
-            <view class="recommendation-items">
-              <view class="recommendation-item" wx:for="{{item.items}}" wx:key="description" wx:for-item="subItem" wx:for-index="subIndex">
-                <view class="item-content">
-                  <view class="item-header">
-                    <view class="delete-btn" wx:if="{{openid && item.items.length > 1}}" catchtap="handleDelete" data-category-index="{{index}}" data-item-index="{{subIndex}}">
-                      <text class="delete-icon">🗑️</text>
-                    </view>
+
+      <!-- 便签式标签页 -->
+      <view class="tabs-container">
+        <view class="tab-list">
+          <view class="tab {{currentTab === index ? 'active' : ''}}"
+                wx:for="{{preferences.recommendations}}"
+                wx:key="type"
+                bindtap="switchTab"
+                data-index="{{index}}">
+            <text class="tab-icon">{{item.icon}}</text>
+            <text class="tab-text">{{item.type}}</text>
+          </view>
+        </view>
+
+        <!-- 便签内容区域 -->
+        <view class="notes-container">
+          <view class="note-list {{currentTab === index ? 'show' : ''}}"
+                wx:for="{{preferences.recommendations}}"
+                wx:key="type">
+            <view class="note-item {{openid ? 'editable' : ''}}"
+                  wx:for="{{item.items}}"
+                  wx:for-item="subItem"
+                  wx:for-index="subIndex"
+                  wx:key="description">
+              
+              <view class="note-content">
+                <view class="note-text">{{subItem.description}}</view>
+                
+                <!-- 编辑和删除按钮 -->
+                <view class="note-actions" wx:if="{{openid}}">
+                  <view class="action-btn edit-btn"
+                        catchtap="handleEdit"
+                        data-category-index="{{index}}"
+                        data-item-index="{{subIndex}}">
+                    <text class="action-icon">✎</text>
                   </view>
-                  
-                  <view class="text-container {{openid ? 'editable' : ''}} {{editingItem && editingItem.categoryIndex === index && editingItem.itemIndex === subIndex ? 'editing' : ''}}" data-category-index="{{index}}" data-item-index="{{subIndex}}" catchtap="{{openid ? 'handleEdit' : ''}}">
-                    <view class="rich-content">{{subItem.description}}</view>
-                    <view class="edit-hint" wx:if="{{openid}}">
-                      <text class="edit-icon">✎</text>
-                    </view>
-                  </view>
-                  
-                  <block wx:if="{{editingItem && editingItem.categoryIndex === index && editingItem.itemIndex === subIndex}}">
-                    <view class="edit-mask" catchtap="handleCancel"></view>
-                    <view class="edit-wrapper">
-                      <textarea class="edit-textarea" 
-                                value="{{editingItem.originalText}}" 
-                                auto-height 
-                                focus 
-                                maxlength="-1" 
-                                show-confirm-bar="{{false}}" 
-                                adjust-position="{{true}}" 
-                                bindinput="handleInput" 
-                                placeholder="请输入内容">
-                      </textarea>
-                      <view class="edit-actions">
-                        <text class="cancel-btn" catchtap="handleCancel">取消</text>
-                        <text class="save-btn" catchtap="handleSave">保存</text>
-                      </view>
-                    </view>
-                  </block>
-                  
-                  <view class="highlight-tags" wx:if="{{subItem.highlights.length > 0}}">
-                    <text class="highlight-tag" wx:for="{{subItem.highlights}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+                  <view class="action-btn delete-btn"
+                        wx:if="{{item.items.length > 1}}"
+                        catchtap="handleDelete"
+                        data-category-index="{{index}}"
+                        data-item-index="{{subIndex}}">
+                    <text class="action-icon">🗑️</text>
                   </view>
                 </view>
+
+                <!-- 标签 -->
+                <view class="note-tags" wx:if="{{subItem.highlights.length > 0}}">
+                  <text class="tag" wx:for="{{subItem.highlights}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+                </view>
               </view>
+            </view>
+
+            <!-- 添加按钮 -->
+            <view class="add-note" wx:if="{{openid}}" bindtap="handleAdd" data-category-index="{{index}}">
+              <text class="add-icon">+</text>
+              <text class="add-text">添加新项目</text>
             </view>
           </view>
         </view>
       </view>
     </view>
-
-    <!-- 快捷对话入口 -->
-    <button class="chat-btn gradient-bg" bindtap="goToAIChat">
-      <view class="chat-btn-content">
-        <image class="ai-icon" src="/images/ai-icon.png" mode="aspectFit"></image>
-        <view class="btn-text">
-          <text class="btn-title">与AI助手对话</text>
-          <text class="btn-desc">让AI为您推荐美食</text>
-        </view>
-      </view>
-    </button>
   </view>
 </view>

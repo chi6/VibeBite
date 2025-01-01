@@ -286,7 +286,7 @@ const api = {
               data: { code: res.code }
             }).then(openidRes => {
               // 使用获取到的openid更新AI设置
-              return this.request('/api/ai/settings', {  // 修改API路径
+              return this.request('/api/ai/update_settings', {  // 修改API路径
                 method: 'POST',
                 data: {
                   openid: openidRes.openid,
@@ -319,8 +319,8 @@ const api = {
               data: { code: res.code }
             }).then(openidRes => {
               // 使用获取到的openid获取AI设置
-              return this.request('/api/ai/settings', {  // 修改API路径
-                method: 'GET',
+              return this.request('/api/ai/get_settings', {  // 修改API路径
+                method: 'POST',
                 data: { 
                   openid: openidRes.openid 
                 }

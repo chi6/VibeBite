@@ -14,7 +14,8 @@ Page({
     preferences: {
       summary: '加载中...'
     },
-    editingItem: null
+    editingItem: null,
+    currentTab: 0
   },
 
   onLoad() {
@@ -377,6 +378,13 @@ Page({
       });
     }).finally(() => {
       wx.hideLoading();
+    });
+  },
+
+  switchTab(e) {
+    const index = e.currentTarget.dataset.index;
+    this.setData({
+      currentTab: index
     });
   }
 });

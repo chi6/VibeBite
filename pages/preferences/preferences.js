@@ -22,15 +22,70 @@ Page({
         text: '想吃创意菜，预算充足，追求特别的体验',
         icon: '✨'
       }
-    ]
+    ],
+    aiStatus: {
+      name: '加载中...',
+      mood: '加载中...',
+      activity: '加载中...',
+      thought: '加载中...'
+    },
+    openid: '',
+    activeTab: 'history',
+    currentDate: '',
+    showHistory: false,
+    showSuggestions: false
   },
 
   onLoad() {
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
+    this.setData({
+      currentDate: dateStr
+    });
+    
     this.loadHistory();
+    wx.login({
+      success: (res) => {
+        if (res.code) {
+          api.request('/api/wx/openid', {
+            method: 'POST',
+            data: { code: res.code }
+          }).then(openidRes => {
+            this.setData({ openid: openidRes.openid });
+            this.fetchAIStatus();
+          }).catch(err => {
+            console.error('获取openid失败:', err);
+          });
+        }
+      }
+    });
+  },
+
+  fetchAIStatus() {
+    const requestData = {
+      openid: this.data.openid
+    };
+    api.getAIStatus(requestData).then(status => {
+      this.setData({
+        'aiStatus.name': status.name || '未知',
+        'aiStatus.mood': status.mood || '未知',
+        'aiStatus.activity': status.activity || '未知',
+        'aiStatus.thought': status.thought || '未知'
+      });
+    }).catch(error => {
+      console.error('获取AI状态失败:', error);
+      wx.showToast({
+        title: '获取AI状态失败',
+        icon: 'none'
+      });
+    });
   },
 
   onShow() {
     this.loadHistory();
+    if(this.data.openid) {
+      this.fetchAIStatus();
+    }
   },
 
   loadHistory() {
@@ -41,18 +96,15 @@ Page({
 
     api.getPreferencesHistory()
       .then(res => {
-        // 解析返回的数据结构
         const historyList = res.data?.history?.map(item => ({
           id: item.id,
-          text: item.description,  // 使用 description 字段
-          timestamp: new Date(item.createdAt).getTime(),  // 转换时间格式
+          text: item.description,
+          timestamp: new Date(item.createdAt).getTime(),
           createdAt: item.createdAt
         })) || [];
 
-        // 按时间倒序排序
         historyList.sort((a, b) => b.timestamp - a.timestamp);
 
-        // 只取前4条
         this.setData({ 
           historyList: historyList.slice(0, 4)
         });
@@ -139,7 +191,6 @@ Page({
 
     api.submitPreferences({ userInput })
       .then(() => {
-        // 提交成功后重新加载历史记录
         this.loadHistory();
         
         wx.hideLoading();
@@ -176,5 +227,26 @@ Page({
         userInput: text
       });
     }, 200);
+  },
+
+  switchTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    this.setData({
+      activeTab: tab
+    });
+  },
+
+  toggleHistory() {
+    this.setData({
+      showHistory: !this.data.showHistory,
+      showSuggestions: false
+    });
+  },
+
+  toggleSuggestions() {
+    this.setData({
+      showSuggestions: !this.data.showSuggestions,
+      showHistory: false
+    });
   }
 }); 

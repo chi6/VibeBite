@@ -1,58 +1,92 @@
 <view class="container">
-  <view class="header">
-    <text class="title">今天想吃什么？</text>
-    <text class="subtitle">用简单的话告诉我，为您推荐合适的美食</text>
-  </view>
-  
-  <view class="records-section">
-    <!-- 历史记录 -->
-    <view class="column">
-      <view class="column-title">历史记录</view>
-      <view class="record-list">
-        <view class="record-item {{item.isActive ? 'zoom-in' : ''}}" 
-              wx:for="{{historyList}}" 
-              wx:key="timestamp"
-              bindtap="handleHistoryTap"
-              data-text="{{item.text}}"
-              data-index="{{index}}">
-          <view class="record-text">{{item.text}}</view>
-          <view class="record-delete" 
-                catchtap="handleDeleteHistory" 
-                data-index="{{index}}">×</view>
+  <!-- Notebook 风格的 AI 助手区域 -->
+  <view class="notebook-section ai-section">
+    <view class="paper-header">
+      <image class="ai-avatar" src="/images/dog.gif" mode="aspectFit"></image>
+      <view class="ai-info">
+        <text class="ai-name">{{aiStatus.name}}</text>
+        <view class="mood-tags">
+          <text class="mood-tag">{{aiStatus.mood}}</text>
+          <text class="mood-tag">{{aiStatus.activity}}</text>
         </view>
       </view>
     </view>
-
-    <!-- 推荐想法 -->
-    <view class="column">
-      <view class="column-title">推荐想法</view>
-      <view class="record-list">
-        <view class="record-item suggestion {{item.isActive ? 'zoom-in' : ''}}"
-              wx:for="{{suggestions}}"
-              wx:key="text"
-              bindtap="handleSuggestionTap"
-              data-text="{{item.text}}"
-              data-index="{{index}}">
-          <view class="suggestion-icon">{{item.icon}}</view>
-          <view class="record-text">{{item.text}}</view>
-        </view>
-      </view>
+    <view class="thought-bubble">
+      <text>{{aiStatus.thought}}</text>
     </view>
   </view>
 
-  <view class="form-section">
-    <view class="input-card">
+  <!-- Notebook 风格的主要内容区域 -->
+  <view class="notebook-section main-section">
+    <view class="paper-title">
+      <text class="title-text">{{aiStatus.name}}：今天想吃什么？</text>
+      <text class="date-text">{{currentDate}}</text>
+    </view>
+
+    <!-- 输入区域 -->
+    <view class="paper-content">
       <textarea 
-        class="main-input"
-        placeholder="{{inputPlaceholder}}"
+        class="note-input"
+        placeholder="在这里写下你的美食想法..."
         value="{{userInput}}"
         bindinput="handleInputChange"
         maxlength="200"
       />
     </view>
+
+    <!-- 标签区域 -->
+    <view class="paper-title">
+    </view>
+      <view class="tags-container">
+      <view class="tag {{showHistory ? 'active' : ''}}" 
+            bindtap="toggleHistory">
+        <text class="tag-icon">📝</text>
+        <text>历史记录</text>
+      </view>
+      <view class="tag {{showSuggestions ? 'active' : ''}}" 
+            bindtap="toggleSuggestions">
+        <text class="tag-icon">✨</text>
+        <text>推荐灵感</text>
+      </view>
+    </view>
+
+    <!-- 记录展示区域 -->
+    <view class="records-container {{(showHistory || showSuggestions) ? 'show' : ''}}">
+      <!-- 历史记录列表 -->
+      <view class="records-list {{showHistory ? 'show' : 'hide'}}">
+        <view class="record-item {{item.isActive ? 'active' : ''}}"
+              wx:for="{{historyList}}"
+              wx:key="timestamp"
+              bindtap="handleHistoryTap"
+              data-text="{{item.text}}"
+              data-index="{{index}}">
+          <text class="record-text">{{item.text}}</text>
+          <text class="delete-btn" 
+                catchtap="handleDeleteHistory" 
+                data-index="{{index}}">✕</text>
+        </view>
+      </view>
+
+      <!-- 推荐列表 -->
+      <view class="records-list {{showSuggestions ? 'show' : 'hide'}}">
+        <view class="record-item {{item.isActive ? 'active' : ''}}"
+              wx:for="{{suggestions}}"
+              wx:key="text"
+              bindtap="handleSuggestionTap"
+              data-text="{{item.text}}"
+              data-index="{{index}}">
+          <text class="suggestion-icon">{{item.icon}}</text>
+          <text class="record-text">{{item.text}}</text>
+        </view>
+      </view>
+    </view>
   </view>
 
-  <view class="button-container">
-    <button class="submit-btn" bindtap="handleSubmit">开始智能规划</button>
+  <!-- 提交按钮 -->
+  <view class="action-button">
+    <button class="submit-btn" bindtap="handleSubmit">
+      <text class="btn-icon">🪄</text>
+      <text>开始智能规划</text>
+    </button>
   </view>
 </view> 
