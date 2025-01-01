@@ -1,82 +1,145 @@
 <view class="container">
-  <view class="ai-avatar-section {{isCustomizing ? 'customizing' : ''}}">
-    <image 
-      class="avatar-img" 
-      src="/images/dog.gif" 
-      mode="aspectFit"
-      bindtouchstart="onCustomizeStart"
-      bindtouchend="onCustomizeEnd"
-    ></image>
-    <view class="avatar-hint">
-      <text class="hint-text">捏捏我来调教吧~</text>
-      <text class="hint-emoji">✨</text>
-    </view>
+  <view class="header">
+    <text class="title">选择你的宠物搭子</text>
+    <text class="subtitle">选择一个可爱的宠物,它会根据自己的饮食偏好为你推荐美食!</text>
   </view>
 
-  <view class="settings-form">
-    <view class="form-item">
-      <view class="label-container">
-        <text class="label-icon">👋</text>
-        <text class="label">给我起个名字</text>
-      </view>
-      <input 
-        class="input" 
-        value="{{aiName}}" 
-        placeholder="比如：小饭团、美食达人..." 
-        bindinput="onNameInput"
-      />
-    </view>
 
-    <view class="form-item">
-      <view class="label-container">
-        <text class="label-icon">🎭</text>
-        <text class="label">性格选择</text>
-      </view>
-      <picker 
-        bindchange="onPersonalityChange" 
-        value="{{personalities.indexOf(personality)}}" 
-        range="{{personalities}}"
-      >
-        <view class="picker">
-          <text class="picker-value">{{personality}}</text>
-          <text class="picker-arrow">❯</text>
+
+  <view class="pets-grid">
+    <view 
+      wx:for="{{pets}}" 
+      wx:key="id"
+      class="pet-card {{selectedPet.id === item.id ? 'selected' : ''}} {{isSelecting ? 'selecting' : ''}}"
+      bindtap="onPetSelect"
+      data-id="{{item.id}}"
+    >
+      <image class="pet-image" src="{{item.image}}" mode="aspectFit"></image>
+      <view class="pet-info">
+        <text class="pet-name">{{item.name}}</text>
+        <text class="pet-description">{{item.description}}</text>
+        
+        <view class="diet-tags">
+          <text class="diet-tag">{{item.dietPreference}}</text>
+          <text class="personality-tag">{{item.personality}}</text>
         </view>
-      </picker>
-    </view>
 
-    <view class="form-item">
-      <view class="label-container">
-        <text class="label-icon">💭</text>
-        <text class="label">说话风格</text>
-      </view>
-      <picker 
-        bindchange="onStyleChange" 
-        value="{{speakingStyles.indexOf(speakingStyle)}}" 
-        range="{{speakingStyles}}"
-      >
-        <view class="picker">
-          <text class="picker-value">{{speakingStyle}}</text>
-          <text class="picker-arrow">❯</text>
+        <view class="food-recommendations">
+          <text class="recommend-title">推荐食物</text>
+          <view class="food-tags">
+            <text wx:for="{{item.recommendedFoods}}" 
+                  wx:key="*this" 
+                  wx:for-item="food" 
+                  class="food-tag">{{food}}</text>
+          </view>
         </view>
-      </picker>
-    </view>
-
-    <view class="form-item">
-      <view class="label-container">
-        <text class="label-icon">💝</text>
-        <text class="label">要记住的事</text>
       </view>
-      <textarea 
-        class="textarea" 
-        value="{{memories}}" 
-        placeholder="比如：我最爱吃火锅、不能吃太辣..." 
-        bindinput="onMemoriesInput"
-      />
     </view>
   </view>
+  
+  <view class="add-pet-btn" bindtap="showCustomPetModal">
+    <text class="btn-icon">+</text>
+    <text>添加自定义宠物</text>
+  </view>
+</view>
 
-  <button class="save-btn gradient-bg" bindtap="saveSettings">
-    <text class="btn-text">开始美食之旅</text>
-    <text class="btn-emoji">🚀</text>
-  </button>
+<view class="custom-pet-modal {{showCustomModal ? 'show' : ''}}">
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">创建自定义宠物</text>
+      <text class="close-btn" bindtap="hideCustomPetModal">×</text>
+    </view>
+    
+    <view class="modal-body">
+      <view class="form-item">
+        <text class="form-label">宠物名称</text>
+        <input class="form-input" model:value="{{customPet.name}}" placeholder="给宠物起个名字"/>
+      </view>
+      
+      <view class="form-item">
+        <text class="form-label">宠物类型</text>
+        <input class="form-input" model:value="{{customPet.type}}" placeholder="例如：猫咪、狗狗等"/>
+      </view>
+      
+      <view class="form-item">
+        <text class="form-label">性格特点</text>
+        <input class="form-input" model:value="{{customPet.personality}}" placeholder="例如：活泼、安静等"/>
+      </view>
+      
+      <view class="form-item">
+        <text class="form-label">饮食偏好</text>
+        <input class="form-input" model:value="{{customPet.dietPreference}}" placeholder="例如：高蛋白、素食等"/>
+      </view>
+      
+      <view class="form-item">
+        <text class="form-label">推荐食物</text>
+        <input class="form-input" model:value="{{customPet.foods}}" placeholder="用逗号分隔多个食物"/>
+      </view>
+      
+      <view class="form-item">
+        <text class="form-label">描述</text>
+        <textarea class="form-textarea" model:value="{{customPet.description}}" placeholder="简单描述一下你的宠物"/>
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="cancel-btn" bindtap="hideCustomPetModal">取消</button>
+      <button class="confirm-btn" bindtap="createCustomPet">创建</button>
+    </view>
+  </view>
+</view> 
+
+<view class="pet-detail-modal {{showDetailModal ? 'show' : ''}}">
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">宠物详情</text>
+      <text class="close-btn" bindtap="hideDetailModal">×</text>
+    </view>
+    
+    <view class="modal-body">
+      <view class="pet-detail-info">
+        <image class="detail-image" src="{{currentPet.image}}" mode="aspectFit"></image>
+        
+        <view class="detail-content">
+          <view class="detail-item">
+            <text class="detail-label">名称:</text>
+            <text class="detail-value">{{currentPet.name}}</text>
+          </view>
+          
+          <view class="detail-item">
+            <text class="detail-label">类型:</text>
+            <text class="detail-value">{{currentPet.type}}</text>
+          </view>
+          
+          <view class="detail-item">
+            <text class="detail-label">性格:</text>
+            <text class="detail-value">{{currentPet.personality}}</text>
+          </view>
+          
+          <view class="detail-item">
+            <text class="detail-label">饮食偏好:</text>
+            <text class="detail-value">{{currentPet.dietPreference}}</text>
+          </view>
+          
+          <view class="detail-item">
+            <text class="detail-label">描述:</text>
+            <text class="detail-value description">{{currentPet.description}}</text>
+          </view>
+          
+          <view class="detail-item">
+            <text class="detail-label">推荐食物:</text>
+            <view class="detail-food-tags">
+              <text wx:for="{{currentPet.recommendedFoods}}" 
+                    wx:key="*this" 
+                    class="detail-food-tag">{{item}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="confirm-btn" bindtap="selectCurrentPet">选择这个小搭子</button>
+    </view>
+  </view>
 </view> 

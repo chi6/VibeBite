@@ -4,6 +4,7 @@ const api = require('../../services/api');
 Page({
   data: {
     aiStatus: {
+      name: '加载中...',
       mood: '加载中...',
       activity: '加载中...',
       thought: '加载中...',
@@ -27,7 +28,6 @@ Page({
             this.setData({ openid: openidRes.openid });
             this.fetchAIStatus();
             this.fetchPreferencesSummary();
-            this.fetchAISettings();
           }).catch(err => {
             console.error('获取openid失败:', err);
           });
@@ -42,6 +42,7 @@ Page({
     };
     api.getAIStatus(requestData).then(status => {
       this.setData({
+        'aiStatus.name': status.name || '未知',
         'aiStatus.mood': status.mood || '未知',
         'aiStatus.activity': status.activity || '未知',
         'aiStatus.thought': status.thought || '未知'
@@ -136,27 +137,6 @@ Page({
         preferences: {
           recommendations: []
         }
-      });
-    });
-  },
-
-  fetchAISettings() {
-    api.getAISettings().then(res => {
-      console.log('AI设置响应:', res);
-      if (res.success && res.data) {
-        this.setData({
-          'aiStatus.name': res.data.name || 'AI智能助手'
-        });
-        console.log('更新后的AI名字:', this.data.aiStatus.name);
-      } else {
-        this.setData({
-          'aiStatus.name': 'AI智能助手'
-        });
-      }
-    }).catch(err => {
-      console.error('获取AI设置失败:', err);
-      this.setData({
-        'aiStatus.name': 'AI智能助手'
       });
     });
   },
