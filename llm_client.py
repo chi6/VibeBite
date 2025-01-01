@@ -26,7 +26,7 @@ class ChatGptClient:
 
     def add_request(self, uid, system_message, user_message, request_id):
         """处理请求并立即返回响应"""
-        print(f"Processing request: {uid}, {system_message}, {user_message}, {request_id}")
+        #print(f"Processing request: {uid}, {system_message}, {user_message}, {request_id}")
         self.query(system_message, user_message, request_id)
 
     def get_chat(self, request_id):

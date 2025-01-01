@@ -210,7 +210,6 @@ class AgentChatService:
         """处理聊天请求"""
         start_time = time.time()
         data = request.get_json()
-        print(data)
         if not data:
             return jsonify({
                 "uniqueId": int(time.time() * 1000000),
@@ -234,6 +233,13 @@ class AgentChatService:
         # 获取响应
         print(f"开始处理任务: {task_name}, 消息: {message}")
         responses = self.agents[openid].process_task(task_name, message)
+        
+        # 过滤大众点评链接
+        if isinstance(responses, str):
+            # 移除大众点评链接
+            responses = re.sub(r'https?://[^\s]*dianping\.com[^\s]*', '', responses)
+            # 移除链接后可能产生的多余空格
+            responses = re.sub(r'\s+', ' ', responses).strip()
         
         # 异步触发意图分析
         asyncio.create_task(self.analyze_intent(self.agents[openid], openid))

@@ -89,12 +89,6 @@ class Agent:
         if not system_prompt or not user_prompt:
             return "未找到对应任务的prompt"
         
-        # 获取用户特定的prompt(如果存在)
-        prompt_content = self.prompt_manager.get_prompt(task_name, self.openid)
-        print(f"用户特定的prompt: {prompt_content}")
-        if prompt_content:
-            system_prompt["content"] = prompt_content  # 使用用户特定的prompt作为system prompt
-        
         messages = [system_prompt, user_prompt]
         request_id = str(uuid.uuid4())
         print(f"使用的system prompt: {system_prompt['content']}")  # 添加日志
