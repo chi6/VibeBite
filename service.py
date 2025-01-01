@@ -309,7 +309,19 @@ class AgentChatService:
         
         status = await self.agents[openid].get_status()
         
+        # 从数据库中获取AI名称
+        try:
+            with sqlite3.connect('vibebite.db') as conn:
+                cursor = conn.cursor()
+                cursor.execute('SELECT name FROM ai_settings WHERE openid = ?', (openid,))
+                result = cursor.fetchone()
+                ai_name = result[0] if result and result[0] else 'AI智能助手'
+        except sqlite3.Error as e:
+            print(f"获取AI名称失败: {str(e)}")
+            ai_name = 'AI智能助手'  # 如果发生错误，使用默认名称
+
         return jsonify({
+            "name": ai_name,
             "mood": status.get('mood'),
             "activity": status.get('activity'),
             "thought": status.get('thought'),
@@ -1866,7 +1878,8 @@ class AgentChatService:
             personality = data.get('personality')
             speaking_style = data.get('speaking_style')
             memories = data.get('memories')
-            
+            # 将memories列表转换为字符串
+            memories_str = json.dumps(memories, ensure_ascii=False) if isinstance(memories, list) else str(memories)
             if not openid:
                 return jsonify({
                     "success": False,
@@ -1884,7 +1897,7 @@ class AgentChatService:
 {speaking_style}
 
 重要记忆：
-{memories}
+{memories_str}
 
 请在对话中始终保持这些特征，提供友好且个性化的回答。"""
 
@@ -1898,14 +1911,14 @@ class AgentChatService:
 {speaking_style}
 
 重要记忆：
-{memories}
+{memories_str}
 
 请返回当前AI状态,包含mood, activity, thought, 分别表示心情、活跃度、正在思考的内容。
 请用json格式返回，注意：
 1. 每一个字段都要是中文且有值
 2. 返回的内容要符合你的性格特征和说话风格
 3. 在thought中可以提到你的重要记忆"""
-
+            
             # 更新数据库中的AI设置
             with sqlite3.connect('vibebite.db') as conn:
                 cursor = conn.cursor()
@@ -1923,7 +1936,6 @@ class AgentChatService:
                         FOREIGN KEY (openid) REFERENCES users (openid)
                     )
                 ''')
-                
                 # 更新AI设置
                 cursor.execute('''
                     INSERT OR REPLACE INTO ai_settings 
@@ -1932,7 +1944,7 @@ class AgentChatService:
                     VALUES (?, ?, ?, ?, ?,
                         COALESCE((SELECT created_at FROM ai_settings WHERE openid = ?), CURRENT_TIMESTAMP),
                         CURRENT_TIMESTAMP)
-                ''', (openid, name, personality, speaking_style, memories, openid))
+                ''', (openid, name, personality, speaking_style, memories_str, openid))
                 
                 conn.commit()
                 
@@ -2026,6 +2038,7 @@ class AgentChatService:
                         'memories': '我是一个AI助手，我的目标是帮助用户解决问题。'
                     }
                 self.update_ai_settings_prompt(openid, settings['name'], settings['personality'], settings['speakingStyle'], settings['memories'])
+                print(f"已更新用户 {openid} 的AI设置", settings)
                 return jsonify({
                     "success": True,
                     "data": settings,
