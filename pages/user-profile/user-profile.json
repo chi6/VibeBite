@@ -1,4 +1,6 @@
 {
-  "navigationBarTitleText": "个人信息",
-  "usingComponents": {}
+  "navigationBarTitleText": "个人中心",
+  "navigationBarTextStyle": "black",
+  "navigationBarBackgroundColor": "#ffffff",
+  "backgroundColor": "#ffffff"
 }
