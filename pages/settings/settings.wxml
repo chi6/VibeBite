@@ -1,0 +1,36 @@
+<view class="settings-container">
+  <!-- 用户信息区域 -->
+  <view class="user-info-section">
+    <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+    <view class="user-details">
+      <text class="nickname">{{userInfo.nickName || '未登录'}}</text>
+      <text class="user-id">ID: {{userInfo.userId || '--'}}</text>
+    </view>
+  </view>
+
+  <!-- 设置选项列表 -->
+  <view class="settings-list">
+    <view class="settings-item" bindtap="handleAccount">
+      <text>宠物选择</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+    
+    <view class="settings-item" bindtap="handlePrivacy">
+      <text>隐私设置</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+
+    <view class="settings-item" bindtap="handleNotification">
+      <text>消息通知</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+
+    <view class="settings-item" bindtap="handleAbout">
+      <text>关于我们</text>
+      <image class="arrow" src="/images/arrow-right.png"></image>
+    </view>
+  </view>
+
+  <!-- 退出登录按钮 -->
+  <view class="logout-button" bindtap="handleLogout">退出登录</view>
+</view> 

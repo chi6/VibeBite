@@ -1,0 +1,32 @@
+<view class="feedback-container">
+  <view class="type-section">
+    <view class="section-title">反馈类型</view>
+    <picker bindchange="handleTypeChange" value="{{index}}" range="{{feedbackTypes}}">
+      <view class="picker">
+        {{selectedType}}
+      </view>
+    </picker>
+  </view>
+
+  <view class="content-section">
+    <view class="section-title">反馈内容</view>
+    <textarea 
+      class="feedback-input"
+      placeholder="请详细描述您的问题或建议..."
+      bindinput="handleContentInput"
+      value="{{feedbackContent}}"
+    ></textarea>
+  </view>
+
+  <view class="contact-section">
+    <view class="section-title">联系方式（选填）</view>
+    <input 
+      class="contact-input"
+      placeholder="请留下您的联系方式，方便我们回复"
+      bindinput="handleContactInput"
+      value="{{contactInfo}}"
+    />
+  </view>
+
+  <button class="submit-btn" bindtap="submitFeedback">提交反馈</button>
+</view> 

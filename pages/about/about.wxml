@@ -1,0 +1,18 @@
+<view class="about-container">
+  <view class="logo-section">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <view class="app-name">{{appInfo.name}}</view>
+    <view class="version">版本 {{version}}</view>
+  </view>
+
+  <view class="description">{{appInfo.description}}</view>
+
+  <view class="features">
+    <view class="features-title">主要功能</view>
+    <view class="feature-item" wx:for="{{appInfo.features}}" wx:key="*this">
+      {{item}}
+    </view>
+  </view>
+
+  <button class="update-btn" bindtap="handleUpdate">检查更新</button>
+</view> 

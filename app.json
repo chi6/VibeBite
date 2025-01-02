@@ -2,11 +2,14 @@
   "pages": [
     "pages/login/login",
     "pages/index/index",
-    "pages/recommendation/recommendation",
     "pages/webview/webview",
     "pages/preferences/preferences",
     "pages/ai-customization/ai-customization",
-    "pages/ai-chat/ai-chat"
+    "pages/ai-chat/ai-chat",
+    "pages/settings/settings",
+    "pages/privacy/privacy",
+    "pages/about/about",
+    "pages/feedback/feedback"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -15,6 +18,38 @@
     "navigationBarTextStyle": "black",
     "enablePullDownRefresh": false,
     "backgroundColor": "#ffffff"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#FF6B6B",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/preferences/preferences",
+        "text": "偏好",
+        "iconPath": "images/user.png",
+        "selectedIconPath": "images/user-active.png"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "推荐",
+        "iconPath": "images/index.png",
+        "selectedIconPath": "images/index-active.png"
+      },
+      {
+        "pagePath": "pages/ai-chat/ai-chat",
+        "text": "我的",
+        "iconPath": "images/ai-customization.png",
+        "selectedIconPath": "images/ai-customization-active.png"
+      },
+      {
+        "pagePath": "pages/settings/settings",
+        "text": "设置",
+        "iconPath": "images/setting.png",
+        "selectedIconPath": "images/setting-active.png"
+      }
+    ]
   },
   "permission": {
     "scope.userLocation": {

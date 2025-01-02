@@ -160,7 +160,7 @@ Page({
       wx.hideLoading();
       
       // 修改为 navigateTo，避免使用 reLaunch
-      wx.navigateTo({
+      wx.switchTab({
         url: '/pages/preferences/preferences',
         success: () => {
           wx.showToast({

@@ -1,0 +1,62 @@
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 96rpx;
+  background: white;
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab-bar-border {
+  background-color: #f6f6f6;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1rpx;
+}
+
+.tab-bar-item {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.iconfont {
+  font-size: 54rpx;
+  color: #999999;
+}
+
+.selected {
+  color: #1AAD19;
+}
+
+/* 引入字体图标 */
+@font-face {
+  font-family: 'iconfont';
+  src: url('data:font/woff2;charset=utf-8;base64,d09GMgABAAAAAALkAAsAAAAABqwAAAKXAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHFQGYACDHAqBEIEsATYCJAMQCwoABCAFhGcHSRvDBciemjwJKFEUACgAYEE8/Df2u3dm9u1+URJNovl0kslMSCSSiBAJ0QqhkRDpkMyQ/Ofp+v4XhwpVVahQtWaP7OEO1QnVCRUSqrMn/v/cc/0EKJDfAOUyx6APOk7qBTQwpgW0N0aRFUgCbxi7wCW8TqDVpJjEnrOXryGWYU8LxL1SqxBbwbKCXKFZqDeszeIVtebp6RLwMvp+/DeGWJJaZk89vH6WhtlfoVaJRP9vJxYRAZ1eIMM6UIiLxuSRQmBcSmvmKQajrFNfwVdhrf4KmRPV4F9eIWrZ3g7MQnHlN5NJ8JvLJPktZCL81kYNVvEA7QE+YnCQpFYuN7ZqGG1uGhwaGm0dxg0bnNs2jg0bxeHm/0BTf/9ofyA4MPwEgk/NHc7c/SdR6z8/pM+r0QFP49eN7fN8t7QO9K/5vyEOgO/zv0v+UfyqShEo/LX5QNQU5a92qnKwKGVrwVqDihx+2zLVqtWEv8ZGPGtFk4/eavLWkRXNZpDVbBGFdeuoabOBZs3W0WrN7H6bHqJC0YqVTgNCt0eSjt/Iur2jUO4DNcP+0Kw7GFptRsTENhORvUhEHlQhzUHyh7qJ2GxSEb5BSrGJSp1KzMR7pOYscmXViN0wQ3yMMUUvVhSdY4xxhXkuQ0qShJQUj+hFQaBcLhHmuAwxk2QRk8puIu9BSkGNA2k8SPlA6YTYzIwUEj4DSUKZiFJOUsimvB6ic2zhFCsV4m6oQXwYRSGvWILoXCwh5wqWz8shSSQiSBLFQ+gKCQTkjLMQTJ8zIYyJyESYNFO7Mb5elL/fEbTyXaOkSJGjRI1Gc/0oQmw2AA==') format('woff2');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-heart:before {
+  content: "\e8ab";
+}
+
+.icon-home:before {
+  content: "\e8b9";
+}
+
+.icon-user:before {
+  content: "\e8c8";
+} 

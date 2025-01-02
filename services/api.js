@@ -65,14 +65,41 @@ const api = {
   },
 
   // 登录
-  login(code, userInfo, location = '') {
-    return this.request('/api/login', {
-      method: 'POST',
-      data: {
-        code,
-        userInfo,
-        location
-      }
+  login(code, userInfo, locationInfo) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: 'http://vibebite.online/api/login', // 替换为你的实际后端登录接口
+        method: 'POST',
+        data: {
+          code: code,
+          userInfo: userInfo,
+          locationInfo: locationInfo
+        },
+        success: (res) => {
+          if (res.data.success) {
+            // 确保返回的数据包含必要的用户信息
+            const userData = {
+              token: res.data.token,
+              userId: res.data.userId,
+              nickName: userInfo.nickName,
+              avatarUrl: userInfo.avatarUrl,
+              // 其他需要的用户信息...
+            };
+            resolve({
+              success: true,
+              data: userData
+            });
+          } else {
+            resolve({
+              success: false,
+              message: res.data.message || '登录失败'
+            });
+          }
+        },
+        fail: (err) => {
+          reject(err);
+        }
+      });
     });
   },
 

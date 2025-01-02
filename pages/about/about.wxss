@@ -1,0 +1,54 @@
+.about-container {
+  padding: 40rpx;
+  text-align: center;
+}
+
+.logo-section {
+  margin-bottom: 60rpx;
+}
+
+.logo {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 20rpx;
+}
+
+.app-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.version {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.description {
+  font-size: 30rpx;
+  color: #666;
+  margin-bottom: 60rpx;
+}
+
+.features {
+  margin-bottom: 60rpx;
+}
+
+.features-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 30rpx;
+}
+
+.feature-item {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.update-btn {
+  width: 80%;
+  background: #FF6B6B;
+  color: white;
+  border-radius: 40rpx;
+} 

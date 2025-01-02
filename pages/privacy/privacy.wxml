@@ -1,0 +1,11 @@
+<view class="privacy-container">
+  <view class="privacy-title">{{privacyContent.title}}</view>
+  <view class="privacy-content">
+    <block wx:for="{{privacyContent.sections}}" wx:key="heading">
+      <view class="section">
+        <view class="section-heading">{{item.heading}}</view>
+        <view class="section-content">{{item.content}}</view>
+      </view>
+    </block>
+  </view>
+</view> 

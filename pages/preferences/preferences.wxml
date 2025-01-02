@@ -35,18 +35,22 @@
     </view>
 
     <!-- 标签区域 -->
-    <view class="paper-title">
-    </view>
       <view class="tags-container">
-      <view class="tag {{showHistory ? 'active' : ''}}" 
-            bindtap="toggleHistory">
-        <text class="tag-icon">📝</text>
-        <text>历史记录</text>
-      </view>
-      <view class="tag {{showSuggestions ? 'active' : ''}}" 
-            bindtap="toggleSuggestions">
-        <text class="tag-icon">✨</text>
-        <text>推荐灵感</text>
+      <view class="buttons-row">
+        <view class="tag {{showHistory ? 'active' : ''}}" 
+              bindtap="toggleHistory">
+          <!-- <text class="tag-icon">📝</text> -->
+          <text>历史记录</text>
+        </view>
+        <view class="tag {{showSuggestions ? 'active' : ''}}" 
+              bindtap="toggleSuggestions">
+          <!-- <text class="tag-icon">✨</text> -->
+          <text>推荐灵感</text>
+        </view>
+        <button class="submit-btn" bindtap="handleSubmit">
+          <text class="btn-icon">🪄</text>
+          <text>发布</text>
+        </button>
       </view>
     </view>
 
@@ -82,11 +86,5 @@
     </view>
   </view>
 
-  <!-- 提交按钮 -->
-  <view class="action-button">
-    <button class="submit-btn" bindtap="handleSubmit">
-      <text class="btn-icon">🪄</text>
-      <text>开始智能规划</text>
-    </button>
-  </view>
+
 </view> 

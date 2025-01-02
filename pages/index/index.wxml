@@ -1,19 +1,7 @@
 <!--index.wxml-->
 <view class="container">
   <view class="notebook-container">
-    <!-- AI对话入口 -->
-    <view class="notebook-section chat-section">
-      <view class="paper-header">
-        <image class="ai-avatar" src="/images/ai-icon.png" mode="aspectFit"></image>
-        <view class="chat-info">
-          <text class="chat-title">与AI助手对话</text>
-          <text class="chat-subtitle">让AI为您推荐美食</text>
-        </view>
-        <button class="chat-btn" bindtap="goToAIChat">
-          <text class="btn-icon">💭</text>
-        </button>
-      </view>
-    </view>
+
 
     <!-- 个性化推荐笔记本 -->
     <view class="notebook-section main-section">
