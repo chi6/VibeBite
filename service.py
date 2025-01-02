@@ -69,7 +69,8 @@ class AgentChatService:
         self.app.route('/api/share/<share_id>', methods=['GET'])(self.get_shared_session)
         self.app.route('/api/update_pref', methods=['POST'])(self.update_user_preferences)
         self.app.route('/api/wx/openid', methods=['POST'])(self.get_wx_openid)
-        self.app.route('/api/ai/settings', methods=['GET', 'POST'])(self.ai_settings)
+        self.app.route('/api/ai/get_settings', methods=['POST'])(self.get_ai_settings)
+        self.app.route('/api/ai/update_settings', methods=['POST'])(self.update_ai_settings)
         self.app.route('/api/feedback', methods=['POST'])(self.save_feedback)
         self.app.route('/api/preferences/history', methods=['POST'])(self.get_preferences_history)
 
@@ -1988,19 +1989,13 @@ class AgentChatService:
                 "response_time": f"{time.time() - start_time:.3f}s"
             }), 500
 
-    def ai_settings(self):
-        """处理AI设置的获取和更新"""
-        if request.method == 'GET':
-            return self.get_ai_settings()
-        else:  # POST
-            return self.update_ai_settings()
-
     def get_ai_settings(self):
         """获取AI设置"""
         start_time = time.time()
         
         try:
-            data = request.args
+            # 从POST请求体中获取数据，而不是GET参数
+            data = request.get_json()
             openid = data.get('openid')
             
             if not openid:
@@ -2009,7 +2004,7 @@ class AgentChatService:
                     "message": "缺少openid参数",
                     "response_time": f"{time.time() - start_time:.3f}s"
                 }), 400
-                
+            
             # 从数据库获取AI设置
             with sqlite3.connect('vibebite.db') as conn:
                 cursor = conn.cursor()
@@ -2037,8 +2032,17 @@ class AgentChatService:
                         'speakingStyle': '正式但亲切',
                         'memories': '我是一个AI助手，我的目标是帮助用户解决问题。'
                     }
-                self.update_ai_settings_prompt(openid, settings['name'], settings['personality'], settings['speakingStyle'], settings['memories'])
+                
+                # 更新AI设置的prompt
+                self.update_ai_settings_prompt(
+                    openid, 
+                    settings['name'], 
+                    settings['personality'], 
+                    settings['speakingStyle'], 
+                    settings['memories']
+                )
                 print(f"已更新用户 {openid} 的AI设置", settings)
+                
                 return jsonify({
                     "success": True,
                     "data": settings,
